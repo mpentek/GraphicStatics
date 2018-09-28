@@ -6,24 +6,96 @@ Created on Sat May 26 13:57:06 2018
 """
 
 from matplotlib import pyplot as plt
-
-from plot import plot_system, plot_results, safe_to_pdf
-from Class_System import System
-from functions import calculate_member_forces, cremona_plan
-
 from os.path import join as join_path
+
+# own modules
+from plot_utilities import plot_system, plot_results, save_to_pdf
+from system import System
+from mechanics_utilities import calculate_member_forces, cremona_plan
 
 # close all open figures
 plt.close('all')
 
 # filename for import
-#json_name = 'input/sample_ritter_input.json'
 input_folder = 'input'
-input_file_name = 'sample_ritter_input.json'
+#input_file_name = 'sample_ritter_input.json'
+input_file_name = 'sample_input.json'
 json_name = join_path(input_folder, input_file_name)
 
 output_folder = 'output'
 output_file_name_prefix = 'report_'
+
+## PMT comments
+'''
+Create an analysis object
+
+This will have an IO
+
+I -> Input() -> generate a model part based upon input folder and file name
+
+Run() -> do necessary computations and save this
+
+Postprocess() -> matplotlib and custon plot functionalitites
+
+O -> Output() -> generate/export postprocessing information in pictures files and/or PDF
+
+Main script content
+sample_analysis.input()
+sample_analysis.run()
+sample_analysis.postprocess()
+sample_analysis.output()
+
+==>> will be decided which functions will get additional parameters
+
+JSON content to build model:
+"nodes":
+    [
+        {"id" : 0,
+         "coords" : [.., ...] ==>> array of float/double for X and Y
+        },
+        {"id" : 1,
+         "coords" : [.., ...]
+        },
+        ...
+    ],
+"elements":
+    [
+        {"id" : 0,
+         "connect" : [.., ...] ==>> array of int identifying begin and end node
+        },
+        {"id" : 1,
+         "connect" : [.., ...]
+        },
+        ...
+    ],
+"boundary_conditions":
+{
+    "external_force":
+        [
+            {"id" : 0,
+            "node_id" : ...,
+            "value" : [.., ...] ==>> array of float/double
+            },
+            {"id" : 1,
+            "node_id" : ...,
+            "value" : [.., ...]
+            },
+            ...
+        ]
+    "supports":
+        [
+            {"id" : 0,
+            "node_id" : ...,
+            "fixity" : [.., ...] ==>> array of bool to show which component is fix
+            },
+            {"id" : 1,
+            "node_id" : ...,
+            "fixity" : [.., ...]
+            },
+            ...
+        ]
+}
+'''
 
 #create system and some atrributes from json file
 system = System(json_name)
@@ -84,8 +156,8 @@ ax_results.axis('equal')
 
 plt.show()
 
-# Safe figures to pdf
-safe_to_pdf([fig_system,fig_reactions,fig_member_forces,fig_subsystem_forces,fig_cremona,fig_results],
+# Save figures to pdf
+save_to_pdf([fig_system,fig_reactions,fig_member_forces,fig_subsystem_forces,fig_cremona,fig_results],
             join_path(output_folder, output_file_name_prefix + input_file_name[:-5]))
 
 # ToDo: create output text document
