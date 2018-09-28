@@ -55,12 +55,12 @@ class System():
             acting_point = self.node_list[node_id][0]
 
             ## PMT amount should be deprecated, scaled as well
-            # amount = 1.0
+            #amount = 1.0
             # scale = 1.0
             # scaled = True
-            # force_i = Force(acting_point,ex_forces[i]['value'][0],ex_forces[i]['value'][1],amount, scale, scaled)
+            #force_i = Force(acting_point,ex_forces[i]['value'][0],ex_forces[i]['value'][1],amount)
 
-            force_i = Force(acting_point,ex_forces[i]['components'][0],ex_forces[i]['components'][1],ex_forces[i]['amount'])
+            #force_i = Force(acting_point,ex_forces[i]['components'][0],ex_forces[i]['components'][1],ex_forces[i]['amount'])
             self.ex_forces_list.append([force_i,node_id,ex_forces[i]['id']+self.n_members-1])
 
         # get boundary_conditions:

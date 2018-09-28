@@ -68,7 +68,7 @@
         {
             "id":1,
             "node_id":2,
-            "components": [0.0,-1],
+            "components": [0,-1],
             "amount": 100
         },
         {
