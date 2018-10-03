@@ -1,0 +1,15 @@
+Ist: Berechnung der Stabkräfte mit Knotengleichgewichten, Erzeugen des Cremonaplans aus Ergebnissen
+Soll: Berechnung der Stabkräfte direkt im Cremonaplan
+
+Ist: Fallunterscheidung vor Aufruf der Force.Line, weil bei Kraft=0 (identische Punkte p1 und p2) mit sympy.geometry.line2d keine Linie erzeugt werden kann
+Soll: Entweder in der neuen Line Klasse "Nulllinien" definieren, oder anders die Fallunterscheidung umgehen
+
+Ist: keine Prüfung der Inputdatei
+Soll: prüfe auf statische Bestimmtheit, Abzählkriterium: f=2k-(r+s)=0, k=Knoten, r=Auflagerbedingungen, s=Stäbe
+
+Ist: keine Darstellung der Auflagerkräfte --> Ergebnisse können nicht auf Vorzeichen überprüft werden 
+Soll: Auflagerkräfte in die Systemdarstellung hinzufügen
+
+Ist: Schnitt in Teilsysteme dient nur zur Berechnung der Kräfte, in der Darstellung ist weiterhin das gesamte System zu sehen
+Soll: Teilsystem hervorheben, oder geometry des Teilsystems erstellen und damit die Plots durchführen
+
