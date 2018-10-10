@@ -18,8 +18,8 @@ plt.close('all')
 
 # filename for import
 input_folder = 'input'
-#input_file_name = 'sample_ritter_input.json'
-input_file_name = 'sample_input.json'
+input_file_name = 'sample_ritter_input.json'
+#input_file_name = 'sample_input.json'
 json_name = join_path(input_folder, input_file_name)
 
 output_folder = 'output'
