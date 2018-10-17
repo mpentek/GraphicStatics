@@ -10,7 +10,12 @@ import matplotlib.pyplot as plt
 import math
 
 # PMT remove sympy dependency
-from sympy import Point2D, Line2D, Segment2D
+#from sympy import Point2D, Line2D, Segment2D
+
+# own geometric entities
+from point import Point2D
+from line import Line2D
+from segment import Segment2D
 
 # own modules
 from geometric_utilities import translate_to_point, translate_delta, calculate_angle
@@ -74,7 +79,9 @@ def funicular_polygon(ax_fr_poly,ax_fun_poly,forces,system):
     ax_fr_poly = plot_poleline(ax_fr_poly,pole,polelines[0])
 
     #create baseline underneath system for beautiful plot
-    baseline = Line2D([0,-system.largest_element_length*0.2],[1,-system.largest_element_length*0.2])
+    # PMT remove sympy dependency
+    #baseline = Line2D([0,-system.largest_element_length*0.2],[1,-system.largest_element_length*0.2])
+    baseline = Line2D(Point2D(0,-system.largest_element_length*0.2),Point2D(1,-system.largest_element_length*0.2)) 
     intersections = system.ex_forces_list[0][0].line.intersection(baseline)
 
     if intersections == []:
@@ -110,131 +117,146 @@ def funicular_polygon(ax_fr_poly,ax_fun_poly,forces,system):
     return ax_fr_poly, ax_fun_poly, res_fun_poly
 
 def method_of_joints(ax_method_of_joints,acting_forces,node_number,unknown_forces,system):
-
+    
     #create lines for unknown members
     member_lines = []
-
+    
     i = 0
     while i < system.n_nodes:
         if system.solved_geometry[node_number][i] != 0:
             for k in range(len(system.member_forces)): #find the force in member_forces
                       if system.member_forces [k][1] == [node_number,i] or system.member_forces [k][1] == [i,node_number] :
                           member_id = k
-
+            
             second_node_number = i
-            member_lines.append([Line2D(system.node_list[node_number][0],system.node_list[i][0]),member_id,second_node_number])
-
+            member_lines.append([Line2D(system.node_list[node_number][0],system.node_list[i][0]),member_id,second_node_number]) 
+        
         else: #solved_geometry == 0 --> no member or has been calculated
             if system.geometry[node_number][i] == 1: # --> has been calculated
                   for k in range(len(system.member_forces)): #find the force in member_forces
                       if system.member_forces [k][1] == [node_number,i] or system.member_forces [k][1] == [i,node_number] :
                           member_force = system.member_forces[k][0]
-
+                              
                           # set direction of force: + pointing from node, - pointing to node
                           delta_x_nodes = system.node_list[i][0].x-system.node_list[node_number][0].x
                           delta_y_nodes = system.node_list[i][0].y-system.node_list[node_number][0].y
-
+                          
                           if np.sign(delta_x_nodes) == np.sign(member_force.dx) and np.sign(delta_y_nodes) == np.sign(member_force.dy) : #force points from node_number to node i
                               pass
                           else:
+                            # PMT remove sympy dependency
+                            #   member_force.mirror_at_foodpoint()
+                              member_force.mirror_at_endpoint()
+                        
+                          if member_force.amount < 0: 
+                            # PMT remove sympy dependency
+                            #   member_force.mirror_at_foodpoint()
                               member_force.mirror_at_endpoint()
 
-                          if member_force.amount < 0:
-                              member_force.mirror_at_endpoint()
-
+                        # PMT remove sympy dependency      
+                        #   member_force.translate_food_to_point(system.node_list[node_number][0])
                           member_force.translate_end_to_point(system.node_list[node_number][0])
+                          
 
                           acting_forces.append([member_force,node_number,len(acting_forces)])
-                          break
-
+                          break 
+                      
         i += 1
+        
+    #force polygon of all acting forces on node
+    _,closed,res_fr_polygon,fr_polygon = force_polygon(None, system.scale,acting_forces)
+    
+    if unknown_forces == 0:
+         if closed == False:
+             print('Error: Node is not in equilibrium: Node',node_number)
+    intersection = []
+    
+    if unknown_forces == 1:
+        #unknwon_force = res fr_polygon, watch direction
+        dx = res_fr_polygon.dx
+        dy = res_fr_polygon.dy
+        dx1 = member_lines[0][0].p2.x-member_lines[0][0].p1.x
+        dy1 = member_lines[0][0].p2.y-member_lines[0][0].p1.y
+            
+        amount = res_fr_polygon.amount
+            
+        if np.sign(dx) == np.sign(dx1) or np.sign(dy) != np.sign(dy1): #set sign 
+            amount = 0 - amount
+           
+        
+        acting_point = system.node_list[node_number][0]
+            
+             
+        member_force = [Force(acting_point,dx,dy,amount,system.scale,scaled = True)]
+        
+        system.member_forces[member_lines[0][1]][0] = member_force[0]
+            
+        system.solved_geometry[node_number][member_lines[0][2]] = 0
+        system.solved_geometry[member_lines[0][2]][node_number] = 0
+        
+    
+    elif unknown_forces == 2:
+        
+        member_lines[0][0] = translate_to_point(member_lines[0][0],fr_polygon[0].p2)
+        member_lines[1][0] = translate_to_point(member_lines[1][0],fr_polygon[-1].p1)
+        
+        # PMT remove sympy dependency
+        #  intersection = member_lines[0][0].intersection(member_lines[1][0])[0]
+        intersection = [member_lines[0][0].intersection(member_lines[1][0])[0]]
+        
+        member_force = [None]*2
+        
+        #member 0
+        # PMT remove sympy dependency
+        # dx = fr_polygon[0].p2.x-intersection.x
+        # dy = fr_polygon[0].p2.y-intersection.y
+        dx = fr_polygon[0].p2.x-intersection[0].x
+        dy = fr_polygon[0].p2.y-intersection[0].y
+        dx1 = member_lines[0][0].p1.x-member_lines[0][0].p2.x
+            
+        # PMT remove sympy dependency
+        # amount = fr_polygon[0].p2.distance(intersection)/system.scale
+        amount = fr_polygon[0].p2.distance(intersection[0])/system.scale
+            
+        if np.sign(dx) == np.sign(dx1): #set sign
+            amount = amount * -1
+          
+        acting_point = Point2D(system.node_list[node_number][0].x,system.node_list[node_number][0].y)
+            
+        member_force[0] = Force(acting_point,dx,dy,amount,system.scale,scaled = True)
+        
+        system.member_forces[member_lines[0][1]][0] = member_force[0]
+            
+        system.solved_geometry[node_number][member_lines[0][2]] = 0
+        system.solved_geometry[member_lines[0][2]][node_number] = 0
+        
+        #member 1
+        # PMT remove sympy dependency
+        # dx = fr_polygon[-1].p1.x-intersection.x
+        # dy = fr_polygon[-1].p1.y-intersection.y
+        dx = fr_polygon[-1].p1.x-intersection[0].x
+        dy = fr_polygon[-1].p1.y-intersection[0].y
+        dx1 = member_lines[1][0].p2.x-member_lines[1][0].p1.x
 
-    if acting_forces == []:
-        pass
-    else:
-
-        #force polygon of all acting forces on node
-        _,closed,res_fr_polygon,fr_polygon = force_polygon(None, system.scale,acting_forces)
-
-        if unknown_forces == 0:
-             if closed == False:
-                 print('Error: Node is not in equilibrium: Node',node_number)
-        intersection = []
-
-        if unknown_forces == 1:
-            #unknwon_force = res fr_polygon, watch direction
-            dx = res_fr_polygon.dx
-            dy = res_fr_polygon.dy
-            dx1 = member_lines[0][0].p2.x-member_lines[0][0].p1.x
-            dy1 = member_lines[0][0].p2.y-member_lines[0][0].p1.y
-
-            amount = res_fr_polygon.amount
-
-            if np.sign(dx) == np.sign(dx1) or np.sign(dy) != np.sign(dy1): #set sign
-                amount = 0 - amount
-
-
-            acting_point = system.node_list[node_number][0]
-
-
-            member_force = [Force(acting_point,dx,dy,amount,system.scale,scaled = True)]
-
-            system.member_forces[member_lines[0][1]][0] = member_force[0]
-
-            system.solved_geometry[node_number][member_lines[0][2]] = 0
-            system.solved_geometry[member_lines[0][2]][node_number] = 0
-
-
-        elif unknown_forces == 2:
-
-            member_lines[0][0] = translate_to_point(member_lines[0][0],fr_polygon[0].p2)
-            member_lines[1][0] = translate_to_point(member_lines[1][0],fr_polygon[-1].p1)
-
-            intersection = member_lines[0][0].intersection(member_lines[1][0])[0]
-
-            member_force = [None]*2
-
-            #member 0
-            dx = fr_polygon[0].p2.x-intersection.x
-            dy = fr_polygon[0].p2.y-intersection.y
-            dx1 = member_lines[0][0].p1.x-member_lines[0][0].p2.x
-
-            amount = fr_polygon[0].p2.distance(intersection)/system.scale
-
-            if np.sign(dx) == np.sign(dx1): #set sign
-                amount = amount * -1
-
-            acting_point = Point2D(system.node_list[node_number][0].x,system.node_list[node_number][0].y)
-
-            member_force[0] = Force(acting_point,dx,dy,amount,system.scale,scaled = True)
-
-            system.member_forces[member_lines[0][1]][0] = member_force[0]
-
-            system.solved_geometry[node_number][member_lines[0][2]] = 0
-            system.solved_geometry[member_lines[0][2]][node_number] = 0
-
-            #member 1
-            dx = fr_polygon[-1].p1.x-intersection.x
-            dy = fr_polygon[-1].p1.y-intersection.y
-            dx1 = member_lines[1][0].p2.x-member_lines[1][0].p1.x
-
-            amount = float(fr_polygon[-1].p1.distance(intersection)/system.scale)
-
-            if np.sign(dx) == np.sign(dx1): #set sign
-                amount = 0 - amount
-
-            acting_point = Point2D(system.node_list[node_number][0].x+dx,system.node_list[node_number][0].y+dy)
-
-            member_force[1] = Force(acting_point,dx,dy,amount,system.scale,scaled = True)
-
-            system.member_forces[member_lines[1][1]][0] = member_force[1]
-
-            system.solved_geometry[node_number][member_lines[1][2]] = 0
-            system.solved_geometry[member_lines[1][2]][node_number] = 0
-
-        #plot
-        ax_method_of_joints = plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_polygon,node_number,member_force,unknown_forces,member_lines,intersection)
-
+        # PMT remove sympy dependency   
+        # amount = float(fr_polygon[-1].p1.distance(intersection)/system.scale)
+        amount = float(fr_polygon[-1].p1.distance(intersection[0])/system.scale)
+            
+        if np.sign(dx) == np.sign(dx1): #set sign
+            amount = 0 - amount
+           
+        acting_point = Point2D(system.node_list[node_number][0].x+dx,system.node_list[node_number][0].y+dy)
+             
+        member_force[1] = Force(acting_point,dx,dy,amount,system.scale,scaled = True)
+        
+        system.member_forces[member_lines[1][1]][0] = member_force[1]
+            
+        system.solved_geometry[node_number][member_lines[1][2]] = 0
+        system.solved_geometry[member_lines[1][2]][node_number] = 0  
+        
+    #plot
+    ax_method_of_joints = plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_polygon,node_number,member_force,unknown_forces,member_lines,intersection)
+       
     return ax_method_of_joints, system.solved_geometry #not necessary
 
 def find_cuttingline(system):
@@ -266,8 +288,12 @@ def find_cuttingline(system):
             for line_number in range(len(cutting_lines)):
                 intersected_elements = []
                 for element_number in range(len(element_lines)):
-                    if len(cutting_lines[line_number].intersection(element_lines[element_number])) != 0:
+                    # PMT remove sympy dependency
+                    # if len(cutting_lines[line_number].intersection(element_lines[element_number])) != 0:
+                    #     intersected_elements.append(element_number)
+                    if element_lines[element_number].intersection(cutting_lines[line_number]) != []:
                         intersected_elements.append(element_number)
+
                 if len(intersected_elements) <= 3:
                     member_number = i
                     cuttingline = cutting_lines[line_number]
@@ -414,34 +440,34 @@ def calculate_subsystem_forces(ax_sect_fr_poly, ax_sect_fun_poly,intersected_ele
 def calculate_member_forces(ax_sub_fr_poly,ax_sub_fun_poly,fig_member_forces,system):
     while True:
         n_unsolved_nodes = 0 #reset to 0 before starting loop through all nodes
-        steps_without_solving = 1
-
+        steps_without_solving = 1 
+        
         # go through rows = nodes
-        for i in range(system.n_nodes):
+        for i in range(system.n_nodes): 
             # set_unknown_forces to 0 before continuing with next node
             n_unknown_forces = 0
             # check if node has been calculated yet
             if system.solved_geometry[i][-1] is False:
-                # get number of unknown forces
+                # get number of unknown forces                      
                 for j in range(system.n_columns_geometry):
                     if system.solved_geometry[i][j] != 0:
                         n_unknown_forces +=1
-                # calculate unknown forces depending on number of unknown forces
+                # calculate unknown forces depending on number of unknown forces     
                 if n_unknown_forces > 2:
-                     # if more than two unknown forces go to next node and set unsolved_nodes +1
-                     n_unsolved_nodes +=1
+                     # if more than two unknown forces go to next node and set unsolved_nodes +1 
+                     n_unsolved_nodes +=1            
                 elif n_unknown_forces == 2 or n_unknown_forces == 1 or n_unknown_forces == 0:
                     system.solved_geometry[i][-1] = True
                     acting_forces = system.get_acting_forces_on_node(i)
-
-
+                    
+                    
                     ax_fr_poly_node = fig_member_forces.add_subplot(system.n_nodes,2,i+1)
-
+    
                     ax_fr_poly_node.set_title('Method of joints on node %s' %i)
-
+                    
                     ax_fr_poly_node.axis('equal')
                     ax_fr_poly_node,system.solved_geometry = method_of_joints(ax_fr_poly_node,acting_forces,i,n_unknown_forces,system)
-
+                    
                     ax_fr_poly_node.set_adjustable('box')
                     steps_without_solving = 0
 

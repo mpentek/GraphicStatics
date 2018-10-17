@@ -8,7 +8,11 @@ Created on Wed May  2 13:03:45 2018
 import numpy as np
 
 # PMT remove sympy dependency
-from sympy.geometry import Point2D,Line2D
+#from sympy import Point2D, Line2D
+
+# own geometric entities
+from point import Point2D
+from line import Line2D
 
 # own modules
 from geometric_utilities import translate_to_point
@@ -34,7 +38,7 @@ class Force:
         if type(acting_point) == Point2D:
             self.p1 = acting_point
         else:
-            self.p1 = Point2D(acting_point)
+            self.p1 = Point2D(acting_point[1],acting_point[2])
 
         ## PMT
         # instead of scale -> scaling_factor
@@ -142,11 +146,13 @@ class Force:
     ## PMT the 2 mirror functions could be merged into one mirror(self, "at_foot")
     # or mirror(self, "head")
     def mirror_at_endpoint(self):
+        ''' former mirror_at_foodpoint'''
         self.dx = -self.dx
         self.dy = -self.dy
         self.p1 = Point2D(self.p2.x+self.dx,self.p2.y+self.dy)
 
     def mirror_at_startpoint(self):
+        ''' former mirror_at_headpoint'''
         head = self.p1
         self.mirror_at_endpoint()
         self.translate_start_to_point(head)
@@ -155,6 +161,7 @@ class Force:
     # or  translate_to_point(self,point,"from_foot")
 
     def translate_start_to_point(self,point):
+        ''' former translate_head_to_point'''
         self.p1 = point
         self.p2 = Point2D(self.p1.x-self.dx,self.p1.y-self.dy)
 
@@ -162,6 +169,7 @@ class Force:
             self.line = Line2D(self.p1,self.p2)
 
     def translate_end_to_point(self,point):
+        ''' former translate_food_to_point'''
         self.p2 = point
         self.p1 = Point2D(self.p2.x+self.dx,self.p2.y+self.dy)
 

@@ -10,7 +10,13 @@ import matplotlib.pyplot as plt
 import math
 
 # PMT remove sympy dependency
-from sympy import Point2D, Line2D, Segment2D
+#from sympy import Point2D, Line2D, Segment2D
+
+# own geometric entities
+from point import Point2D
+from line import Line2D
+from segment import Segment2D
+
 
 # own modules
 #from plot import plot_fr_poly, plot_fun_poly,plot_method_of_joints,plot_poleline,plot_cremona, plot_cutting_line

@@ -8,7 +8,10 @@ import json
 import copy
 
 # PMT remove sympy dependency
-from sympy import Point2D
+#from sympy import Point2D
+
+# own geometric entities
+from point import Point2D
 
 # own modules
 from force import Force

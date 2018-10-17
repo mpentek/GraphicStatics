@@ -12,6 +12,12 @@ from matplotlib.backends.backend_pdf import PdfPages
 # PMT remove sympy dependency
 from sympy import Segment2D
 
+# PMT remove sympy dependency
+#from sympy import Segment2D
+
+# own geometric entities
+from segment import Segment2D
+
 # own modules
 from geometric_utilities import extend_line
 
@@ -228,7 +234,9 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
     points.append(fr_polygon[0].p2)
     points.append(fr_polygon[-1].p1)
     if len(intersection) != 0:
-        points.append(intersection)
+        # PMT remove sympy dependency
+        # points.append(intersection)
+        points.append(intersection[0])
 
     for i in range(len(points)):
         ax_method_of_joints.plot(points[i].x,points[i].y,'ko')
@@ -259,8 +267,11 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
         member_force[0].translate_start_to_point(fr_polygon[0].p2)
 
         # set direction of force:
-        delta_x_nodes = fr_polygon[0].p2.x-intersection.x
-        delta_y_nodes = fr_polygon[0].p2.y-intersection.y
+        # PMT remove sympy dependency
+        # delta_x_nodes = fr_polygon[0].p2.x-intersection.x
+        # delta_y_nodes = fr_polygon[0].p2.y-intersection.y
+        delta_x_nodes = fr_polygon[0].p2.x-intersection[0].x
+        delta_y_nodes = fr_polygon[0].p2.y-intersection[0].y
 
         if np.sign(delta_x_nodes) == np.sign(member_force[0].dx) and np.sign(delta_y_nodes) == np.sign(member_force[0].dy) : #force points from fr_polygon[0] to intersection
             pass
@@ -273,8 +284,11 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
         member_force[1].translate_end_to_point(fr_polygon[-1].p1)
 
         # set direction of force:
-        delta_x_nodes = round(float(intersection.x-fr_polygon[-1].p1.x),5)
-        delta_y_nodes = round(float(intersection.y-fr_polygon[-1].p1.y),5)
+        # PMT remove sympy dependency
+        # delta_x_nodes = round(float(intersection.x-fr_polygon[-1].p1.x),5)
+        # delta_y_nodes = round(float(intersection.y-fr_polygon[-1].p1.y),5)
+        delta_x_nodes = round(float(intersection[0].x-fr_polygon[-1].p1.x),5)
+        delta_y_nodes = round(float(intersection[0].y-fr_polygon[-1].p1.y),5)
 
         if np.sign(delta_x_nodes) == np.sign(round(float(member_force[0].dx),5)) and np.sign(delta_y_nodes) == np.sign(round(float(member_force[0].dy),5)) : #force points from fr_polygon[0] to intersection
             pass
@@ -353,8 +367,6 @@ def plot_results(ax_results,system):
             height = round(float(system.member_forces[i][0].amount),5)*system.scale*0.1
 
             patch = patches.Rectangle(xy, width, height, angle, ec=(0,0,0,0.9), fc=(1,0,0,0.5))
-
-
 
         ax_results.add_patch(patch)
         ax_results.annotate('S %d' %i,(center_text[0],center_text[1]))
