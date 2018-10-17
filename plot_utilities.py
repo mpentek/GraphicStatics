@@ -230,10 +230,11 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
     points = []
     points.append(fr_polygon[0].p2)
     points.append(fr_polygon[-1].p1)
-    if len(intersection) != 0:
+    print(intersection)
+    if intersection is not None:
         # PMT remove sympy dependency
         # points.append(intersection)
-        points.append(intersection[0])
+        points.append(intersection)
 
     for i in range(len(points)):
         ax_method_of_joints.plot(points[i].x,points[i].y,'ko')
@@ -267,8 +268,8 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
         # PMT remove sympy dependency
         # delta_x_nodes = fr_polygon[0].p2.x-intersection.x
         # delta_y_nodes = fr_polygon[0].p2.y-intersection.y
-        delta_x_nodes = fr_polygon[0].p2.x-intersection[0].x
-        delta_y_nodes = fr_polygon[0].p2.y-intersection[0].y
+        delta_x_nodes = fr_polygon[0].p2.x-intersection.x
+        delta_y_nodes = fr_polygon[0].p2.y-intersection.y
 
         if np.sign(delta_x_nodes) == np.sign(member_force[0].dx) and np.sign(delta_y_nodes) == np.sign(member_force[0].dy) : #force points from fr_polygon[0] to intersection
             pass
@@ -284,8 +285,8 @@ def plot_method_of_joints(ax_method_of_joints,system,closed,res_fr_polygon,fr_po
         # PMT remove sympy dependency
         # delta_x_nodes = round(float(intersection.x-fr_polygon[-1].p1.x),5)
         # delta_y_nodes = round(float(intersection.y-fr_polygon[-1].p1.y),5)
-        delta_x_nodes = round(float(intersection[0].x-fr_polygon[-1].p1.x),5)
-        delta_y_nodes = round(float(intersection[0].y-fr_polygon[-1].p1.y),5)
+        delta_x_nodes = round(intersection.x-fr_polygon[-1].p1.x,5)
+        delta_y_nodes = round(intersection.y-fr_polygon[-1].p1.y,5)
 
         if np.sign(delta_x_nodes) == np.sign(round(float(member_force[0].dx),5)) and np.sign(delta_y_nodes) == np.sign(round(float(member_force[0].dy),5)) : #force points from fr_polygon[0] to intersection
             pass

@@ -84,14 +84,14 @@ class Force:
         base_line = Line2D(p1,p2)
 
         if other_force_line is not False:
-            intersection2 = other_force_line.intersection(base_line)[0]
+            intersection2 = other_force_line.intersection(base_line)
             self.translate_start_to_point(intersection2)
 
         p3 = Point2D(p1.x-self.dx,p1.y-self.dy)
         prop_line = Line2D(p3,p2)
-        intersection0 = Point2D(self.line.intersection(base_line)[0].x-self.dx, self.line.intersection(base_line)[0].y-self.dy)
-        intersection1 = self.line.intersection(prop_line)[0]
-        intersection2 = self.line.intersection(base_line)[0]
+        intersection0 = Point2D(self.line.intersection(base_line).x-self.dx, self.line.intersection(base_line).y-self.dy)
+        intersection1 = self.line.intersection(prop_line)
+        intersection2 = self.line.intersection(base_line)
 
         dx_1 = intersection2.x-intersection1.x
         dy_1 = intersection2.y-intersection1.y

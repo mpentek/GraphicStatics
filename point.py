@@ -1,4 +1,4 @@
-# define 2D Point 
+# define 2D Point
 import math
 
 TOL = 1e-8
@@ -17,17 +17,16 @@ class Point2D:
         self.y = y
 
     def translatePoint2D(self,deltax,deltay):
-        self.x = self.x + deltax
-        self.y = self.y + deltay
+        self.x += deltax
+        self.y += deltay
 
     def multipliPoint2D(self, factor):
-        self.x= self.x * factor 
-        self.y= self.y * factor
+        self.x *= factor
+        self.y *= factor
 
     #Abstand zwischen zwei Punkten
     def distance(self, Point):
-        deltax= Point.x - self.x
-        deltay = Point.y- self.y 
-        d = math.sqrt((deltax**2) + (deltay**2))
-        return d
+        deltax = Point.x - self.x
+        deltay = Point.y - self.y
+        return math.sqrt((deltax**2) + (deltay**2))
 
