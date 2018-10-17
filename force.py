@@ -38,6 +38,8 @@ class Force:
         if type(acting_point) == Point2D:
             self.p1 = acting_point
         else:
+            # PMT remove sympy dependency
+            # self.p1 = Point2D(acting_point)
             self.p1 = Point2D(acting_point[1],acting_point[2])
 
         ## PMT

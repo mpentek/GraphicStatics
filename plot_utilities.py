@@ -10,9 +10,6 @@ import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
 # PMT remove sympy dependency
-from sympy import Segment2D
-
-# PMT remove sympy dependency
 #from sympy import Segment2D
 
 # own geometric entities
