@@ -11,11 +11,14 @@ class Segment2D:
             self.p1 = p1
             self.p2 = p2   
         if (p1.x > p2.x) == True:
-                self.p1, self.p2 = p2,p1
-        elif (p1.x == p2.x) == True and (p1.y > p2.y) == True:
+                self.p1 = p1 
+                self.p2 = p2
+        #elif (p1.x == p2.x) == True and (p1.y > p2.y) == True:
+        elif abs(p1.x - p2.x) <= TOL and (p1.y > p2.y) == True:
                     self.p1, self.p2 = p2, p1
         else: 
-            self.p1, self.p2 = p1,p2 
+            self.p1 = p1
+            self.p2 = p2 
 
         self.points = (self.p1, self.p2)
 
@@ -43,9 +46,10 @@ class Segment2D:
                 #überprüfen, ob S1 innerhalb Segment
                 if S1 != []:
                     l_segment = sqrt(self.dx*self.dx+self.dy*self.dy)
-                    l1 = sqrt((self.p1.x-S1[0].x)*(self.p1.x-S1[0].x)+(self.p1.y-S1[0].y)*(self.p1.y-S1[0].y))
-                    l2 = sqrt((self.p2.x-S1[0].x)*(self.p2.x-S1[0].x)+(self.p2.y-S1[0].y)*(self.p2.y-S1[0].y))
-                    if l_segment - TOL <= l1+l2 <= l_segment + TOL:
+                    l1 = sqrt((self.p1.x-intersection_point[0].x)**2+(self.p1.y-intersection_point[0].y)**2)
+                    l2 = sqrt((self.p2.x-intersection_point[0].x)**2+(self.p2.y-intersection_point[0].y)**2)
+                    # if l_segment - TOL <= l1+l2 <= l_segment + TOL:
+                    if abs((l1+l2)-l_segment) <= TOL:
                         return S1
                     else:
                         return []

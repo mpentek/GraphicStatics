@@ -42,48 +42,48 @@ class Line2D:
     # checks if two lines have an intersection or not
     def isparallel(self,line):
     
-       if line.u == 0:
-           if (-TOL) <= self.u <= TOL:
-               return True
-           else:
-               return False
+        if abs(line.u) <= TOL:
+            if abs(self.u) <= TOL:
+                return True
+            else:
+                return False
         
-       if line.v == 0:
-           if (-TOL) <= self.v <= TOL:
-               return True
-           else:
-               return False
+        if abs(line.v) <= TOL:
+            if abs(self.v) <= TOL:
+                return True
+            else:
+                return False
 
-       a= self.u/line.u
-       b = self.v/line.v
-       if (b-TOL) <= a <= (b+TOL):
-           return True
-       else:
+        a= self.u/line.u
+        b = self.v/line.v
+        # if (b-TOL) <= a <= (b+TOL):
+        if abs(a-b) <= TOL:
+            return True
+        else:
             return False 
        
     def intersection(self,line):
 
-     if isinstance(line, Line2D):
-  
-         #bei parallelen Geraden keinen Schnittpunkt berechnen
-         if self.isparallel(line):
-             S1 = []
-             
-             print("The lines are PARALLEL")
-             return S1
-       
-         else:
-             a1,b1,c1 = self.coefficients()
-             a2,b2,c2 = line.coefficients()
-             if b2 == 0: #line vertikal -> Teilen durch 0 -> vertauschen
-                 a1,b1,c1 = line.coefficients()
-                 a2,b2,c2 = self.coefficients()
+        if isinstance(line, Line2D):
 
-             x = ((-1*(b2-b1)/b2+1)*c2-c1)/((a1-a2)+a2*(b2-b1)/b2)
-             y = (-a2*x - c2)/b2
+            #bei parallelen Geraden keinen Schnittpunkt berechnen
+            if self.isparallel(line):
+                S1 = []                
+                print("The lines are PARALLEL")
+                return S1
+        
+            else:
+                a1,b1,c1 = self.coefficients()
+                a2,b2,c2 = line.coefficients()
+                if abs(b2) <= TOL: #line vertikal -> Teilen durch 0 -> vertauschen
+                    a1,b1,c1 = line.coefficients()
+                    a2,b2,c2 = self.coefficients()
 
-             S1 = [Point2D(x,y)]
-             return S1 
+                x = ((-1*(b2-b1)/b2+1)*c2-c1)/((a1-a2)+a2*(b2-b1)/b2)
+                y = (-a2*x - c2)/b2
+
+                S1 = [Point2D(x,y)]
+                return S1 
    
     #Linie um einen bestimmten Punkt rotieren
     def rotate(self,alpha,point):

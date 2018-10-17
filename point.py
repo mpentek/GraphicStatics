@@ -28,6 +28,6 @@ class Point2D:
     def distance(self, Point):
         deltax= Point.x - self.x
         deltay = Point.y- self.y 
-        d = math.sqrt((deltax* deltax) + (deltay * deltay))
+        d = math.sqrt((deltax**2) + (deltay**2))
         return d
 
