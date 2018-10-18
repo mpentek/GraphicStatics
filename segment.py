@@ -30,7 +30,7 @@ class Segment2D:
 
         mx = p1.x + (self.dx/2)
         my = p1.y + (self.dy/2)
-        self.midpoint = Point2D(mx,my)
+        self.midpoint = [mx,my] #Patches need iterable array not Point2D -> false: Point2D(mx,my)
 
     # erstellen einer Linie senkrecht auf dem Segment
     def perpendicular_line(self,Point):

@@ -20,6 +20,9 @@ plt.close('all')
 input_folder = 'input'
 input_file_name = 'sample_ritter_input.json'
 input_file_name = 'sample_input.json'
+input_file_name = 'sample_input.1.json'
+# input_file_name = 'sample_input.2.json'
+# input_file_name = 'sample_input.3.json'
 json_name = join_path(input_folder, input_file_name)
 
 output_folder = 'output'

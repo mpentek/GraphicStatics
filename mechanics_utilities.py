@@ -222,8 +222,8 @@ def method_of_joints(ax_method_of_joints,acting_forces,node_number,unknown_force
         # amount = fr_polygon[0].p2.distance(intersection)/system.scale
         amount = fr_polygon[0].p2.distance(intersection)/system.scale
 
-        if np.sign(dx) == np.sign(dx1): #set sign
-            amount = amount * -1
+        # if np.sign(dx) == np.sign(dx1): #set sign
+        #     amount = amount * -1
 
         acting_point = Point2D(system.node_list[node_number][0].x,system.node_list[node_number][0].y)
 

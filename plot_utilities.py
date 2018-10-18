@@ -350,10 +350,10 @@ def plot_results(ax_results,system):
                 angle = np.degrees(angle)
 
         if round(float(system.member_forces[i][0].amount),5) == 0:
-             center = element_segment.midpoint
-             radius = 0.05 * element_segment.length
+            center = element_segment.midpoint
+            radius = 0.05 * element_segment.length
 
-             patch = patches.Circle(center,radius,ec=(0,0,0,0.9), fc=(1,0,0,0.25))
+            patch = patches.Circle(center,radius,ec=(0,0,0,0.9), fc=(1,0,0,0.25))
 
 
         elif round(float(system.member_forces[i][0].amount),5) > 0:
