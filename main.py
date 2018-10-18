@@ -16,6 +16,8 @@ from mechanics_utilities import calculate_member_forces, cremona_plan
 # close all open figures
 plt.close('all')
 
+print("my comments")
+
 # filename for import
 input_folder = 'input'
 input_file_name = 'sample_ritter_input.json'
