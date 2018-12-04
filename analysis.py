@@ -181,7 +181,10 @@ class Analysis(object):
 
         system_solved = False
         counter = 0
-        print("## System solve - iteratively")
+
+        if self.echo_level == 1:
+            print("## System solve - iteratively")
+
         while not(system_solved):
             counter +=1
 
@@ -288,10 +291,11 @@ class Analysis(object):
                 current_system_unsolved_degree += node.unsolved_degree
 
             ##
-            print("At iteration: ", counter)
-            print("System unsolved degree - old: ", old_system_unsolved_degree)
-            print("System unsolved degree - current: ", current_system_unsolved_degree)
-            change = old_system_unsolved_degree - current_system_unsolved_degree
+            if self.echo_level == 1:
+                print("At iteration: ", counter)
+                print("System unsolved degree - old: ", old_system_unsolved_degree)
+                print("System unsolved degree - current: ", current_system_unsolved_degree)
+                change = old_system_unsolved_degree - current_system_unsolved_degree
 
             old_system_unsolved_degree = current_system_unsolved_degree
 
