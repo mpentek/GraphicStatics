@@ -6,6 +6,7 @@ Created on Tuesday Dec 4 18:00 2018
 Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 """
 
+
 class Fixity2D:
     def __init__(self, id, node_id, is_fixed):
         self.id = str(id)

@@ -7,30 +7,6 @@ Created on Wed May  2 13:03:45 2018
 
 import numpy as np
 
-# PMT remove sympy dependency
-#from sympy import Point2D, Line2D
-
-# own geometric entities
-# from point import Point2D
-# from line import Line2D
-
-# own modules
-# from geometric_utilities import translate_to_point
-
-## PMT
-'''
-A line is defined by a point and a direction ==>> Line2D
-
-A segment by 2 points (no specific direction) ==>> Segment2D (special case a a line)
-
-A vector2d is a segment with a specific direction (special case of a segment)
-==>> Force should be changed to Vector2D, whic maybe inherits from Segment2D
-
-CHECK naming, maybe not better
-head ==>> was renamed to start: head_to_point -> start_to_point
-food(t) ==>> was renamed to end: foot_to_point -> end_to_point
-MAYBE rather head and tail?
-'''
 
 class Force2D:
 
@@ -40,7 +16,8 @@ class Force2D:
         self.node = node
         # maybe redundant
         self.coordinates = coordinates
-        self.magnitude, self.direction = self._get_magnitude_and_direction(components)
+        self.magnitude, self.direction = self._get_magnitude_and_direction(
+            components)
         # type: one of internal, external, reaction
         self.force_type = force_type
         # application line - with direction and coefficients
@@ -74,7 +51,7 @@ class Force2D:
         # gibt a,b und c aus ax+by+c
         a = p1[1]-p2[1]
         b = p2[0]-p1[0]
-        c = -(a* p1[0]+b*p1[1])
+        c = -(a * p1[0]+b*p1[1])
 
         # http://www.pdas.com/lineint.html
         # a1:= y2-y1;
@@ -85,6 +62,4 @@ class Force2D:
         c1 = p2[0] * p1[1] - p1[0] * p2[1]
 
         # return [a,b,c]
-        return [a1,b1,c1]
-
-
+        return [a1, b1, c1]

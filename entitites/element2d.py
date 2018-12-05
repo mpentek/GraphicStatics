@@ -8,6 +8,7 @@ Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 
 from node2d import Node2D
 
+
 class Element2D:
     def __init__(self, id, nodes, coordinates):
         self.id = id
@@ -32,8 +33,8 @@ class Element2D:
 
     def _get_midpoint(self):
         return Node2D('m',
-                    [(self.coordinates[0][0] + self.coordinates[1][0]) / 2.,
-                     (self.coordinates[0][1] + self.coordinates[1][1]) / 2.])
+                      [(self.coordinates[0][0] + self.coordinates[1][0]) / 2.,
+                       (self.coordinates[0][1] + self.coordinates[1][1]) / 2.])
 
     def _get_line_coefficients(self):
         p1 = self.coordinates[0]
@@ -41,7 +42,7 @@ class Element2D:
         # gibt a,b und c aus ax+by+c
         a = p1[1]-p2[1]
         b = p2[0]-p1[0]
-        c = -(a* p1[0]+b*p1[1])
+        c = -(a * p1[0]+b*p1[1])
 
         # http://www.pdas.com/lineint.html
         # a1:= y2-y1;
@@ -52,7 +53,7 @@ class Element2D:
         c1 = p2[0] * p1[1] - p1[0] * p2[1]
 
         # return [a,b,c]
-        return [a1,b1,c1]
+        return [a1, b1, c1]
 
     def _get_line(self):
         line = {}

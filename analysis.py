@@ -23,6 +23,7 @@ from utilities.mechanical_utilities import get_force_diagram, get_space_diagram,
 from utilities.geometric_utilities import TOL
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
 
+
 class Analysis(object):
     def __init__(self, input_model_file, echo_level=0):
         self.echo_level = echo_level
@@ -68,11 +69,12 @@ class Analysis(object):
         # get (external) forces:
         for ext_force in data['external_forces']:
             model["forces"]['e' + str(ext_force['id'])] = Force2D(ext_force['id'],
-                                                       ext_force['node_id'],
-                                                       # maybe remove once dependency is not needed
-                                                       model["nodes"][ext_force['node_id']].coordinates,
-                                                       ext_force['components'],
-                                                       force_type='external')
+                                                                  ext_force['node_id'],
+                                                                  # maybe remove once dependency is not needed
+                                                                  model["nodes"][ext_force['node_id']
+                                                                                 ].coordinates,
+                                                                  ext_force['components'],
+                                                                  force_type='external')
 
         # get fixitites
         for fixity in data['fixities']:
@@ -90,18 +92,18 @@ class Analysis(object):
     def _calculate_reaction_forces(self):
         forces = []
         for key, force in self.input_system["forces"].items():
-            #if force.force_type == 'external':
+            # if force.force_type == 'external':
             forces.append(force)
 
         ################
-        ## force diagram
+        # force diagram
         # to find the magnitude of the resultant of external forces
         force_diagram = get_force_diagram(forces)
         if self.echo_level == 1:
             plot_force_diagram(force_diagram)
 
         ################
-        ## funicular or space diagram
+        # funicular or space diagram
         # to find the acting line of the resultant of external forces
 
         space_diagram = get_space_diagram(force_diagram)
@@ -109,38 +111,42 @@ class Analysis(object):
             plot_space_diagram(space_diagram)
 
         # for now diractions hard-coded
-        directions = [[1,0],[0,1]]
+        directions = [[1, 0], [0, 1]]
 
-        decomposed_forces, points = decompose_force_into_components_by_directions(space_diagram['resultant'], directions)
+        decomposed_forces, points = decompose_force_into_components_by_directions(
+            space_diagram['resultant'], directions)
         if self.echo_level == 1:
-            plot_decomposed_forces(space_diagram['resultant'], decomposed_forces, points)
+            plot_decomposed_forces(
+                space_diagram['resultant'], decomposed_forces, points)
 
         ################
-        ## from decomposed resultant get reactions based upon fixities
+        # from decomposed resultant get reactions based upon fixities
         # use inverse proportion
         fixity_node_id = []
         fixity_locations = []
         fixity_type = []
         for key, fixity in self.input_system['fixities'].items():
-            fixity_locations.append(self.input_system['nodes'][fixity.node_id].coordinates)
+            fixity_locations.append(
+                self.input_system['nodes'][fixity.node_id].coordinates)
             fixity_node_id.append(fixity.node_id)
             fixity_type.append(fixity.is_fixed)
 
         # resultant line needs to be re-calculated! (as it is a copy and _get_line() is in the constructor)
         space_diagram['resultant'].line = space_diagram['resultant']._get_line()
-        reactions = get_reactions(space_diagram['resultant'].line, decomposed_forces, directions, fixity_locations, fixity_type, fixity_node_id)
+        reactions = get_reactions(space_diagram['resultant'].line, decomposed_forces,
+                                  directions, fixity_locations, fixity_type, fixity_node_id)
         if self.echo_level == 1:
             plot_reaction_forces(reactions, space_diagram['resultant'])
 
         ################
-        ## setup the computational model
+        # setup the computational model
         # by discarding fixities and adding reaction into force dictionary
         self.computation_model = self.input_system
         key = 'fixities'
         try:
             del self.computation_model[key]
         except KeyError:
-            print('Key '+ key +' not found')
+            print('Key ' + key + ' not found')
 
         for idx, reaction in enumerate(reactions):
             self.computation_model['forces']['r' + str(idx)] = reaction
@@ -149,18 +155,18 @@ class Analysis(object):
     def _check_system_equilibrium(self):
         forces = []
         for key, force in self.computation_model["forces"].items():
-            #if force.force_type == 'external' or force.force_type == 'reaction':
+            # if force.force_type == 'external' or force.force_type == 'reaction':
             forces.append(force)
 
         ################
-        ## force diagram
+        # force diagram
         # to find the magnitude of the resultant of external forces
         force_diagram = get_force_diagram(forces)
         if self.echo_level == 1:
             plot_force_diagram(force_diagram)
 
         if force_diagram['resultant'].magnitude > TOL:
-           raise Exception('Computation model not in equilibrium!')
+            raise Exception('Computation model not in equilibrium!')
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
@@ -170,8 +176,10 @@ class Analysis(object):
             self.computation_model['nodes'][force.node].forces.append(key)
         # update nodal information with elements: will link to internal forces
         for key, element in self.computation_model['elements'].items():
-            self.computation_model['nodes'][element.nodes[0]].unsolved_elements.append(key)
-            self.computation_model['nodes'][element.nodes[1]].unsolved_elements.append(key)
+            self.computation_model['nodes'][element.nodes[0]
+                                            ].unsolved_elements.append(key)
+            self.computation_model['nodes'][element.nodes[1]
+                                            ].unsolved_elements.append(key)
 
     def _solve_iteratively(self):
         current_system_unsolved_degree = 0
@@ -191,7 +199,7 @@ class Analysis(object):
             print("## System solve - iteratively")
 
         while not(system_solved):
-            counter +=1
+            counter += 1
 
             # setup initial values
             system_solved = True
@@ -209,11 +217,13 @@ class Analysis(object):
                         # create list of foces and elements relevant to node
                         nodal_forces = []
                         for force_id in node.forces:
-                            nodal_forces.append(self.computation_model['forces'][force_id])
+                            nodal_forces.append(
+                                self.computation_model['forces'][force_id])
                         nodal_elements = []
 
                         for element_id in node.unsolved_elements:
-                            nodal_elements.append(self.computation_model['elements'][element_id])
+                            nodal_elements.append(
+                                self.computation_model['elements'][element_id])
 
                         # could happen, here a workaround
                         insufficient_unsolved = False
@@ -221,9 +231,11 @@ class Analysis(object):
                             insufficient_unsolved = True
                             # take an already solved element
                             # take care not to update values
-                            nodal_elements.append(self.computation_model['elements'][node.solved_elements[-1]])
+                            nodal_elements.append(
+                                self.computation_model['elements'][node.solved_elements[-1]])
 
-                        forces = get_nodal_equilibrium_by_method_of_joints(nodal_forces, nodal_elements)
+                        forces = get_nodal_equilibrium_by_method_of_joints(
+                            nodal_forces, nodal_elements)
 
                         if forces is not None:
                             # update force coordinates and line
@@ -241,11 +253,13 @@ class Analysis(object):
                                     dir_u = forces[o_idx].direction[0]
                                     dir_v = forces[o_idx].direction[1]
                                     if abs(dir_u) > 0.0:
-                                        xi_x = (element.midpoint.coordinates[0] - forces[o_idx].coordinates[0])/ dir_u
+                                        xi_x = (
+                                            element.midpoint.coordinates[0] - forces[o_idx].coordinates[0]) / dir_u
                                     else:
                                         xi_x = 0.0
                                     if abs(dir_v) > 0.0:
-                                        xi_y = (element.midpoint.coordinates[1] - forces[o_idx].coordinates[1])/ dir_v
+                                        xi_y = (
+                                            element.midpoint.coordinates[1] - forces[o_idx].coordinates[1]) / dir_v
                                     else:
                                         xi_y = 0.0
 
@@ -266,11 +280,12 @@ class Analysis(object):
                                     for i_idx, node_id in enumerate(element.nodes):
                                         # if element.element_type == 'tension':
                                         #     components = []
-                                        #elif element.element_type == 'compression':
+                                        # elif element.element_type == 'compression':
                                         components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint.coordinates[0],
-                                                        self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint.coordinates[1]]
+                                                      self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint.coordinates[1]]
                                         if element.element_type == 'tension':
-                                            components = [-components[0], -components[1]]
+                                            components = [-components[0], -
+                                                          components[1]]
                                         # else:
                                         #     ValueError("Case not permitted")
 
@@ -287,12 +302,15 @@ class Analysis(object):
                                         self.computation_model['forces'][force.id] = force
 
                                         # update nodes - force list and node unsolved degree
-                                        self.computation_model['nodes'][node_id].forces.append(force.id)
+                                        self.computation_model['nodes'][node_id].forces.append(
+                                            force.id)
                                         self.computation_model['nodes'][node_id].unsolved_degree -= 1
                                         # also pop elemnt id once solve
                                         # using remove as ID should be unique in list
-                                        self.computation_model['nodes'][node_id].unsolved_elements.remove(element.id)
-                                        self.computation_model['nodes'][node_id].solved_elements.append(element.id)
+                                        self.computation_model['nodes'][node_id].unsolved_elements.remove(
+                                            element.id)
+                                        self.computation_model['nodes'][node_id].solved_elements.append(
+                                            element.id)
                         else:
                             # TODO: implement some better workaround, as in some cases the 2 elements
                             # and respectivce directions might be colinear/parallel
@@ -303,8 +321,10 @@ class Analysis(object):
             ##
             if self.echo_level == 1:
                 print("At iteration: ", counter)
-                print("System unsolved degree - old: ", old_system_unsolved_degree)
-                print("System unsolved degree - current: ", current_system_unsolved_degree)
+                print("System unsolved degree - old: ",
+                      old_system_unsolved_degree)
+                print("System unsolved degree - current: ",
+                      current_system_unsolved_degree)
                 change = old_system_unsolved_degree - current_system_unsolved_degree
 
             old_system_unsolved_degree = current_system_unsolved_degree
