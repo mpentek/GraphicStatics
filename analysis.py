@@ -186,7 +186,7 @@ class Analysis(object):
                 plot_force_diagram(force_diagram)
 
             if force_diagram['resultant'].magnitude > TOL:
-                warnings.warn('Computation model not in equilibrium at node ' + node.id + '!')
+                warnings.warn('Computation model not in equilibrium at node ' + node.id + '!', Warning)
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
