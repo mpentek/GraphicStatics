@@ -19,7 +19,7 @@ input_files = ['sample_input',  # can be checked with Stiff
                'double_arch_kinematic_bottom_load',  # TODO: check the bug in member 6
                'double_arch_top_load',  # can be checked with Stiff
                'double_arch_bottom_load']  # can be checked with Stiff
-selected_file_idx = 4
+selected_file_idx = 1
 
 # filename for import
 input_folder = 'input'

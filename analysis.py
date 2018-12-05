@@ -7,7 +7,7 @@ Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 """
 
 import json
-
+import warnings
 # still needed for plotting the (input) system, to be moved to plot_utilities
 
 # from matplotlib import pyplot as plt
@@ -150,9 +150,13 @@ class Analysis(object):
 
         for idx, reaction in enumerate(reactions):
             self.computation_model['forces']['r' + str(idx)] = reaction
+        
         self._check_system_equilibrium()
 
     def _check_system_equilibrium(self):
+        # for checking equilibrium under external loads 
+        # and reaction forces once calculated
+
         forces = []
         for key, force in self.computation_model["forces"].items():
             # if force.force_type == 'external' or force.force_type == 'reaction':
@@ -166,7 +170,23 @@ class Analysis(object):
             plot_force_diagram(force_diagram)
 
         if force_diagram['resultant'].magnitude > TOL:
-            raise Exception('Computation model not in equilibrium!')
+            raise Exception('Computation model not in equilibrium under external and reaction forces!')
+
+    def _check_nodal_equilibrium(self):
+        # checking equilibrium of each node under all forces
+        
+        for key, node in self.computation_model['nodes'].items():
+            forces = [self.computation_model['forces'][force_id] for force_id in node.forces] 
+            
+            ################
+            # force diagram
+            # to find the magnitude of the resultant of external forces
+            force_diagram = get_force_diagram(forces)
+            if self.echo_level == 1:
+                plot_force_diagram(force_diagram)
+
+            if force_diagram['resultant'].magnitude > TOL:
+                warnings.warn('Computation model not in equilibrium at node ' + node.id + '!')
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
@@ -325,11 +345,12 @@ class Analysis(object):
                       old_system_unsolved_degree)
                 print("System unsolved degree - current: ",
                       current_system_unsolved_degree)
-                change = old_system_unsolved_degree - current_system_unsolved_degree
+            change = old_system_unsolved_degree - current_system_unsolved_degree
 
             old_system_unsolved_degree = current_system_unsolved_degree
 
         print("## System solved successfully!")
+        self._check_nodal_equilibrium()
 
     def solve_system(self):
         self._solve_iteratively()
