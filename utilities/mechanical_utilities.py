@@ -12,7 +12,7 @@ from node2d import Node2D
 from segment2d import Segment2D
 from force2d import Force2D
 
-from geometric_utilities import get_line, get_intersection, TOL
+from geometric_utilities import get_line_by_point_and_direction, get_intersection, TOL
 
 #for debug
 #from plot_utilities import plot_decomposed_forces, plot_force_diagram
@@ -112,7 +112,7 @@ def get_space_diagram(force_diagram, initial_offset_factor=0.1):
     for i in range(len(force_diagram['forces'])-1):
         space_diagram['intersection_points'].append(Node2D(space_diagram['forces'][-1].id, [cur_p_coords_x, cur_p_coords_y]))
 
-        [cur_p_coords_x, cur_p_coords_y] = get_intersection([get_line([cur_p_coords_x, cur_p_coords_y],
+        [cur_p_coords_x, cur_p_coords_y] = get_intersection([get_line_by_point_and_direction([cur_p_coords_x, cur_p_coords_y],
                                                         force_diagram['pole_segments'][i+1].line['direction']),
                                                       force_diagram['forces'][i+1].line])
 
@@ -125,9 +125,9 @@ def get_space_diagram(force_diagram, initial_offset_factor=0.1):
 
     space_diagram['intersection_points'].append(Node2D(space_diagram['forces'][-1].id, [cur_p_coords_x, cur_p_coords_y]))
 
-    [cur_p_coords_x, cur_p_coords_y] = get_intersection([get_line([init_p_coords_x, init_p_coords_y],
+    [cur_p_coords_x, cur_p_coords_y] = get_intersection([get_line_by_point_and_direction([init_p_coords_x, init_p_coords_y],
                                                           force_diagram['pole_segments'][0].line['direction']),
-                                                 get_line([cur_p_coords_x, cur_p_coords_y],
+                                                 get_line_by_point_and_direction([cur_p_coords_x, cur_p_coords_y],
                                                           force_diagram['pole_segments'][-1].line['direction'])])
 
     # set the resultant point of application to the last intersectio point
@@ -149,18 +149,27 @@ def decompose_force_into_components_by_directions(force, directions):
              [force.coordinates[0] + force.direction[0] * force.magnitude,
               force.coordinates[1] + force.direction[1] * force.magnitude]]
 
-    intersection_point = get_intersection([get_line(points[0], directions[0]), get_line(points[1], directions[1])])
+    intersection_point = get_intersection([get_line_by_point_and_direction(points[0], directions[0]),
+                                           get_line_by_point_and_direction(points[1], directions[1])])
 
-    corrected_directions = [[intersection_point[0] - points[0][0], intersection_point[1] - points[0][1]],
-                            [points[1][0] - intersection_point[0], points[1][1] - intersection_point[1]]]
+    # TODO: implement some better workaround, as in some cases the 2 elements
+    # and respective directions might be colinear/parallel
+    # this method is only applicable for non-parallel directions
+    # otherwise will return None
 
-    decomposed_forces = [Force2D('1', None, force.coordinates, [corrected_directions[0][0],
-                                                                corrected_directions[0][1]]),
-                         Force2D('1', None, force.coordinates, [corrected_directions[1][0],
-                                                                corrected_directions[1][1]])]
-    points.append(intersection_point)
+    if intersection_point is not None:
+        corrected_directions = [[intersection_point[0] - points[0][0], intersection_point[1] - points[0][1]],
+                                [points[1][0] - intersection_point[0], points[1][1] - intersection_point[1]]]
 
-    return decomposed_forces, points
+        decomposed_forces = [Force2D('1', None, force.coordinates, [corrected_directions[0][0],
+                                                                    corrected_directions[0][1]]),
+                            Force2D('1', None, force.coordinates, [corrected_directions[1][0],
+                                                                    corrected_directions[1][1]])]
+        points.append(intersection_point)
+
+        return decomposed_forces, points
+    else:
+        return None, None
 
 def decompose_force_by_inverse_proportion(acting_line, direction, fixity_locations, force, fixity_node_id):
     decomposed_forces = []
@@ -177,15 +186,15 @@ def decompose_force_by_inverse_proportion(acting_line, direction, fixity_locatio
                             fixity_locations[1][1] - force_moved_to_fixity.coordinates[1]]
 
         # baseline at (moved) force head
-        baseline = get_line(fixity_locations[0], normal_direction)
+        baseline = get_line_by_point_and_direction(fixity_locations[0], normal_direction)
         # parallel to base line
         # shifted_baseline at (moved) force tail
-        shifted_baseline = get_line(force_moved_to_fixity.coordinates, normal_direction)
+        shifted_baseline = get_line_by_point_and_direction(force_moved_to_fixity.coordinates, normal_direction)
 
-        mid_line = get_line(force_moved_to_fixity.coordinates, intersect_direction)
+        mid_line = get_line_by_point_and_direction(force_moved_to_fixity.coordinates, intersect_direction)
 
         actual_point_of_application = get_intersection([baseline, acting_line])
-        force_line = get_line(actual_point_of_application, force.direction)
+        force_line = get_line_by_point_and_direction(actual_point_of_application, force.direction)
 
         # first decomposed force - at first fixity# for fixity 0 - x -> check y coordinates
         start_point = get_intersection([mid_line, force_line])
@@ -244,7 +253,7 @@ def get_reactions(acting_line, decomposed_forces, directions, fixity_locations, 
     # decomposed forces: decomposed_force[0] is only the x-component
     # decomposed_force[1] is only the y-component
 
-    # refactor, code duplication
+    # TODO: refactor, code duplication
     # x-components
     if n_fixed[0] == 1:
         # should only return one element - [0] needed in the end
@@ -321,6 +330,11 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
     # force diagram
     # to find the magnitude of the resultant of existing nodal forces
     force_diagram = get_force_diagram(forces)
+
+    # TODO: implement some better workaround, as in some cases the 2 elements
+    # and respectivce directions might be colinear/parallel
+    # this method is only applicable for non-parallel directions
+    # otherwise will return None
 
     # decompose resultant
     # into two non-parallel components

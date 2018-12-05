@@ -190,8 +190,9 @@ def plot_computation_model(computation_model):
     # (external) forces
     x, y, u, v, c = get_forces_for_plot(computation_model, True, 0.01)
     for i in range(len(x)):
-        ax.arrow(x[i], y[i], u[i], v[i], color=c[i],
-                    length_includes_head=True, head_width=0.25, head_length=0.25)
+        if (u[i]**2 + v[i]**2)**0.5 > TOL:
+            ax.arrow(x[i], y[i], u[i], v[i], color=c[i],
+                        length_includes_head=True, head_width=0.25, head_length=0.25)
 
 def plot_solved_system(computation_model):
     fig, ax = plt.subplots()

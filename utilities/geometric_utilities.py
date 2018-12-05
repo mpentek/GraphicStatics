@@ -55,7 +55,7 @@ def get_line_coefficients(points):
     c = -(a* p1[0]+b*p1[1])
     return [a,b,c]
 
-def get_line(point, direction):
+def get_line_by_point_and_direction(point, direction):
     points = [point]
     points.append([point[0] + direction[0],
                    point[1] + direction[1]])

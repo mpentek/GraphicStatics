@@ -10,6 +10,7 @@ import json
 
 # still needed for plotting the (input) system, to be moved to plot_utilities
 
+# from matplotlib import pyplot as plt
 import numpy as np
 
 from entitites.node2d import Node2D
@@ -29,9 +30,13 @@ class Analysis(object):
         self.input_system = self._import_model(input_model_file)
         plot_input_system(self.input_system)
 
+        # plt.show()
+
         self.computation_model = None
         self._prepare_computation_model()
         plot_computation_model(self.computation_model)
+
+        # plt.show()
 
         # if it is set to 0, no additional plots will be done
         # if set to 1 additional plots will be shown
@@ -220,73 +225,78 @@ class Analysis(object):
 
                         forces = get_nodal_equilibrium_by_method_of_joints(nodal_forces, nodal_elements)
 
-                        # update force coordinates and line
-                        for force in forces:
-                            force.coordinates = node.coordinates
-                            force.line = force._get_line()
+                        if forces is not None:
+                            # update force coordinates and line
+                            for force in forces:
+                                force.coordinates = node.coordinates
+                                force.line = force._get_line()
 
-                        # update element and nodal information
-                        for o_idx, element in enumerate(nodal_elements):
-                            if insufficient_unsolved and o_idx == 1:
-                                # nothing needs to be done, already solved
-                                pass
-                            else:
-                                # use a parameter xi to determine internal force type
-                                dir_u = forces[o_idx].direction[0]
-                                dir_v = forces[o_idx].direction[1]
-                                if abs(dir_u) > 0.0:
-                                    xi_x = (element.midpoint.coordinates[0] - forces[o_idx].coordinates[0])/ dir_u
+                            # update element and nodal information
+                            for o_idx, element in enumerate(nodal_elements):
+                                if insufficient_unsolved and o_idx == 1:
+                                    # nothing needs to be done, already solved
+                                    pass
                                 else:
-                                    xi_x = 0.0
-                                if abs(dir_v) > 0.0:
-                                    xi_y = (element.midpoint.coordinates[1] - forces[o_idx].coordinates[1])/ dir_v
-                                else:
-                                    xi_y = 0.0
+                                    # use a parameter xi to determine internal force type
+                                    dir_u = forces[o_idx].direction[0]
+                                    dir_v = forces[o_idx].direction[1]
+                                    if abs(dir_u) > 0.0:
+                                        xi_x = (element.midpoint.coordinates[0] - forces[o_idx].coordinates[0])/ dir_u
+                                    else:
+                                        xi_x = 0.0
+                                    if abs(dir_v) > 0.0:
+                                        xi_y = (element.midpoint.coordinates[1] - forces[o_idx].coordinates[1])/ dir_v
+                                    else:
+                                        xi_y = 0.0
 
-                                if xi_x >= 0.0 and xi_y >= 0:
-                                    # force points towards midpoint
-                                    element.element_type = 'compression'
-                                    element.force_magnitude = forces[o_idx].magnitude
+                                    if xi_x >= 0.0 and xi_y >= 0:
+                                        # force points towards midpoint
+                                        element.element_type = 'compression'
+                                        element.force_magnitude = forces[o_idx].magnitude
 
-                                elif xi_x <= 0.0 and xi_y <= 0:
-                                    # force points away from midpoint
-                                    element.element_type = 'tension'
-                                    element.force_magnitude = forces[o_idx].magnitude
-                                else:
-                                    ValueError("Case not permitted")
+                                    elif xi_x <= 0.0 and xi_y <= 0:
+                                        # force points away from midpoint
+                                        element.element_type = 'tension'
+                                        element.force_magnitude = forces[o_idx].magnitude
+                                    else:
+                                        ValueError("Case not permitted")
 
-                                # update node and force lists:
-                                labels = ['i', 'j']
-                                for i_idx, node_id in enumerate(element.nodes):
-                                    # if element.element_type == 'tension':
-                                    #     components = []
-                                    #elif element.element_type == 'compression':
-                                    components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint.coordinates[0],
-                                                    self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint.coordinates[1]]
-                                    if element.element_type == 'tension':
-                                        components = [-components[0], -components[1]]
-                                    # else:
-                                    #     ValueError("Case not permitted")
+                                    # update node and force lists:
+                                    labels = ['i', 'j']
+                                    for i_idx, node_id in enumerate(element.nodes):
+                                        # if element.element_type == 'tension':
+                                        #     components = []
+                                        #elif element.element_type == 'compression':
+                                        components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint.coordinates[0],
+                                                        self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint.coordinates[1]]
+                                        if element.element_type == 'tension':
+                                            components = [-components[0], -components[1]]
+                                        # else:
+                                        #     ValueError("Case not permitted")
 
-                                    force = Force2D(str(element.id) + labels[i_idx],
-                                                    node_id,
-                                                    self.computation_model['nodes'][node_id].coordinates,
-                                                    # direction will be computed correctly
-                                                    components,
-                                                    'internal')
-                                    # overwriting magnitude with the correct value
-                                    force.magnitude = forces[o_idx].magnitude
+                                        force = Force2D(str(element.id) + labels[i_idx],
+                                                        node_id,
+                                                        self.computation_model['nodes'][node_id].coordinates,
+                                                        # direction will be computed correctly
+                                                        components,
+                                                        'internal')
+                                        # overwriting magnitude with the correct value
+                                        force.magnitude = forces[o_idx].magnitude
 
-                                    # update forces
-                                    self.computation_model['forces'][force.id] = force
+                                        # update forces
+                                        self.computation_model['forces'][force.id] = force
 
-                                    # update nodes - force list and node unsolved degree
-                                    self.computation_model['nodes'][node_id].forces.append(force.id)
-                                    self.computation_model['nodes'][node_id].unsolved_degree -= 1
-                                    # also pop elemnt id once solve
-                                    # using remove as ID should be unique in list
-                                    self.computation_model['nodes'][node_id].unsolved_elements.remove(element.id)
-                                    self.computation_model['nodes'][node_id].solved_elements.append(element.id)
+                                        # update nodes - force list and node unsolved degree
+                                        self.computation_model['nodes'][node_id].forces.append(force.id)
+                                        self.computation_model['nodes'][node_id].unsolved_degree -= 1
+                                        # also pop elemnt id once solve
+                                        # using remove as ID should be unique in list
+                                        self.computation_model['nodes'][node_id].unsolved_elements.remove(element.id)
+                                        self.computation_model['nodes'][node_id].solved_elements.append(element.id)
+                        else:
+                            # TODO: implement some better workaround, as in some cases the 2 elements
+                            # and respectivce directions might be colinear/parallel
+                            pass
 
                 current_system_unsolved_degree += node.unsolved_degree
 
