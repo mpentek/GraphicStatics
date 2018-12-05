@@ -14,7 +14,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 import numpy as np
 
-from geometric_utilities import TOL
+from geometric_utilities import TOL, euclidean_distance, angle_between_directions
 
 from entitites.segment2d import Segment2D
 
@@ -69,21 +69,27 @@ def get_member_limits_and_segments_for_plot(model, offset_factor=0.1):
     y_lim[0] -= offset_factor * delta_y
     y_lim[1] += offset_factor * delta_y
 
-    return x_lim, y_lim, segments, x_m, y_m, m_id
+    avg_seg_length = np.mean([euclidean_distance([[seg[0][0],seg[1][0]],[seg[0][1],seg[1][1]]]) for seg in segments])
 
-def get_forces_for_plot(model, shift_to_head=False, scale=0.1):
+    return x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length
+
+def get_forces_for_plot(model, ref_length, shift_to_head=False, scale=0.1):
     x = []
     y = []
     u = []
     v = []
     c = []
 
+    avg_force_length = np.mean([force.magnitude for id, force in model["forces"].items()])
+
+    scaling_factor = scale * ref_length/avg_force_length
+
     for id, force in model["forces"].items():
         x.append(model["nodes"][force.node].coordinates[0])
         y.append(model["nodes"][force.node].coordinates[1])
 
-        u.append(scale * force.direction[0] * force.magnitude)
-        v.append(scale * force.direction[1] * force.magnitude)
+        u.append(scaling_factor * force.direction[0] * force.magnitude)
+        v.append(scaling_factor * force.direction[1] * force.magnitude)
 
         if shift_to_head:
             x[-1] -= u[-1]
@@ -114,12 +120,12 @@ def get_nodal_data_for_plot(model):
 
 def plot_input_system(input_system):
 
-    x_lim, y_lim, segments, x_m, y_m, m_id = get_member_limits_and_segments_for_plot(input_system, offset_factor=0.25)
+    x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length = get_member_limits_and_segments_for_plot(input_system, offset_factor=0.2)
 
     fig, ax = plt.subplots()
     ax.set_title('Input system')
-    # ax.set_xlim(x_lim)
-    # ax.set_ylim(y_lim)
+    ax.set_xlim(x_lim)
+    ax.set_ylim(y_lim)
 
     # members
     for segment in segments:
@@ -135,7 +141,7 @@ def plot_input_system(input_system):
         ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
 
     # (external) forces
-    x, y, u, v, c = get_forces_for_plot(input_system, True, 0.01)
+    x, y, u, v, c = get_forces_for_plot(input_system, avg_seg_length, True,  0.25)
     for i in range(len(x)):
         ax.arrow(x[i], y[i], u[i], v[i], color=c[i],
                     length_includes_head=True, head_width=0.25, head_length=0.25)
@@ -167,12 +173,10 @@ def plot_input_system(input_system):
 
 def plot_computation_model(computation_model):
 
-    x_lim, y_lim, segments, x_m, y_m, m_id = get_member_limits_and_segments_for_plot(computation_model, offset_factor=0.25)
+    x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length = get_member_limits_and_segments_for_plot(computation_model, offset_factor=0.2)
 
     fig, ax = plt.subplots()
     ax.set_title('Computational model')
-    # ax.set_xlim(x_lim)
-    # ax.set_ylim(y_lim)
 
     # members
     for segment in segments:
@@ -188,114 +192,102 @@ def plot_computation_model(computation_model):
         ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
 
     # (external) forces
-    x, y, u, v, c = get_forces_for_plot(computation_model, True, 0.01)
+    x, y, u, v, c = get_forces_for_plot(computation_model, avg_seg_length, True, 0.25)
     for i in range(len(x)):
         if (u[i]**2 + v[i]**2)**0.5 > TOL:
             ax.arrow(x[i], y[i], u[i], v[i], color=c[i],
                         length_includes_head=True, head_width=0.25, head_length=0.25)
 
-def plot_solved_system(computation_model):
+def plot_solved_system(computation_model, scale=0.1):
+    x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length = get_member_limits_and_segments_for_plot(computation_model, offset_factor=0.2)
+
     fig, ax = plt.subplots()
     ax.set_title('Results: normal force distribution in system')
+    ax.set_xlim(x_lim)
+    ax.set_ylim(y_lim)
 
-    # todo: some better solution
-    system_scale = 0.05
+    # members
+    for segment in segments:
+        ax.add_line(
+            PLine2D(segment[0], segment[1], alpha=0.5, color='grey'))
+    for i, txt in enumerate(m_id):
+        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]))
+
+    # nodes
+    x_n, y_n, n_id = get_nodal_data_for_plot(computation_model)
+    ax.scatter(x_n, y_n)
+    for i, txt in enumerate(n_id):
+        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
 
     results = []
 
+    xy_lower_left = []
+    xy_mid = []
+    el_width = []
+    el_height = []
+    el_angle= []
+    el_type = []
+
+    # horizontal in positive x is the base direction
+    ref_direction = [1, 0]
+
     for key, element in computation_model['elements'].items():
 
-        # add Rectangles and Elementnumbers
-        segment = Segment2D(None,
-                            [computation_model['nodes'][element.nodes[0]],
-                                computation_model['nodes'][element.nodes[1]]])
-
-        dx = segment.x[1] - segment.x[0]
-        dy = segment.y[1] - segment.y[0]
-
-        width = segment.length
-        height = segment.length*0.3# ()system.largest_element_length*0.25
-        if dy == 0:
-            angle = 0
-            # choose point with smaller x-coordinate as xy
-            if segment.x[0] < segment.x[1]:
-                xy = [segment.x[0],segment.y[0]]
-            else:
-                xy = [segment.x[1],segment.y[1]]
-
-            center_text = [segment.x[0]+0.5*dx,segment.y[0]]
-
-        elif dx == 0:
-            angle = 90
-            # choose node with smaller y-coordinate as xy
-            if segment.y[0] < segment.y[1]:
-                xy = [segment.x[0],segment.y[0]]
-            else:
-                xy = [segment.x[1],segment.y[1]]
-
-            center_text = [segment.x[0],segment.y[0]+0.5*dy]
-        else:
-            # calculate angle
-
-            angle = np.degrees(np.arctan(float(dy/dx)))
-            # choose node at lower left
-            if angle < 0:
-                angle = angle + 360
-            if (angle > 0) and (angle < 180):
-                xy = [segment.x[0],segment.y[0]]
-                angle = np.radians(angle)
-                center_text = [xy[0]+0.5*(np.cos(angle)*width),xy[1]+0.5*(np.sin(angle)*width)]
-                angle = np.degrees(angle)
-            elif angle > 180 and angle <= 270:
-                xy = [segment.x[1],segment.y[1]]
-                angle = np.radians(angle)
-                center_text = [xy[0]+0.5*(np.cos(angle)*width),xy[1]+0.5*(np.sin(angle)*width)]
-                angle = np.degrees(angle)
-            elif angle > 270:
-                xy = [segment.x[0],segment.y[0]]
-                angle = np.radians(angle)
-                center_text = [xy[0]+0.5*(np.cos(angle)*width),xy[1]+0.5*(np.sin(angle)*width)]
-                angle = np.degrees(angle)
-
-        if abs(element.force_magnitude)  < TOL:
-            center = segment.midpoint.coordinates
-            radius = 0.05 * segment.length
-
-            patch = patches.Circle(center,radius,ec=(0,0,0,0.9), fc=(1,0,0,0.25))
-
-        elif element.element_type == 'tension':
-            height = element.force_magnitude * system_scale*0.1
-            patch = patches.Rectangle(xy, width, height, angle, ec=(0,0,0,0.9), fc=(0,0,1,0.5))
-
-        elif element.element_type == 'compression':
-            height = element.force_magnitude * system_scale*0.1
-            patch = patches.Rectangle(xy, width, height, angle, ec=(0,0,0,0.9), fc=(1,0,0,0.5))
-
-        ax.add_patch(patch)
-        #ax.annotate('S %d' %element.id,(center_text[0],center_text[1]))
-
-        #member
-        ax.add_line(
-            PLine2D(segment.x, segment.y, alpha=0.5, color='grey'))
-        # member id
-        ax.annotate('S_' + str(element.id), (segment.midpoint.coordinates[0], segment.midpoint.coordinates[1]))
-
-        # create string with results and add to rectangle
         value = round(element.force_magnitude,3)
         if element.element_type == 'compression':
             value *= -1
-        results.append('S_%d = %.2f kN \n' %(element.id,value))
+        results.append('m_%d = %.2f kN \n' %(element.id,value))
+
+        el_width.append(element.length)
+        el_height.append(element.force_magnitude)
+        xy_mid.append(element.midpoint.coordinates)
+        el_type.append(element.element_type)
+
+        xy_lower_left.append([element.coordinates[0][0], element.coordinates[0][1]])
+
+        directions = [ref_direction,
+                        [element.coordinates[1][0]-element.coordinates[0][0],
+                        element.coordinates[1][1]-element.coordinates[0][1]]]
+
+        angle = angle_between_directions(directions)
+
+        el_angle.append(angle)
+
+    avg_height = np.mean(el_height)
+    scaling_factor = scale * avg_seg_length/avg_height
+
+    for i in range(len(xy_lower_left)):
+
+        width = el_width[i]
+        height = el_height[i] * scaling_factor
+
+        # ec: edgecolor
+        # fc: facecolor
+
+        if abs(height)  < TOL:
+            center = xy_mid[i]
+            radius = avg_height * scaling_factor
+            patch = patches.Circle(center,radius,ec=(0,0,0,0.9), fc=(1,0,0,0.25))
+
+        elif el_type[i] == 'tension':
+            height = height
+            patch = patches.Rectangle(xy_lower_left[i], width, height, np.degrees(el_angle[i]), ec=(0,0,0,0.9), fc=(0,0,1,0.5))
+
+        elif el_type[i] == 'compression':
+            height = height
+            patch = patches.Rectangle(xy_lower_left[i], width, height, np.degrees(el_angle[i]), ec=(0,0,0,0.9), fc=(1,0,0,0.5))
+
+        ax.add_patch(patch)
 
     results = ''.join(results)
-    # identify location dynamically
-    results_loc = (17.0, 0.0)
+
+    # lower-left location for annotation bloc
+    results_loc = (x_lim[-1] * 1.1, y_lim[0])
     ax.annotate(results,(results_loc))
 
-    # set limits dynamically
-    ax.set_xlim([-2.5, 25])
-    ax.set_ylim([-2.5, 8])
-
-    pass
+    #ax.set_aspect('equal')
+    ax.set_xlim([x_lim[0], x_lim[1] + (x_lim[1] - x_lim[0]) * 0.2])
+    ax.set_ylim(y_lim)
 
 def plot_force_diagram(force_diagram):
     fig, ax = plt.subplots()

@@ -25,10 +25,10 @@ class Element2D:
         # self.x = [nodes[0].coordinates[0], nodes[1].coordinates[0]]
         # self.y = [nodes[0].coordinates[1], nodes[1].coordinates[1]]
         self.line = self._get_line()
-        # self.length = self._get_length()
+        self.length = self._get_length()
 
-    # def _get_length(self):
-    #     return ((self.x[1] - self.x[0])**2 + (self.y[1] - self.y[0])**2)**0.5
+    def _get_length(self):
+        return ((self.coordinates[1][0] - self.coordinates[0][0])**2 + (self.coordinates[1][1] - self.coordinates[0][1])**2)**0.5
 
     def _get_midpoint(self):
         return Node2D('m',

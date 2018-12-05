@@ -15,8 +15,8 @@ from analysis import Analysis
 
 # select the desired input file by index from the list
 input_files = ['sample_input', # can be checked with Stiff
-               'double_arch_kinematic_top_load',
-               'double_arch_kinematic_bottom_load',
+               'double_arch_kinematic_top_load', #TODO: check the bug in member 6
+               'double_arch_kinematic_bottom_load', #TODO: check the bug in member 6
                'double_arch_top_load', # can be checked with Stiff
                'double_arch_bottom_load'] # can be checked with Stiff
 selected_file_idx = 4
@@ -31,8 +31,8 @@ output_folder = 'output'
 output_file_name_prefix = 'report_'
 
 # create analysis and run
-sample_analysis = Analysis(json_name,echo_level=1)
-#sample_analysis = Analysis(json_name)
+#sample_analysis = Analysis(json_name,echo_level=1)
+sample_analysis = Analysis(json_name)
 sample_analysis.solve_system()
 sample_analysis.postprocess()
 
