@@ -14,12 +14,15 @@ from utilities.plot_utilities import save_to_pdf
 from analysis import Analysis
 
 # select the desired input file by index from the list
-input_files = ['sample_input',  # can be checked with Stiff
-               'double_arch_kinematic_top_load',  # TODO: check the bug in member 6
-               'double_arch_kinematic_bottom_load',  # TODO: check the bug in member 6
-               'double_arch_top_load',  # can be checked with Stiff
-               'double_arch_bottom_load']  # can be checked with Stiff
-selected_file_idx = 1
+input_files = {1 : 'sample_input',  # can be checked with Stiff
+               2 : 'sample_input_mod1',
+               3 : 'sample_input_mod2',
+               4 : 'double_arch_kinematic_top_load',  # TODO: check the bug at nodes 6,7,8,9
+               5 : 'double_arch_kinematic_top_load_mod',  # TODO: check the bug at nodes 6,7,8,9
+               6 : 'double_arch_kinematic_bottom_load',  # TODO: check the bug at nodes 6,7,8,9
+               7 : 'double_arch_top_load',  # can be checked with Stiff
+               8 : 'double_arch_bottom_load'}  # can be checked with Stiff
+selected_file_idx = 4
 
 # filename for import
 input_folder = 'input'

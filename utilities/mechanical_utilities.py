@@ -370,15 +370,26 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
     # this method is only applicable for non-parallel directions
     # otherwise will return None
 
-    # decompose resultant
-    # into two non-parallel components
-    directions = [elements[0].line['direction'], elements[1].line['direction']]
-    decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
-                                                                              directions)
-
+    if len(elements) == 2:
+        # decompose resultant
+        # into two non-parallel components
+        directions = [elements[0].line['direction'], elements[1].line['direction']]
+        decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
+                                                                                directions)
+    elif len(elements) == 1:
+        # get resultant
+        force_diagram = get_force_diagram(forces)
+        decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
+    else:
+        print("###### I AM HERE")
+        wait = input("here")
+        pass
     # for debug
     # plot_force_diagram(force_diagram)
     #plot_decomposed_forces(force_diagram['resultant'], decomposed_forces, points)
     # plt.show()
+
+    # TODO: because it is nodal equilibrium, here the signs should be flipped
+    # and not in the function calling this one
 
     return decomposed_forces
