@@ -19,6 +19,7 @@ from geometric_utilities import TOL, euclidean_distance, angle_between_direction
 from entitites.segment2d import Segment2D
 
 # TODO: make some dynamic adjustments of limits
+# done for major system plots, do for force and space diagram as well
 
 
 def save_to_pdf(name, figures=None):
@@ -33,7 +34,7 @@ def save_to_pdf(name, figures=None):
     multipage_pdf.close()
 
 
-def get_member_limits_and_segments_for_plot(model, offset_factor=0.1):
+def get_member_limits_and_segments_for_plot(model, offset_factor=0.25):
     x = []
     x_m = []
     y = []

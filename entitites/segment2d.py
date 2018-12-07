@@ -8,7 +8,7 @@ Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 
 from node2d import Node2D
 
-from geometric_utilities import get_line_coefficients, get_magnitude_and_direction, get_length
+from geometric_utilities import get_line_coefficients, get_magnitude_and_direction, get_length, get_midpoint
 
 
 class Segment2D(object):
@@ -16,7 +16,8 @@ class Segment2D(object):
         self.id = str(id)
         # id of nodes at i and j
         self.nodes = nodes
-        self.midpoint = self._get_midpoint()
+        self.midpoint = get_midpoint(
+            [self.nodes[0].coordinates, self.nodes[1].coordinates])
         self.x = [nodes[0].coordinates[0], nodes[1].coordinates[0]]
         self.y = [nodes[0].coordinates[1], nodes[1].coordinates[1]]
         self.line = self._get_line()
@@ -24,12 +25,8 @@ class Segment2D(object):
         self.length = get_length(
             [[self.x[0], self.y[0]], [self.x[1], self.y[1]]])
 
-    # TODO: midpoint, line and scaled_segment should be moved to
+    # TODO: line and scaled_segment should be moved to
     # geometric_utilities
-    def _get_midpoint(self):
-        return Node2D('m',
-                      [(self.nodes[0].coordinates[0] + self.nodes[1].coordinates[0]) / 2.,
-                       (self.nodes[0].coordinates[1] + self.nodes[1].coordinates[1]) / 2.])
 
     def _get_line(self):
         line = {}
