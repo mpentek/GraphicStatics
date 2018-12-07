@@ -251,6 +251,9 @@ class Analysis(object):
                             nodal_elements.append(
                                 self.computation_model['elements'][element_id])
 
+                        ##
+                        ##
+                        ##
                         # could happen, here a workaround
                         # insufficient_unsolved = False
                         # if len(node.unsolved_elements) == 1:
@@ -260,6 +263,7 @@ class Analysis(object):
                         #     nodal_elements.append(
                         #         self.computation_model['elements'][node.solved_elements[-1]])
 
+                        print("## node coord: ", node.coordinates)
                         forces = get_nodal_equilibrium_by_method_of_joints(
                             nodal_forces, nodal_elements)
 
@@ -275,6 +279,9 @@ class Analysis(object):
                             # update element and nodal information
                             for o_idx, element in enumerate(nodal_elements):
 
+                                ##
+                                ##
+                                ##
                                 # if insufficient_unsolved and o_idx == 1:
                                 #     # nothing needs to be done, already solved
                                 #     pass

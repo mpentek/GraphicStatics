@@ -18,8 +18,10 @@ class Segment2D(object):
         self.x = [nodes[0].coordinates[0], nodes[1].coordinates[0]]
         self.y = [nodes[0].coordinates[1], nodes[1].coordinates[1]]
         self.line = self._get_line()
+        # TODO: magnitude redundant with length, clean up
         self.length = self._get_length()
 
+    # TODO: magnitude redundant with length, clean up
     def _get_length(self):
         return ((self.x[1] - self.x[0])**2 + (self.y[1] - self.y[0])**2)**0.5
 
@@ -52,8 +54,23 @@ class Segment2D(object):
         # not normalized, for consistency normlize always, overall
         line['direction'] = [self.nodes[1].coordinates[0] - self.nodes[0].coordinates[0],
                              self.nodes[1].coordinates[1] - self.nodes[0].coordinates[1]]
+        # TODO: magnitude redundant with length, clean up
+        magnitude, line['direction'] = self._get_magnitude_and_direction(line['direction'])
         line['coefficients'] = self._get_line_coefficients()
         return line
+
+    def _get_magnitude_and_direction(self, components):
+        magnitude = self._norm(components)
+        return magnitude, self._normalized_components(components, magnitude)
+
+    def _norm(self, components):
+        return (components[0]**2 + components[1]**2)**0.5
+
+    def _normalized_components(self, components, magnitude):
+        if magnitude < 1e-8:
+            return [components[0], components[1]]
+        else:
+            return [components[0] / magnitude, components[1] / magnitude]
 
     def get_scaled_segment(self, scaling_factor=1.0, scale_ends='both'):
         # move to geometric operations

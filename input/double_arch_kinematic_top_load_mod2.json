@@ -1,0 +1,142 @@
+{
+    "nodes": [
+        {
+            "id": 0,
+            "coords": [
+                -12.5,
+                0.0
+            ]
+        },
+        {
+            "id": 1,
+            "coords": [
+                -8.5,
+                4.0
+            ]
+        },
+        {
+            "id": 2,
+            "coords": [
+                8.5,
+                4.0
+            ]
+        },
+        {
+            "id": 3,
+            "coords": [
+                12.5,
+                0.0
+            ]
+        },
+        {
+            "id": 4,
+            "coords": [
+                7.5,
+                -0.9
+            ]
+        },
+        {
+            "id": 5,
+            "coords": [
+                -7.5,
+                -0.9
+            ]
+        }
+    ],
+    "elements": [
+        {
+            "id": 0,
+            "connect": [
+                0,
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "connect": [
+                1,
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "connect": [
+                2,
+                3
+            ]
+        },
+        {
+            "id": 3,
+            "connect": [
+                3,
+                4
+            ]
+        },
+        {
+            "id": 4,
+            "connect": [
+                4,
+                5
+            ]
+        },
+        {
+            "id": 5,
+            "connect": [
+                5,
+                0
+            ]
+        },
+        {
+            "id": 6,
+            "connect": [
+                2,
+                4
+            ]
+        },
+        {
+            "id": 7,
+            "connect": [
+                1,
+                5
+            ]
+        }
+    ],
+    "external_forces": [
+        {
+            "id": 1,
+            "node_id": 1,
+            "components": [
+                0.0,
+                -100.0
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 2,
+            "components": [
+                0.0,
+                -100.0
+            ]
+        }
+    ],
+    "fixities": [
+        {
+            "id": 1,
+            "node_id": 0,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                true,
+                true
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 3,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                true,
+                true
+            ]
+        }
+    ]
+}

@@ -12,7 +12,7 @@ from node2d import Node2D
 from segment2d import Segment2D
 from force2d import Force2D
 
-from geometric_utilities import get_line_by_point_and_direction, get_intersection, TOL
+from geometric_utilities import get_line_by_point_and_direction, get_intersection, are_parallel, TOL
 
 # for debug
 #from plot_utilities import plot_decomposed_forces, plot_force_diagram
@@ -377,8 +377,17 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
         decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
                                                                                 directions)
     elif len(elements) == 1:
-        # get resultant
-        force_diagram = get_force_diagram(forces)
+        # TODO: check if this is robust enough
+        # for element 5 -> works
+        # for 6 -> does not work -> not parallel
+
+        print("## ARE PARALLEL: ", are_parallel([elements[0].line,force_diagram['resultant'].line]))
+        print("element id: ", elements[0].id)
+        print("element_dir: ",elements[0].line['direction'])
+        print("resultant_dir: ", force_diagram['resultant'].direction)
+        print("element_line: ",elements[0].line['coefficients'])
+        print("resultant_line: ", force_diagram['resultant'].line['coefficients'])
+        print("resultant_coordinates: ", force_diagram['resultant'].coordinates)
         decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
     else:
         print("###### I AM HERE")
