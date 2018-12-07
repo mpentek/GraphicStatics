@@ -28,6 +28,11 @@ from numpy import arctan2
 TOL = 1e-8
 
 
+def get_midpoint(points):
+    return [(points[0][0] + points[1][0]) / 2.,
+            (points[0][1] + points[1][1]) / 2.]
+
+
 def normalized_components(components, magnitude):
     if magnitude < TOL:
         return [components[0], components[1]]

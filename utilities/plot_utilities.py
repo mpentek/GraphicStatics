@@ -57,8 +57,8 @@ def get_member_limits_and_segments_for_plot(model, offset_factor=0.1):
 
         segments.append([[x0, x1], [y0, y1]])
 
-        x_m.append(element.midpoint.coordinates[0])
-        y_m.append(element.midpoint.coordinates[1])
+        x_m.append(element.midpoint[0])
+        y_m.append(element.midpoint[1])
         m_id.append(element.id)
 
     x_lim = [min(x), max(x)]
@@ -254,7 +254,7 @@ def plot_solved_system(computation_model, scale=0.1):
 
         el_width.append(element.length)
         el_height.append(element.force_magnitude)
-        xy_mid.append(element.midpoint.coordinates)
+        xy_mid.append(element.coordinates)
         el_type.append(element.element_type)
 
         xy_lower_left.append(

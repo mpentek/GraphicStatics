@@ -292,12 +292,12 @@ class Analysis(object):
                                 dir_v = forces[o_idx].direction[1]
                                 if abs(dir_u) > 0.0:
                                     xi_x = (
-                                        element.midpoint.coordinates[0] - forces[o_idx].coordinates[0]) / dir_u
+                                        element.midpoint[0] - forces[o_idx].coordinates[0]) / dir_u
                                 else:
                                     xi_x = 0.0
                                 if abs(dir_v) > 0.0:
                                     xi_y = (
-                                        element.midpoint.coordinates[1] - forces[o_idx].coordinates[1]) / dir_v
+                                        element.midpoint[1] - forces[o_idx].coordinates[1]) / dir_v
                                 else:
                                     xi_y = 0.0
 
@@ -319,8 +319,8 @@ class Analysis(object):
                                     # if element.element_type == 'tension':
                                     #     components = []
                                     # elif element.element_type == 'compression':
-                                    components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint.coordinates[0],
-                                                    self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint.coordinates[1]]
+                                    components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint[0],
+                                                    self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint[1]]
                                     if element.element_type == 'tension':
                                         components = [-components[0], -
                                                         components[1]]
