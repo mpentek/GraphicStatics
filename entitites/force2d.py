@@ -7,6 +7,8 @@ Created on Wed May  2 13:03:45 2018
 
 import numpy as np
 
+from geometric_utilities import get_line_coefficients, get_magnitude_and_direction
+
 
 class Force2D:
 
@@ -16,50 +18,17 @@ class Force2D:
         self.node = node
         # maybe redundant
         self.coordinates = coordinates
-        self.magnitude, self.direction = self._get_magnitude_and_direction(
+        self.magnitude, self.direction = get_magnitude_and_direction(
             components)
         # type: one of internal, external, reaction
         self.force_type = force_type
         # application line - with direction and coefficients
         self.line = self._get_line()
 
-    def _get_magnitude_and_direction(self, components):
-        magnitude = self._norm(components)
-        return magnitude, self._normalized_components(components, magnitude)
-
-    def _norm(self, components):
-        return (components[0]**2 + components[1]**2)**0.5
-
-    def _normalized_components(self, components, magnitude):
-        if magnitude < 1e-8:
-            return [components[0], components[1]]
-        else:
-            return [components[0] / magnitude, components[1] / magnitude]
-
     def _get_line(self):
         line = {}
         line['direction'] = self.direction
-        line['coefficients'] = self._get_line_coefficients()
+        line['coefficients'] = get_line_coefficients([self.coordinates, [self.coordinates[0] + self.direction[0] * self.magnitude,
+                                                                         self.coordinates[1] + self.direction[1] * self.magnitude]])
 
         return line
-
-    def _get_line_coefficients(self):
-        p1 = self.coordinates
-        p2 = [p1[0] + self.direction[0] * self.magnitude,
-              p1[1] + self.direction[1] * self.magnitude]
-
-        # gibt a,b und c aus ax+by+c
-        a = p1[1]-p2[1]
-        b = p2[0]-p1[0]
-        c = -(a * p1[0]+b*p1[1])
-
-        # http://www.pdas.com/lineint.html
-        # a1:= y2-y1;
-        # b1:= x1-x2;
-        # c1:= x2*y1 - x1*y2;  { a1*x + b1*y + c1 = 0 is line 1 }
-        a1 = p2[1]-p1[1]
-        b1 = p1[0]-p2[0]
-        c1 = p2[0] * p1[1] - p1[0] * p2[1]
-
-        # return [a,b,c]
-        return [a1, b1, c1]

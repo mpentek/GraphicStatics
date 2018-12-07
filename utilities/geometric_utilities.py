@@ -4,6 +4,22 @@ Created on Tuesday Dec 4 18:00 2018
 @author: mate.pentek@tum.de
 
 Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
+
+NOTE: Should get as input only list/array-type data like
+
+        point = [x,y]
+        direction = [u,v] (normalized)
+        vector (or components) = [u,v] (do not have to be normalized)
+        magnitude (or norm) = d
+        line = [a,b,c]
+
+    or a list of the above types
+
+    BUT NO custom types (so no dependcy is created on custom types)
+
+    Should return only such types (or scalars, boolean)
+
+TODO: move here geometric operation from custom types like Node2D, Segment2D, Force2D,
 """
 
 from math import acos
@@ -12,11 +28,27 @@ from numpy import arctan2
 TOL = 1e-8
 
 
+def normalized_components(components, magnitude):
+    if magnitude < TOL:
+        return [components[0], components[1]]
+    else:
+        return [components[0] / magnitude, components[1] / magnitude]
+
+
+def get_magnitude_and_direction(components):
+    magnitude = norm(components)
+    return magnitude, normalized_components(components, magnitude)
+
+
 def euclidean_distance(points):
     return ((points[1][0] - points[0][0])**2 + (points[1][1] - points[0][1])**2)**0.5
 
 
-def magnitude(vector):
+def get_length(coordinates):
+    return euclidean_distance(coordinates)
+
+
+def norm(vector):
     return (vector[0]**2 + vector[1]**2)**0.5
 
 
@@ -28,7 +60,8 @@ def angle_between_directions(directions):
     return arctan2([directions[0][1], directions[1][1]],
                    [directions[0][0], directions[1][0]])[1]
 
-    # return acos(dot_product(directions)/(magnitude(directions[0])* magnitude(directions[1])))
+    # return acos(dot_product(directions)/(magnitude(directions[0])*
+    # magnitude(directions[1])))
 
 
 def dot_product(vectors):
@@ -58,8 +91,9 @@ def get_intersection(lines):
             a1, b1, c1 = lines[1]['coefficients']
             a2, b2, c2 = lines[0]['coefficients']
 
-        x = ((-1*(b2-b1)/b2+1)*c2-c1)/((a1-a2)+a2*(b2-b1)/b2)
-        y = (-a2*x - c2)/b2
+        x = ((-1 * (b2 - b1) / b2 + 1) * c2 - c1) / \
+            ((a1 - a2) + a2 * (b2 - b1) / b2)
+        y = (-a2 * x - c2) / b2
 
         # TODO: check for redundancy
         # http://www.pdas.com/lineint.html
@@ -70,9 +104,9 @@ def get_intersection(lines):
         a1, b1, c1 = lines[0]['coefficients']
         a2, b2, c2 = lines[1]['coefficients']
 
-        denom = a1*b2 - a2*b1
-        x = (b1*c2 - b2*c1)/denom
-        y = (a2*c1 - a1*c2)/denom
+        denom = a1 * b2 - a2 * b1
+        x = (b1 * c2 - b2 * c1) / denom
+        y = (a2 * c1 - a1 * c2) / denom
         return [x, y]
 
 
@@ -80,9 +114,9 @@ def get_line_coefficients(points):
     p1 = points[0]
     p2 = points[1]
     # gibt a,b und c aus ax+by+c
-    a = p1[1]-p2[1]
-    b = p2[0]-p1[0]
-    c = -(a * p1[0]+b*p1[1])
+    a = p1[1] - p2[1]
+    b = p2[0] - p1[0]
+    c = -(a * p1[0] + b * p1[1])
     return [a, b, c]
 
 
