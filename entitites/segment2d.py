@@ -24,10 +24,8 @@ class Segment2D(object):
         self.length = get_length(
             [[self.x[0], self.y[0]], [self.x[1], self.y[1]]])
 
-    # TODO: magnitude redundant with length, clean up
-    def _get_length(self):
-        return ((self.x[1] - self.x[0])**2 + (self.y[1] - self.y[0])**2)**0.5
-
+    # TODO: midpoint, line and scaled_segment should be moved to
+    # geometric_utilities
     def _get_midpoint(self):
         return Node2D('m',
                       [(self.nodes[0].coordinates[0] + self.nodes[1].coordinates[0]) / 2.,

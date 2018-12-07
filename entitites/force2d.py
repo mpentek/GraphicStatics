@@ -25,6 +25,7 @@ class Force2D:
         # application line - with direction and coefficients
         self.line = self._get_line()
 
+    # TODO: line should be moved to geometric_utilities
     def _get_line(self):
         line = {}
         line['direction'] = self.direction
