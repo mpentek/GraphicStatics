@@ -88,7 +88,7 @@ def get_forces_for_plot(model, ref_length, shift_to_head=False, scale=0.1):
     avg_force_length = np.mean(
         [force.magnitude for id, force in model["forces"].items()])
 
-    scaling_factor = scale * ref_length/avg_force_length
+    scaling_factor = scale * ref_length / avg_force_length
 
     for id, force in model["forces"].items():
         x.append(model["nodes"][force.node].coordinates[0])
@@ -163,9 +163,9 @@ def plot_input_system(input_system):
         if fixity.is_fixed[0] is True:
             point = input_system['nodes'][fixity.node_id].coordinates
             dy = scaling_factor
-            dx = dy*1.5
-            x = [point[0], point[0]-dx, point[0]-dx]
-            y = [point[1], point[1]+dy, point[1]-dy]
+            dx = dy * 1.5
+            x = [point[0], point[0] - dx, point[0] - dx]
+            y = [point[1], point[1] + dy, point[1] - dy]
             xy = np.array([x, y])
             xy = np.transpose(xy)
             patch = patches.Polygon(xy, color='r')
@@ -173,9 +173,9 @@ def plot_input_system(input_system):
         if fixity.is_fixed[1] is True:
             point = input_system['nodes'][fixity.node_id].coordinates
             dx = scaling_factor
-            dy = dx*1.5
-            x = [point[0], point[0]+dx, point[0]-dx]
-            y = [point[1], point[1]-dy, point[1]-dy]
+            dy = dx * 1.5
+            x = [point[0], point[0] + dx, point[0] - dx]
+            y = [point[1], point[1] - dy, point[1] - dy]
             xy = np.array([x, y])
             xy = np.transpose(xy)
             patch = patches.Polygon(xy, color='r')
@@ -262,15 +262,15 @@ def plot_solved_system(computation_model, scale=0.1):
             [element.coordinates[0][0], element.coordinates[0][1]])
 
         directions = [ref_direction,
-                      [element.coordinates[1][0]-element.coordinates[0][0],
-                       element.coordinates[1][1]-element.coordinates[0][1]]]
+                      [element.coordinates[1][0] - element.coordinates[0][0],
+                       element.coordinates[1][1] - element.coordinates[0][1]]]
 
         angle = angle_between_directions(directions)
 
         el_angle.append(angle)
 
     avg_height = np.mean(el_height)
-    scaling_factor = scale * avg_seg_length/avg_height
+    scaling_factor = scale * avg_seg_length / avg_height
 
     for i in range(len(xy_lower_left)):
 
@@ -332,8 +332,8 @@ def plot_force_diagram(force_diagram):
         seg = segment.get_scaled_segment(1.25, 'both')
         segments.append([seg.x, seg.y])
         s_id.append(segment.id)
-        s_x.append(segment.midpoint.coordinates[0])
-        s_y.append(segment.midpoint.coordinates[1])
+        s_x.append(segment.midpoint[0])
+        s_y.append(segment.midpoint[1])
 
     for segment in segments:
         ax.add_line(PLine2D(segment[0], segment[1],
@@ -361,6 +361,8 @@ def plot_force_diagram(force_diagram):
             c.append('green')
         elif force.force_type == 'internal':
             c.append('blue')
+        else:
+             c.append('black')
 
     for i in range(len(x)):
         if (u[i]**2 + v[i]**2)**0.5 > TOL:
@@ -384,7 +386,10 @@ def plot_force_diagram(force_diagram):
         custom_str += '\n Resultant location - x: ' + \
             str(round(x, 2)) + ' y: ' + str(round(y, 2))
         custom_str += '\n and components - u: ' + \
-            str(round(u, 2)) + ' v: ' + str(round(v, 2))
+            str(round(force_diagram['resultant'].direction[0], 2)) + \
+            ' v: ' + str(round(force_diagram['resultant'].direction[1], 2))
+        custom_str += '\n and magnitude: ' + \
+            str(round(force_diagram['resultant'].magnitude, 2))
     else:
         custom_str += '\n Resultant has zero magnitude (equilibrium)'
     ax.set_title('Forces - force diagram: ' + custom_str)

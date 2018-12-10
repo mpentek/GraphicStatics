@@ -43,35 +43,35 @@ class Segment2D(object):
     def get_scaled_segment(self, scaling_factor=1.0, scale_ends='both'):
         # move to geometric operations
         if scale_ends == 'both':
-            delta_start = [(self.nodes[0].coordinates[0] - self.midpoint.coordinates[0]) * scaling_factor,
-                           (self.nodes[0].coordinates[1] - self.midpoint.coordinates[1]) * scaling_factor]
+            delta_start = [(self.nodes[0].coordinates[0] - self.midpoint[0]) * scaling_factor,
+                           (self.nodes[0].coordinates[1] - self.midpoint[1]) * scaling_factor]
 
-            delta_end = [(self.nodes[1].coordinates[0] - self.midpoint.coordinates[0]) * scaling_factor,
-                         (self.nodes[1].coordinates[1] - self.midpoint.coordinates[1]) * scaling_factor]
+            delta_end = [(self.nodes[1].coordinates[0] - self.midpoint[0]) * scaling_factor,
+                         (self.nodes[1].coordinates[1] - self.midpoint[1]) * scaling_factor]
 
             return Segment2D(self.id + 'b',
-                             [Node2D(self.nodes[0].id + 's', [self.midpoint.coordinates[0] + delta_start[0],
-                                                              self.midpoint.coordinates[1] + delta_start[1]]),
-                              Node2D(self.nodes[1].id + 'e', [self.midpoint.coordinates[0] + delta_end[0],
-                                                              self.midpoint.coordinates[1] + delta_end[1]])])
+                             [Node2D(self.nodes[0].id + 's', [self.midpoint[0] + delta_start[0],
+                                                              self.midpoint[1] + delta_start[1]]),
+                              Node2D(self.nodes[1].id + 'e', [self.midpoint[0] + delta_end[0],
+                                                              self.midpoint[1] + delta_end[1]])])
 
         elif scale_ends == 'start':
-            delta_start = [(self.nodes[0].coordinates[0] - self.midpoint.coordinates[0]) * scaling_factor,
-                           (self.nodes[0].coordinates[1] - self.midpoint.coordinates[1]) * scaling_factor]
+            delta_start = [(self.nodes[0].coordinates[0] - self.midpoint[0]) * scaling_factor,
+                           (self.nodes[0].coordinates[1] - self.midpoint[1]) * scaling_factor]
 
             return Segment2D(self.id + 's',
-                             [Node2D(self.nodes[0].id + 's', [self.midpoint.coordinates[0] + delta_start[0],
-                                                              self.midpoint.coordinates[1] + delta_start[1]]),
+                             [Node2D(self.nodes[0].id + 's', [self.midpoint[0] + delta_start[0],
+                                                              self.midpoint[1] + delta_start[1]]),
                               self.nodes[1]])
 
         elif scale_ends == 'end':
-            delta_end = [(self.nodes[1].coordinates[0] - self.midpoint.coordinates[0]) * scaling_factor,
-                         (self.nodes[1].coordinates[1] - self.midpoint.coordinates[1]) * scaling_factor]
+            delta_end = [(self.nodes[1].coordinates[0] - self.midpoint[0]) * scaling_factor,
+                         (self.nodes[1].coordinates[1] - self.midpoint[1]) * scaling_factor]
 
             return Segment2D(self.id + 'e',
                              [self.nodes[0],
-                              Node2D(self.nodes[1].id + 'e', [self.midpoint.coordinates[0] + delta_end[0],
-                                                              self.midpoint.coordinates[1] + delta_end[1]])])
+                              Node2D(self.nodes[1].id + 'e', [self.midpoint[0] + delta_end[0],
+                                                              self.midpoint[1] + delta_end[1]])])
         else:
             # throw error
             pass

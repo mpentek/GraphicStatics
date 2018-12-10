@@ -168,6 +168,24 @@ def get_space_diagram(force_diagram, initial_offset_factor=0.1):
 
 
 def decompose_force_into_components_by_directions(force, directions):
+    '''
+    Pure geometric operation:
+    get the points = [start point of force (tail), end point of force (head)]
+
+    get the lines through the start point and direction 1 as well as
+    for the one through the end point and direction 2
+
+    get the instersection point of these lines
+
+    the decomposed forces geometrically mean in order connecting
+    the start point and the intersection point for the first one,
+    the intersection point and end point for the second on
+
+    TODO: implement some better workaround, as in some cases the 2 elements
+    and respective directions might be colinear/parallel
+    this method is only applicable for non-parallel directions
+    otherwise will return None
+    '''
     points = [force.coordinates,
               [force.coordinates[0] + force.direction[0] * force.magnitude,
                force.coordinates[1] + force.direction[1] * force.magnitude]]
@@ -175,10 +193,7 @@ def decompose_force_into_components_by_directions(force, directions):
     intersection_point = get_intersection([get_line_by_point_and_direction(points[0], directions[0]),
                                            get_line_by_point_and_direction(points[1], directions[1])])
 
-    # TODO: implement some better workaround, as in some cases the 2 elements
-    # and respective directions might be colinear/parallel
-    # this method is only applicable for non-parallel directions
-    # otherwise will return None
+
 
     if intersection_point is not None:
         corrected_directions = [[intersection_point[0] - points[0][0], intersection_point[1] - points[0][1]],
@@ -364,6 +379,12 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
     # force diagram
     # to find the magnitude of the resultant of existing nodal forces
     force_diagram = get_force_diagram(forces)
+
+    # # TODO: for debuging
+    # from plot_utilities import plot_force_diagram
+    # plot_force_diagram(force_diagram)
+    # plt.show()
+
 
     # TODO: implement some better workaround, as in some cases the 2 elements
     # and respectivce directions might be colinear/parallel

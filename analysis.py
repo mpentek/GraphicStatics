@@ -382,3 +382,31 @@ class Analysis(object):
         self._solve_iteratively()
         plot_solved_system(self.computation_model)
         pass
+
+# if __name__ == "__main__":
+    # '''
+    # Mock to check equilibrium at node 6 - example 4
+    # '''
+
+    # element = Element2D('6', ['6', '7'], [[7.5, -0.9],[2.5, -1.5]])
+    # elements = [element]
+
+    # force_m13 = Force2D('13j', '6', [7.5, -0.9], [0.19996 * 1.599296, 0.9798 * 1.599296], 'internal')
+    # force_m5 = Force2D('5j', '6', [7.5, -0.9], [0.98418 * 172.2154, 0.17771 * 172.2154], 'internal')
+    # forces = [force_m13, force_m5]
+
+    # force_diagram = get_force_diagram(forces)
+
+    # plot_force_diagram(force_diagram)
+    # plt.show()
+
+
+
+    # print("## ARE PARALLEL: ", are_parallel([elements[0].line,force_diagram['resultant'].line]))
+    # print("element id: ", elements[0].id)
+    # print("element_dir: ",elements[0].line['direction'])
+    # print("resultant_dir: ", force_diagram['resultant'].direction)
+    # print("element_line: ",elements[0].line['coefficients'])
+    # print("resultant_line: ", force_diagram['resultant'].line['coefficients'])
+    # print("resultant_coordinates: ", force_diagram['resultant'].coordinates)
+    # decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]

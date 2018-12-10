@@ -25,7 +25,7 @@ TODO: move here geometric operation from custom types like Node2D, Segment2D, Fo
 from math import acos
 from numpy import arctan2
 
-TOL = 1e-8
+TOL = 1e-5
 
 
 def get_midpoint(points):
