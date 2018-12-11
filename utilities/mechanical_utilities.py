@@ -170,7 +170,8 @@ def get_space_diagram(force_diagram, initial_offset_factor=0.1):
 def decompose_force_into_components_by_directions(force, directions):
     '''
     Pure geometric operation:
-    get the points = [start point of force (tail), end point of force (head)]
+    get the points as the start point of force (tail)
+    and the end point of force (head)
 
     get the lines through the start point and direction 1 as well as
     for the one through the end point and direction 2

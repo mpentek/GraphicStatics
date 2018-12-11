@@ -233,6 +233,17 @@ class Analysis(object):
 
             # computation loop
             for key, node in self.computation_model['nodes'].items():
+
+            # should work from python3.5 onwards
+            # for key, node in reversed(self.computation_model['nodes'].items()):
+
+            # reversed_keys = list(reversed([key for key, node in self.computation_model['nodes'].items()]))
+            # sel_key = 0
+            # reversed_keys.remove(sel_key)
+            # reversed_keys.insert(0, sel_key)
+            # for r_key in reversed_keys:
+            #     node = self.computation_model['nodes'][r_key]
+
                 if node.unsolved_degree > 0:
                     # for any unsolved node set to False
                     system_solved = False
@@ -263,12 +274,8 @@ class Analysis(object):
                         #     nodal_elements.append(
                         #         self.computation_model['elements'][node.solved_elements[-1]])
 
-                        print("## node coord: ", node.coordinates)
                         forces = get_nodal_equilibrium_by_method_of_joints(
                             nodal_forces, nodal_elements)
-
-                        if node.id in ['6', '7', '8', '9']:
-                            print("I am here - check nodal equilibrium")
 
                         if forces is not None:
                             # update force coordinates and line
