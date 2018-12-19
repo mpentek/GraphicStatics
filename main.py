@@ -23,7 +23,7 @@ input_files = {1 : 'sample_input',  # can be checked with Stiff
                7 : 'double_arch_top_load',  # can be checked with Stiff
                8 : 'double_arch_bottom_load',  # can be checked with Stiff
                9 : 'double_arch_kinematic_top_load_mod2'} # simple for debugging
-selected_file_idx = 8
+selected_file_idx = 7
 
 # filename for import
 input_folder = 'input'

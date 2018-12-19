@@ -425,8 +425,8 @@ def plot_space_diagram(space_diagram):
         seg = segment.get_scaled_segment(1.25, 'both')
         segments.append([seg.x, seg.y])
         s_id.append(segment.id)
-        s_x.append(segment.midpoint.coordinates[0])
-        s_y.append(segment.midpoint.coordinates[1])
+        s_x.append(segment.midpoint[0])
+        s_y.append(segment.midpoint[1])
 
     for segment in segments:
         ax.add_line(PLine2D(segment[0], segment[1],
