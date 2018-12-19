@@ -361,8 +361,9 @@ class Analysis(object):
                             # and respective directions might be colinear/parallel
                             pass
 
-                # check for nodal equilibrium
-                self._check_nodal_equilibrium(node.id)
+                        # once the node is solved
+                        # check for nodal equilibrium
+                        self._check_nodal_equilibrium(node.id)
 
                 current_system_unsolved_degree += node.unsolved_degree
 

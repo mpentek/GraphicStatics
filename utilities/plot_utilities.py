@@ -255,7 +255,7 @@ def plot_solved_system(computation_model, scale=0.1):
 
         el_width.append(element.length)
         el_height.append(element.force_magnitude)
-        xy_mid.append(element.coordinates)
+        xy_mid.append(element.midpoint)
         el_type.append(element.element_type)
 
         xy_lower_left.append(
@@ -284,7 +284,7 @@ def plot_solved_system(computation_model, scale=0.1):
             center = xy_mid[i]
             radius = avg_height * scaling_factor
             patch = patches.Circle(center, radius, ec=(
-                0, 0, 0, 0.9), fc=(1, 0, 0, 0.25))
+                 0, 0, 0, 0.9), fc=(1, 0, 0, 0.25))
 
         elif el_type[i] == 'tension':
             height = height
@@ -362,7 +362,7 @@ def plot_force_diagram(force_diagram):
         elif force.force_type == 'internal':
             c.append('blue')
         else:
-             c.append('black')
+            c.append('black')
 
     for i in range(len(x)):
         if (u[i]**2 + v[i]**2)**0.5 > TOL:
