@@ -77,98 +77,112 @@
             "connect": [
                 0,
                 1
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 1,
             "connect": [
                 1,
                 2
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 2,
             "connect": [
                 2,
                 3
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 3,
             "connect": [
                 3,
                 4
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 4,
             "connect": [
                 4,
                 5
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 5,
             "connect": [
                 5,
                 6
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 6,
             "connect": [
                 6,
                 7
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 7,
             "connect": [
                 7,
                 8
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 8,
             "connect": [
                 8,
                 9
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 9,
             "connect": [
                 9,
                 0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
             "id": 10,
             "connect": [
                 1,
                 9
-            ]
+            ],
+            "is_constrain" : true
         },
         {
             "id": 11,
             "connect": [
                 2,
                 8
-            ]
+            ],
+            "is_constrain" : true
         },
         {
             "id": 12,
             "connect": [
                 3,
                 7
-            ]
+            ],
+            "is_constrain" : true
         },
         {
             "id": 13,
             "connect": [
                 4,
                 6
-            ]
+            ],
+            "is_constrain" : true
         }
     ],
     "external_forces": [

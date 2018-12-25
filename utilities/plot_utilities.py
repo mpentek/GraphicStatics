@@ -129,7 +129,7 @@ def get_nodal_data_for_plot(model):
 def plot_input_system(input_system):
 
     x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length = get_member_limits_and_segments_for_plot(
-        input_system, offset_factor=0.2)
+        input_system, offset_factor=0.25)
 
     fig, ax = plt.subplots()
     ax.set_title('Input system')
@@ -185,10 +185,12 @@ def plot_input_system(input_system):
 def plot_computation_model(computation_model):
 
     x_lim, y_lim, segments, x_m, y_m, m_id, avg_seg_length = get_member_limits_and_segments_for_plot(
-        computation_model, offset_factor=0.2)
+        computation_model, offset_factor=0.25)
 
     fig, ax = plt.subplots()
     ax.set_title('Computational model')
+    ax.set_xlim(x_lim)
+    ax.set_ylim(y_lim)
 
     # members
     for segment in segments:
@@ -284,7 +286,7 @@ def plot_solved_system(computation_model, scale=0.1):
             center = xy_mid[i]
             radius = avg_height * scaling_factor
             patch = patches.Circle(center, radius, ec=(
-                 0, 0, 0, 0.9), fc=(1, 0, 0, 0.25))
+                0, 0, 0, 0.9), fc=(1, 0, 0, 0.25))
 
         elif el_type[i] == 'tension':
             height = height

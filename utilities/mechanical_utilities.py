@@ -387,34 +387,13 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
     # plt.show()
 
 
-    # TODO: implement some better workaround, as in some cases the 2 elements
-    # and respectivce directions might be colinear/parallel
-    # this method is only applicable for non-parallel directions
-    # otherwise will return None
 
-    if len(elements) == 2:
-        # decompose resultant
-        # into two non-parallel components
-        directions = [elements[0].line['direction'], elements[1].line['direction']]
-        decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
-                                                                                directions)
-    elif len(elements) == 1:
-        # TODO: check if this is robust enough
-        # for element 5 -> works
-        # for 6 -> does not work -> not parallel
+    # decompose resultant
+    # into two non-parallel components
+    directions = [elements[0].line['direction'], elements[1].line['direction']]
+    decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
+                                                                            directions)
 
-        print("## ARE PARALLEL: ", are_parallel([elements[0].line,force_diagram['resultant'].line]))
-        print("element id: ", elements[0].id)
-        print("element_dir: ",elements[0].line['direction'])
-        print("resultant_dir: ", force_diagram['resultant'].direction)
-        print("element_line: ",elements[0].line['coefficients'])
-        print("resultant_line: ", force_diagram['resultant'].line['coefficients'])
-        print("resultant_coordinates: ", force_diagram['resultant'].coordinates)
-        decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
-    else:
-        print("###### I AM HERE")
-        wait = input("here")
-        pass
     # for debug
     # plot_force_diagram(force_diagram)
     #plot_decomposed_forces(force_diagram['resultant'], decomposed_forces, points)

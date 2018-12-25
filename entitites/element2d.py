@@ -12,11 +12,12 @@ from geometric_utilities import get_length, get_magnitude_and_direction, get_lin
 
 
 class Element2D:
-    def __init__(self, id, nodes, coordinates):
+    def __init__(self, id, nodes, coordinates, is_constrain):
         self.id = id
         # id of nodes at i and j
         self.nodes = nodes
         self.coordinates = coordinates
+        self.is_constrain = is_constrain
         # will be tension or compression
         self.element_type = None
         # will be assigned after initialize
