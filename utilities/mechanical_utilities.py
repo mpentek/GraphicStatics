@@ -393,6 +393,7 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
 
 
+<<<<<<< HEAD
     if len(elements) == 2:
         # decompose resultant
         # into two non-parallel components
@@ -412,6 +413,14 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
         decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
         decomposed_forces[0].force_type = type_of_element[0]
+=======
+    # decompose resultant
+    # into two non-parallel components
+    directions = [elements[0].line['direction'], elements[1].line['direction']]
+    decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
+                                                                            directions)
+
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
     # for debug
     # plot_force_diagram(force_diagram)
     #plot_decomposed_forces(force_diagram['resultant'], decomposed_forces, points)

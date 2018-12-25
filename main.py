@@ -16,6 +16,7 @@ from cremona_plan import cremona_plan
 
 
 # select the desired input file by index from the list
+<<<<<<< HEAD
 input_files = {1 : 'sample_input', #succesful
                2 : 'sample_input_mod1',#succesful
                3 : 'sample_input_mod2',#succesful, nur Diagonalen
@@ -29,6 +30,22 @@ input_files = {1 : 'sample_input', #succesful
                11 : 'geknicktes_System',#succesful
                12 : 'simple system'}#succesful
 selected_file_idx = 12
+=======
+input_files = {1: 'sample_input',  # can be checked with Stiff
+               2: 'sample_input_mod1',
+               3: 'sample_input_mod2',
+               # Automatic topology update at nodes 7 and 8
+               4: 'double_arch_kinematic_top_load',
+               # Automatic topology update at nodes 7 and 8
+               5: 'double_arch_kinematic_top_load_mod1',
+               # TODO: should add extra constrain not just to elements but also to nodes (those that have external or reaction forces)
+               # Automatic topology update at nodes 7 and 8
+               6: 'double_arch_kinematic_bottom_load',
+               7: 'double_arch_top_load',  
+               8: 'double_arch_bottom_load',
+               9: 'double_arch_kinematic_top_load_mod2'}  # simple for debugging
+selected_file_idx = 1
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
 
 # filename for import
 input_folder = 'input'

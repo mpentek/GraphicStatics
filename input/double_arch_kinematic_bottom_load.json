@@ -89,7 +89,11 @@
                 0,
                 1
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 1,
@@ -97,7 +101,11 @@
                 1,
                 2
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 2,
@@ -105,7 +113,11 @@
                 2,
                 3
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 3,
@@ -113,7 +125,11 @@
                 3,
                 4
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 4,
@@ -121,7 +137,11 @@
                 4,
                 5
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 5,
@@ -129,7 +149,11 @@
                 5,
                 6
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 6,
@@ -137,7 +161,11 @@
                 6,
                 7
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 7,
@@ -145,7 +173,11 @@
                 7,
                 8
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 8,
@@ -153,7 +185,11 @@
                 8,
                 9
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 9,
@@ -161,7 +197,11 @@
                 9,
                 0
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 10,
@@ -169,7 +209,11 @@
                 1,
                 9
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 11,
@@ -177,7 +221,11 @@
                 2,
                 8
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 12,
@@ -185,7 +233,11 @@
                 3,
                 7
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 13,
@@ -193,7 +245,11 @@
                 4,
                 6
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         }
     ],
     "external_forces": [

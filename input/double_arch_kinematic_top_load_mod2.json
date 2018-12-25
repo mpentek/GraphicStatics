@@ -58,7 +58,11 @@
                 0,
                 1
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 1,
@@ -66,7 +70,11 @@
                 1,
                 2
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 2,
@@ -74,7 +82,11 @@
                 2,
                 3
             ],
+<<<<<<< HEAD
             "type" : 2
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 3,
@@ -82,7 +94,11 @@
                 3,
                 4
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 4,
@@ -90,7 +106,11 @@
                 4,
                 5
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 5,
@@ -98,7 +118,11 @@
                 5,
                 0
             ],
+<<<<<<< HEAD
             "type" : 1
+=======
+            "is_constrain" : true
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 6,
@@ -106,7 +130,11 @@
                 2,
                 4
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         },
         {
             "id": 7,
@@ -114,7 +142,11 @@
                 1,
                 5
             ],
+<<<<<<< HEAD
             "type" : 3
+=======
+            "is_constrain" : false
+>>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
         }
     ],
     "external_forces": [
