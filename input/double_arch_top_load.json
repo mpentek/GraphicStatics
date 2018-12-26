@@ -1,225 +1,252 @@
 {
     "nodes": [
         {
-            "id": 0,
+            "id": "0",
             "coords": [
                 -12.5,
                 0.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 1,
+            "id": "1",
             "coords": [
                 -8.5,
                 4.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 2,
+            "id": "2",
             "coords": [
                 -3.5,
                 6.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 3,
+            "id": "3",
             "coords": [
                 3.5,
                 6.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 4,
+            "id": "4",
             "coords": [
                 8.5,
                 4.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 5,
+            "id": "5",
             "coords": [
                 12.5,
                 0.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 6,
+            "id": "6",
             "coords": [
                 7.5,
                 -0.9
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 7,
+            "id": "7",
             "coords": [
                 2.5,
                 -1.5
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 8,
+            "id": "8",
             "coords": [
                 -2.5,
                 -1.5
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 9,
+            "id": "9",
             "coords": [
                 -7.5,
                 -0.9
-            ]
+            ],
+            "is_constrain" : false
         }
     ],
     "elements": [
         {
-            "id": 0,
+            "id": "0",
             "connect": [
-                0,
-                1
-            ]
+                "0",
+                "1"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 1,
+            "id": "1",
             "connect": [
-                1,
-                2
-            ]
+                "1",
+                "2"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 2,
+            "id": "2",
             "connect": [
-                2,
-                3
-            ]
+                "2",
+                "3"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 3,
+            "id": "3",
             "connect": [
-                3,
-                4
-            ]
+                "3",
+                "4"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 4,
+            "id": "4",
             "connect": [
-                4,
-                5
-            ]
+                "4",
+                "5"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 5,
+            "id": "5",
             "connect": [
-                5,
-                6
-            ]
+                "5",
+                "6"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 6,
+            "id": "6",
             "connect": [
-                6,
-                7
-            ]
+                "6",
+                "7"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 7,
+            "id": "7",
             "connect": [
-                7,
-                8
-            ]
+                "7",
+                "8"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 8,
+            "id": "8",
             "connect": [
-                8,
-                9
-            ]
+                "8",
+                "9"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 9,
+            "id": "9",
             "connect": [
-                9,
-                0
-            ]
+                "9",
+                "0"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 10,
+            "id": "10",
             "connect": [
-                1,
-                9
-            ]
+                "1",
+                "9"
+            ],
+            "is_constrain" : true
         },
         {
-            "id": 11,
+            "id": "11",
             "connect": [
-                2,
-                8
-            ]
+                "2",
+                "8"
+            ],
+            "is_constrain" : true
         },
         {
-            "id": 12,
+            "id": "12",
             "connect": [
-                3,
-                7
-            ]
+                "3",
+                "7"
+            ],
+            "is_constrain" : true
         },
         {
-            "id": 13,
+            "id": "13",
             "connect": [
-                4,
-                6
-            ]
+                "4",
+                "6"
+            ],
+            "is_constrain" : true
         },
         {
-            "id": 14,
+            "id": "14",
             "connect": [
-                1,
-                8
-            ]
+                "1",
+                "8"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 15,
+            "id": "15",
             "connect": [
-                2,
-                7
-            ]
+                "2",
+                "7"
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 16,
+            "id": "16",
             "connect": [
-                3,
-                6
-            ]
+                "3",
+                "6"
+            ],
+            "is_constrain" : false
         }
     ],
     "external_forces": [
         {
-            "id": 1,
-            "node_id": 1,
+            "id": "1",
+            "node_id": "1",
             "components": [
                 0.0,
                 -100.0
             ]
         },
         {
-            "id": 2,
-            "node_id": 2,
+            "id": "2",
+            "node_id": "2",
             "components": [
                 0.0,
                 -100.0
             ]
         },
         {
-            "id": 3,
-            "node_id": 3,
+            "id": "3",
+            "node_id": "3",
             "components": [
                 0.0,
                 -100.0
             ]
         },
         {
-            "id": 4,
-            "node_id": 4,
+            "id": "4",
+            "node_id": "4",
             "components": [
                 0.0,
                 -100.0
@@ -228,8 +255,8 @@
     ],
     "fixities": [
         {
-            "id": 1,
-            "node_id": 0,
+            "id": "1",
+            "node_id": "0",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
                 true,
@@ -237,8 +264,8 @@
             ]
         },
         {
-            "id": 2,
-            "node_id": 5,
+            "id": "2",
+            "node_id": "5",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
                 false,

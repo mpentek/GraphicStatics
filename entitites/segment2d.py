@@ -13,9 +13,12 @@ from geometric_utilities import get_line_coefficients, get_magnitude_and_directi
 
 class Segment2D(object):
     def __init__(self, id, nodes):
-        self.id = str(id)
+        self.id = id
+        # TODO: to be removed in future, should be only stored in 'nodes'
+        # shlould be replaced by node_ids
         # id of nodes at i and j
         self.nodes = nodes
+        # TODO: to be removed in future, should be only stored in 'nodes'
         self.midpoint = get_midpoint(
             [self.nodes[0].coordinates, self.nodes[1].coordinates])
         self.x = [nodes[0].coordinates[0], nodes[1].coordinates[0]]

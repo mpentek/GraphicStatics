@@ -5,18 +5,17 @@ Created on Tuesday Dec 4 18:00 2018
 
 Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 """
-
-from node2d import Node2D
-
 from geometric_utilities import get_length, get_magnitude_and_direction, get_line_coefficients, get_midpoint
 
 
 class Element2D:
-    def __init__(self, id, nodes, coordinates):
+    def __init__(self, id, nodes, coordinates, is_constrain):
         self.id = id
         # id of nodes at i and j
         self.nodes = nodes
+        # TODO: to be removed in future, should be only stored in 'nodes'
         self.coordinates = coordinates
+        self.is_constrain = is_constrain
         # will be tension or compression
         self.element_type = None
         # will be assigned after initialize
@@ -27,6 +26,7 @@ class Element2D:
 
         # self.x = [nodes[0].coordinates[0], nodes[1].coordinates[0]]
         # self.y = [nodes[0].coordinates[1], nodes[1].coordinates[1]]
+        
         self.line = self._get_line()
         # TODO: magnitude redundant with length, clean up
         self.length = get_length(self.coordinates)
