@@ -200,9 +200,9 @@ def decompose_force_into_components_by_directions(force, directions):
         corrected_directions = [[intersection_point[0] - points[0][0], intersection_point[1] - points[0][1]],
                                 [points[1][0] - intersection_point[0], points[1][1] - intersection_point[1]]]
 
-        decomposed_forces = [Force2D('1', None, force.coordinates, [corrected_directions[0][0],
+        decomposed_forces = [Force2D('1', '-', force.coordinates, [corrected_directions[0][0],
                                                                     corrected_directions[0][1]]),
-                             Force2D('1', None, force.coordinates, [corrected_directions[1][0],
+                             Force2D('1', '-', force.coordinates, [corrected_directions[1][0],
                                                                     corrected_directions[1][1]])]
         points.append(intersection_point)
 
@@ -244,7 +244,7 @@ def decompose_force_by_inverse_proportion(acting_line, direction, fixity_locatio
         start_point = get_intersection([mid_line, force_line])
         end_point = get_intersection([force_line, baseline])
 
-        decomposed_forces.append(Force2D(None,
+        decomposed_forces.append(Force2D('-',
                                          fixity_node_id[0],
                                          fixity_locations[0],
                                          [end_point[0] - start_point[0],
@@ -254,19 +254,19 @@ def decompose_force_by_inverse_proportion(acting_line, direction, fixity_locatio
         start_point = get_intersection([shifted_baseline, force_line])
         end_point = get_intersection([force_line, mid_line])
 
-        decomposed_forces.append(Force2D(None,
+        decomposed_forces.append(Force2D('-',
                                          fixity_node_id[1],
                                          fixity_locations[1],
                                          [end_point[0] - start_point[0],
                                           end_point[1] - start_point[1]]))
 
     else:
-        decomposed_forces.append(Force2D(None,
+        decomposed_forces.append(Force2D('-',
                                          fixity_node_id[0],
                                          fixity_locations[0],
                                          [0.0, 0.0]))
 
-        decomposed_forces.append(Force2D(None,
+        decomposed_forces.append(Force2D('-',
                                          fixity_node_id[1],
                                          fixity_locations[1],
                                          [0.0, 0.0]))
@@ -305,7 +305,7 @@ def get_reactions(acting_line, decomposed_forces, directions, fixity_locations, 
         idx = [i for i in range(len(fixity_type))
                if fixity_type[i][0] == True][0]
         loc = fixity_locations[idx]
-        reactions.append(Force2D(None,
+        reactions.append(Force2D('-',
                                  fixity_node_id[0],
                                  loc,
                                  [decomposed_forces[0].magnitude * decomposed_forces[0].direction[0],
@@ -314,12 +314,12 @@ def get_reactions(acting_line, decomposed_forces, directions, fixity_locations, 
         # for fixity 0 - x -> check y coordinates
         # if on the same line -> same y coord
         if abs(fixity_locations[0][1]-fixity_locations[1][1]) < TOL:
-            reaction_forces = [Force2D(None,
+            reaction_forces = [Force2D('-',
                                        fixity_node_id[0],
                                        fixity_locations[0],
                                        [decomposed_forces[0].magnitude * .5 * decomposed_forces[0].direction[0],
                                         decomposed_forces[0].magnitude * .5 * decomposed_forces[0].direction[1]]),
-                               Force2D(None,
+                               Force2D('-',
                                        fixity_node_id[1],
                                        fixity_locations[1],
                                        [decomposed_forces[0].magnitude * .5 * decomposed_forces[0].direction[0],
@@ -339,7 +339,7 @@ def get_reactions(acting_line, decomposed_forces, directions, fixity_locations, 
         idx = [i for i in range(len(fixity_type))
                if fixity_type[i][1] == True][0]
         loc = fixity_locations[idx]
-        reactions.append(Force2D(None,
+        reactions.append(Force2D('-',
                                  fixity_node_id[1],
                                  loc,
                                  [-decomposed_forces[1].magnitude * decomposed_forces[1].direction[0],
@@ -348,12 +348,12 @@ def get_reactions(acting_line, decomposed_forces, directions, fixity_locations, 
         # for fixity 1 - y -> check x coordinates
         # if on the same line -> same x coord
         if abs(fixity_locations[0][0]-fixity_locations[1][0]) < TOL:
-            reaction_forces = [Force2D(None,
+            reaction_forces = [Force2D('-',
                                        fixity_node_id[0],
                                        fixity_locations[0],
                                        [decomposed_forces[1].magnitude * .5 * decomposed_forces[1].direction[0],
                                         decomposed_forces[1].magnitude * .5 * decomposed_forces[1].direction[1]]),
-                               Force2D(None,
+                               Force2D('-',
                                        fixity_node_id[1],
                                        fixity_locations[1],
                                        [decomposed_forces[1].magnitude * .5 * decomposed_forces[1].direction[0],

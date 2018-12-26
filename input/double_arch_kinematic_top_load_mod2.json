@@ -1,126 +1,132 @@
 {
     "nodes": [
         {
-            "id": 0,
+            "id": "0",
             "coords": [
                 -12.5,
                 0.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 1,
+            "id": "1",
             "coords": [
                 -8.5,
                 4.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 2,
+            "id": "2",
             "coords": [
                 8.5,
                 4.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 3,
+            "id": "3",
             "coords": [
                 12.5,
                 0.0
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 4,
+            "id": "4",
             "coords": [
                 7.5,
                 -0.9
-            ]
+            ],
+            "is_constrain" : false
         },
         {
-            "id": 5,
+            "id": "5",
             "coords": [
                 -7.5,
                 -0.9
-            ]
+            ],
+            "is_constrain" : false
         }
     ],
     "elements": [
         {
-            "id": 0,
+            "id": "0",
             "connect": [
-                0,
-                1
+                "0",
+                "1"
             ],
             "is_constrain" : false
         },
         {
-            "id": 1,
+            "id": "1",
             "connect": [
-                1,
-                2
+                "1",
+                "2"
             ],
             "is_constrain" : false
         },
         {
-            "id": 2,
+            "id": "2",
             "connect": [
-                2,
-                3
+                "2",
+                "3"
             ],
             "is_constrain" : true
         },
         {
-            "id": 3,
+            "id": "3",
             "connect": [
-                3,
-                4
+                "3",
+                "4"
             ],
             "is_constrain" : false
         },
         {
-            "id": 4,
+            "id": "4",
             "connect": [
-                4,
-                5
+                "4",
+                "5"
             ],
             "is_constrain" : false
         },
         {
-            "id": 5,
+            "id": "5",
             "connect": [
-                5,
-                0
+                "5",
+                "0"
             ],
             "is_constrain" : true
         },
         {
-            "id": 6,
+            "id": "6",
             "connect": [
-                2,
-                4
+                "2",
+                "4"
             ],
             "is_constrain" : false
         },
         {
-            "id": 7,
+            "id": "7",
             "connect": [
-                1,
-                5
+                "1",
+                "5"
             ],
             "is_constrain" : false
         }
     ],
     "external_forces": [
         {
-            "id": 1,
-            "node_id": 1,
+            "id": "1",
+            "node_id": "1",
             "components": [
                 0.0,
                 -100.0
             ]
         },
         {
-            "id": 2,
-            "node_id": 2,
+            "id": "2",
+            "node_id": "2",
             "components": [
                 0.0,
                 -100.0
@@ -129,8 +135,8 @@
     ],
     "fixities": [
         {
-            "id": 1,
-            "node_id": 0,
+            "id": "1",
+            "node_id": "0",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
                 true,
@@ -138,8 +144,8 @@
             ]
         },
         {
-            "id": 2,
-            "node_id": 3,
+            "id": "2",
+            "node_id": "3",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
                 true,

@@ -1,10 +1,10 @@
-"""
+'''
 Created on Tuesday Dec 4 18:00 2018
 
 @author: mate.pentek@tum.de
 
 Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
-"""
+'''
 
 import json
 import warnings
@@ -22,6 +22,7 @@ from entitites.segment2d import Segment2D
 from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints
 from utilities.geometric_utilities import TOL, are_parallel, get_intersection, get_length, get_midpoint
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
+from utilities.file_utilitites import json_dump_model
 
 
 class Analysis(object):
@@ -45,54 +46,59 @@ class Analysis(object):
     def _import_model(self, input_model_file):
 
         model = {}
-        model["nodes"] = {}
-        model["elements"] = {}
-        model["forces"] = {}
+        model['nodes'] = {}
+        model['elements'] = {}
+        model['forces'] = {}
         # rename to fixities (as forces are also boundary conditions)
-        model["fixities"] = {}
+        model['fixities'] = {}
 
         with open(input_model_file) as f:
             data = json.load(f)
 
         # get node_list:
         for node in data['nodes']:
-            model["nodes"][node['id']] = Node2D(node['id'],
-                                                node['coords'])
+            model['nodes'][node['id']] = Node2D(node['id'],
+                                                node['coords'],
+                                                # here by default false, unless user specifies it otherwise
+                                                node['is_constrain'])
 
         # get elements:
         for element in data['elements']:
-            model["elements"][element['id']] = Element2D(element['id'],
+            model['elements'][element['id']] = Element2D(element['id'],
                                                          element['connect'],
-                                                         [model["nodes"][element['connect'][0]].coordinates,
-                                                          model["nodes"][element['connect'][1]].coordinates],
+                                                         # TODO: to be removed in future, should be only stored in 'nodes'
+                                                         [model['nodes'][element['connect'][0]].coordinates,
+                                                          model['nodes'][element['connect'][1]].coordinates],
                                                          element['is_constrain'])
 
         # get (external) forces:
         for ext_force in data['external_forces']:
-            model["forces"]['e' + str(ext_force['id'])] = Force2D(ext_force['id'],
+            model['forces']['e' + str(ext_force['id'])] = Force2D(ext_force['id'],
                                                                   ext_force['node_id'],
                                                                   # maybe remove once dependency is not needed
-                                                                  model["nodes"][ext_force['node_id']
+                                                                  model['nodes'][ext_force['node_id']
                                                                                  ].coordinates,
                                                                   ext_force['components'],
                                                                   force_type='external')
 
         # get fixitites
         for fixity in data['fixities']:
-            model["fixities"][fixity['id']] = Fixity2D(fixity['id'],
+            model['fixities'][fixity['id']] = Fixity2D(fixity['id'],
                                                        fixity['node_id'],
                                                        fixity['is_fixed'])
+            # set node of application to is_constrain
+            model['nodes'][fixity['node_id']].is_constrain = True
 
         return model
 
     def postprocess(self):
         # for example cremona-plan
-        print("Cremona-plan to be implemented")
+        print('Cremona-plan to be implemented')
         pass
 
     def _calculate_reaction_forces(self):
         forces = []
-        for key, force in self.input_system["forces"].items():
+        for key, force in self.input_system['forces'].items():
             # if force.force_type == 'external':
             forces.append(force)
 
@@ -159,7 +165,7 @@ class Analysis(object):
         # and reaction forces once calculated
 
         forces = []
-        for key, force in self.computation_model["forces"].items():
+        for key, force in self.computation_model['forces'].items():
             # if force.force_type == 'external' or force.force_type == 'reaction':
             forces.append(force)
 
@@ -181,7 +187,7 @@ class Analysis(object):
 
     def _check_nodal_equilibrium(self, node_id):
             # TODO: remove need for casting from str to int
-        node = self.computation_model['nodes'][int(node_id)]
+        node = self.computation_model['nodes'][node_id]
 
         forces = [self.computation_model['forces'][force_id]
                   for force_id in node.forces]
@@ -194,15 +200,15 @@ class Analysis(object):
             plot_force_diagram(force_diagram)
 
         if force_diagram['resultant'].magnitude > TOL:
-            warnings.warn(
-                'Computation model not in equilibrium at node ' + node.id + '!', Warning)
+            raise Exception(
+                'Computation model not in equilibrium at node ' + node.id + '!')
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
 
         # update nodal information with existing forces: external and reaction
         for key, force in self.computation_model['forces'].items():
-            self.computation_model['nodes'][force.node].forces.append(key)
+            self.computation_model['nodes'][force.node_id].forces.append(key)
         # update nodal information with elements: will link to internal forces
         for key, element in self.computation_model['elements'].items():
             self.computation_model['nodes'][element.nodes[0]
@@ -225,7 +231,7 @@ class Analysis(object):
         counter = 0
 
         if self.echo_level == 1:
-            print("## System solve - iteratively")
+            print('## System solve - iteratively')
 
         change = 1
         while (not(system_solved) and change > 0):
@@ -291,8 +297,13 @@ class Analysis(object):
                                 # get the next node id - other end of the nodal_elements[0]
                                 tmp = nodal_elements[0].nodes.copy()
                                 # TODO: make consistent type for id - probably overall as str() and not int()
-                                tmp.remove(int(node.id))
+                                tmp.remove(node.id)
                                 other_node_id = tmp[0]
+
+                                if self.computation_model['nodes'][other_node_id].is_constrain:
+                                    raise Exception(
+                                        'Computation model (geometrically) constrained at node ' + other_node_id + ', cannot solve further!')
+
                                 # get list of all elements at node - for now ids
                                 # using .copy() to create value copy of list
                                 elements_at_other_node = self.computation_model['nodes'][other_node_id].unsolved_elements.copy(
@@ -318,10 +329,10 @@ class Analysis(object):
                                     msg += 'node with id ' + \
                                         str(other_node_id) + \
                                         ' and coordinates '
-                                    msg += ", ".join("%.3f" % coord
+                                    msg += ', '.join('%.3f' % coord
                                                      for coord in self.computation_model['nodes'][other_node_id].coordinates) + '\n'
                                     msg += 'updated to coordinates ' + \
-                                        ", ".join("%.3f" % coord
+                                        ', '.join('%.3f' % coord
                                                   for coord in other_node_new_coord) + '\n'
                                     print(msg)
 
@@ -449,24 +460,29 @@ class Analysis(object):
             change = old_system_unsolved_degree - current_system_unsolved_degree
             ##
             if self.echo_level == 1:
-                print("At iteration: ", counter)
-                print("System unsolved degree - old: ",
+                print('At iteration: ', counter)
+                print('System unsolved degree - old: ',
                       old_system_unsolved_degree)
-                print("System unsolved degree - current: ",
+                print('System unsolved degree - current: ',
                       current_system_unsolved_degree)
-                print("System unsolved degree - change: ",
+                print('System unsolved degree - change: ',
                       change)
 
             old_system_unsolved_degree = current_system_unsolved_degree
 
         if current_system_unsolved_degree == 0:
-            print("## System solved successfully!")
+            print('## System solved successfully!')
             self._check_all_nodal_equilibrium()
         else:
             warnings.warn(
-                "System cannot be solved iteratively, needs other solution", Warning)
+                'System cannot be solved iteratively, needs other solution', Warning)
 
     def solve_system(self):
         self._solve_iteratively()
+
         plot_solved_system(self.computation_model)
+        # TODO: add Ritter cut, maybe other solve possibilitie as well
         pass
+
+    def export_computation_results(self, file_path):
+        json_dump_model(self.computation_model, file_path)

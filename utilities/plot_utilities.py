@@ -16,7 +16,7 @@ import numpy as np
 
 from geometric_utilities import TOL, euclidean_distance, angle_between_directions
 
-from entitites.segment2d import Segment2D
+# from entitites.segment2d import Segment2D
 
 # TODO: make some dynamic adjustments of limits
 # done for major system plots, do for force and space diagram as well
@@ -91,8 +91,8 @@ def get_forces_for_plot(model, ref_length, shift_to_head=False, scale=0.1):
     scaling_factor = scale * ref_length / avg_force_length
 
     for id, force in model["forces"].items():
-        x.append(model["nodes"][force.node].coordinates[0])
-        y.append(model["nodes"][force.node].coordinates[1])
+        x.append(model["nodes"][force.node_id].coordinates[0])
+        y.append(model["nodes"][force.node_id].coordinates[1])
 
         u.append(scaling_factor * force.direction[0] * force.magnitude)
         v.append(scaling_factor * force.direction[1] * force.magnitude)
@@ -253,7 +253,7 @@ def plot_solved_system(computation_model, scale=0.1):
         value = round(element.force_magnitude, 3)
         if element.element_type == 'compression':
             value *= -1
-        results.append('m_%d = %.2f kN \n' % (element.id, value))
+        results.append('m_%s = %.2f kN \n' % (element.id, value))
 
         el_width.append(element.length)
         el_height.append(element.force_magnitude)

@@ -27,7 +27,7 @@ input_files = {1: 'sample_input',  # can be checked with Stiff
                7: 'double_arch_top_load',  
                8: 'double_arch_bottom_load',
                9: 'double_arch_kinematic_top_load_mod2'}  # simple for debugging
-selected_file_idx = 1
+selected_file_idx = 9
 
 # filename for import
 input_folder = 'input'
@@ -38,13 +38,16 @@ json_name = join_path(input_folder, input_file_name)
 output_folder = 'output'
 output_file_name_prefix = 'report_'
 
+output_file_path = join_path(output_folder, output_file_name_prefix +
+                      input_files[selected_file_idx])
+
 # create analysis and run
 #sample_analysis = Analysis(json_name,echo_level=1)
 sample_analysis = Analysis(json_name)
 sample_analysis.solve_system()
+sample_analysis.export_computation_results(output_file_path)
 sample_analysis.postprocess()
 
-save_to_pdf(join_path(output_folder, output_file_name_prefix +
-                      input_files[selected_file_idx]))
+save_to_pdf(output_file_path)
 
 plt.show()
