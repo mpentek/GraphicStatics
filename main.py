@@ -17,11 +17,12 @@ from analysis import Analysis
 input_files = {1: 'sample_input',  # can be checked with Stiff
                2: 'sample_input_mod1',
                3: 'sample_input_mod2',
+               # TODO: should add extra constrain not just to elements but also to nodes
+               # those that have external or reaction forces - partially done
                # Automatic topology update at nodes 7 and 8
                4: 'double_arch_kinematic_top_load',
                # Automatic topology update at nodes 7 and 8
                5: 'double_arch_kinematic_top_load_mod1',
-               # TODO: should add extra constrain not just to elements but also to nodes (those that have external or reaction forces)
                # Automatic topology update at nodes 7 and 8
                6: 'double_arch_kinematic_bottom_load',
                7: 'double_arch_top_load',  
