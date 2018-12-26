@@ -234,7 +234,7 @@ class Analysis(object):
             print('## System solve - iteratively')
 
         change = 1
-        while (not(system_solved) and change > 0):
+        while (not(system_solved) or change > 0):
             counter += 1
 
             # setup initial values
@@ -243,16 +243,6 @@ class Analysis(object):
 
             # computation loop
             for key, node in self.computation_model['nodes'].items():
-
-                # should work from python3.5 onwards
-                # for key, node in reversed(self.computation_model['nodes'].items()):
-
-                # reversed_keys = list(reversed([key for key, node in self.computation_model['nodes'].items()]))
-                # sel_key = 0
-                # reversed_keys.remove(sel_key)
-                # reversed_keys.insert(0, sel_key)
-                # for r_key in reversed_keys:
-                #     node = self.computation_model['nodes'][r_key]
 
                 if node.unsolved_degree > 0:
                     # for any unsolved node set to False
@@ -324,6 +314,10 @@ class Analysis(object):
                                     # node will be move along constrained line
                                     other_node_new_coord = get_intersection(
                                         [self.computation_model['elements'][constrained_elements_at_other_node[0]].line, force_diagram['resultant'].line])
+
+                                    # TODO: maybe include if plot with echo
+                                    ##
+                                    # if self.echo_level == 1:
 
                                     msg = '## Topology update:\n'
                                     msg += 'node with id ' + \
