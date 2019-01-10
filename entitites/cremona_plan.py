@@ -77,7 +77,6 @@ class cremona_plan():
        for i in sorted_ex:
            #weitere forces an dem Knoten "einzeichnen"
            current_node = ex_forces[i].node_id
-           print(current_node)
            other_forces = nodes[current_node].forces
            already_done.append(i)
            start = None
@@ -85,7 +84,6 @@ class cremona_plan():
 
            while change == 1:
              for j in range(len(other_forces)):
-                 print(i,other_forces,already_done,other_forces[j],start,change)
                  if other_forces[j] in already_done:
                      if other_forces[j] in self.ex_forces:
                          start = self.ex_forces[other_forces[j]].nodes[1]
@@ -117,8 +115,6 @@ class cremona_plan():
 
        self.points = dict(zip(node_id,points))
        self.members = dict(zip(members,elements))
-
-       print('members', self.members)
 
        elements = []
        

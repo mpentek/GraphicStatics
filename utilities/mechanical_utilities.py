@@ -8,6 +8,7 @@ Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
 
 import matplotlib.pyplot as plt
 
+from math import atan,degrees
 from node2d import Node2D
 from segment2d import Segment2D
 from entitites.force2d  import Force2D
@@ -424,21 +425,40 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
 def sort_clockwise(forces):
     force_id = []
-    force_direction = []
+    force_angle = []
+
 
     for i in range(len(forces)):
         force_id.append(forces[i].id)
 
-        if forces[i].direction[0] != 0:
-            x_direction = 1
-            y_direction = forces[i].direction[1] / abs(forces[i].direction[0])
-        else:
-            x_direction = 0
-            y_direction = forces[i].direction[1]
+        x = forces[i].direction[0]
+        y = forces[i].direction[1]
 
-        force_direction.append([x_direction,y_direction])
-    sort_forces = dict(sorted(zip(force_id,force_direction), key=getSecond, reverse = True))
+        if x != 0:
+            
+         winkel = degrees(atan(y/x))
+         if x >= 0 and y >= 0:
+             angle = winkel
+         if x <= 0 and y >=0:
+             angle = 180 + winkel
+         if x <= 0 and y <=0:
+             angle = 180 + winkel
+         if x >= 0 and y <= 0:
+             quadrant = 4
+             angle = 360 + winkel
+        else:
+            if y >= 0:
+                angle = 90
+            if y <= 0:
+                angle = 270
+
+        force_angle.append(angle)
+
+        print(forces[i].id,[x,y], angle)
+
+    sort_forces = dict(sorted(zip(force_id,force_angle), key=getSecond))
     forces = list(sort_forces.keys())
+    print(forces)
     return(forces)
 
 
