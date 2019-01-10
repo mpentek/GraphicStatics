@@ -12,10 +12,10 @@ from geometric_utilities import get_line_coefficients, get_magnitude_and_directi
 
 class Force2D:
 
-    def __init__(self, id, node, coordinates, components, force_type=None):
-        self.id = str(id)
+    def __init__(self, id, node_id, coordinates, components, force_type=None):
+        self.id = id
         # node (point) of application
-        self.node = node
+        self.node_id = node_id
         # maybe redundant
         self.coordinates = coordinates
         self.magnitude, self.direction = get_magnitude_and_direction(
