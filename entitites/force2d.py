@@ -20,7 +20,7 @@ class Force2D:
         self.coordinates = coordinates
         self.magnitude, self.direction = get_magnitude_and_direction(
             components)
-        # type: one of internal, external, reaction
+        ''' # type: one of internal, external, reaction'''
         self.force_type = force_type
         # application line - with direction and coefficients
         self.line = self._get_line()

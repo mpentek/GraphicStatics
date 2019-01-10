@@ -1,0 +1,212 @@
+{
+    "nodes": [
+        {
+            "id": 0,
+            "coords": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "id": 1,
+            "coords": [
+                3,
+                0.0
+            ]
+        },
+        {
+            "id": 2,
+            "coords": [
+                6,
+                0
+            ]
+        },
+        {
+            "id": 3,
+            "coords": [
+                9,
+                0.0
+            ]
+        },
+        {
+            "id": 4,
+            "coords": [
+                12,
+                0
+            ]
+        },
+        {
+            "id": 5,
+            "coords": [
+                9,
+                -2
+            ]
+        },
+        {
+            "id": 6,
+            "coords": [
+                6,
+                -3
+            ]
+        },
+        {
+            "id": 7,
+            "coords": [
+                3,
+                -2
+            ]
+        }
+    ],
+    "elements": [
+        {
+            "id": "0",
+            "connect": [
+                "0",
+                "1"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "1",
+            "connect": [
+                "1",
+                "2"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "2",
+            "connect": [
+                "2",
+                "3"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "3",
+            "connect": [
+                "3",
+                "4"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "4",
+            "connect": [
+                "4",
+                "5"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "5",
+            "connect": [
+                "5",
+                "6"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "6",
+            "connect": [
+                "6",
+                "7"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "7",
+            "connect": [
+                "7",
+                "0"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "8",
+            "connect": [
+                "1",
+                "7"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "9",
+            "connect": [
+                "2",
+                "6"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "10",
+            "connect": [
+                "3",
+                "5"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "11",
+            "connect": [
+                "2",
+                "7"
+            ],
+            "type" : 1
+        },
+        {
+            "id": "12",
+            "connect": [
+                "2",
+                "5"
+            ],
+            "type" : 1
+        }
+    ],
+    "external_forces": [
+        {
+            "id": 1,
+            "node_id": 7,
+            "components": [
+                0.0,
+                -100.0
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 6,
+            "components": [
+                0.0,
+                -100.0
+            ]
+        },
+        {
+            "id": 3,
+            "node_id": 5,
+            "components": [
+                -100.0,
+                0.0
+            ]
+        }
+    ],
+    "fixities": [
+        {
+            "id": 1,
+            "node_id": 0,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                true,
+                true
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 4,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                false,
+                true
+            ]
+        }
+    ]
+}

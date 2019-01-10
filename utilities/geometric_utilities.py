@@ -134,3 +134,30 @@ def get_line_by_point_and_direction(point, direction):
     line['direction'] = direction
     line['coefficients'] = get_line_coefficients(points)
     return line
+
+def getSecond(sort):
+    number=sort[1]
+    return number
+
+
+def sort_left_to_right(forces,nodes):
+        forces_loaded = forces
+        node_x_forces = []
+
+        for key in forces_loaded:
+            node_id  = forces_loaded[key].node_id
+            node_x = nodes[node_id].coordinates[0]
+            node_x_forces.append(node_x)
+        
+        force_id = list(forces_loaded.keys())
+        force_x = dict(sorted(zip(force_id,node_x_forces),key=getSecond))
+
+        sorted_forces = list(force_x.keys())
+    
+        return sorted_forces
+
+def sort_right_to_left(forces,nodes):
+    forces = sort_left_to_right(forces,nodes)
+    # sorted_forces = sorted(forces,key = getSecond, reverse = True)
+    forces.reverse()
+    return forces

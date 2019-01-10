@@ -1,10 +1,10 @@
-'''
+"""
 Created on Tuesday Dec 4 18:00 2018
 
 @author: mate.pentek@tum.de
 
 Partially based on the BSc Thesis of Benedikt Schatz (TUM, Statik 2018)
-'''
+"""
 
 import json
 import warnings
@@ -19,10 +19,9 @@ from entitites.force2d import Force2D
 from entitites.fixity2d import Fixity2D
 from entitites.segment2d import Segment2D
 
-from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints
-from utilities.geometric_utilities import TOL, are_parallel, get_intersection, get_length, get_midpoint
+from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints,sort_clockwise
+from utilities.geometric_utilities import TOL
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
-from utilities.file_utilitites import json_dump_model
 
 
 class Analysis(object):
@@ -46,59 +45,56 @@ class Analysis(object):
     def _import_model(self, input_model_file):
 
         model = {}
-        model['nodes'] = {}
+        model["nodes"] = {}
         model['elements'] = {}
-        model['forces'] = {}
+        model["forces"] = {}
         # rename to fixities (as forces are also boundary conditions)
-        model['fixities'] = {}
+        model["fixities"] = {}
 
         with open(input_model_file) as f:
             data = json.load(f)
 
         # get node_list:
         for node in data['nodes']:
-            model['nodes'][node['id']] = Node2D(node['id'],
+            model["nodes"][node['id']] = Node2D(node['id'],
                                                 node['coords'],
-                                                # here by default false, unless user specifies it otherwise
                                                 node['is_constrain'])
-
-        # get elements:
-        for element in data['elements']:
-            model['elements'][element['id']] = Element2D(element['id'],
-                                                         element['connect'],
-                                                         # TODO: to be removed in future, should be only stored in 'nodes'
-                                                         [model['nodes'][element['connect'][0]].coordinates,
-                                                          model['nodes'][element['connect'][1]].coordinates],
-                                                         element['is_constrain'])
+        #get elements
+        for element in data['elements']: 
+            print(model['nodes'][0])
+            model['elements'][element['id']] = Element2D(element['id'], 
+                                                         element['connect'], 
+                                                         # TODO: to be removed in future, should be only stored in 'nodes' 
+                                                         [model['nodes'][element['connect'][0]].coordinates, 
+                                                          model['nodes'][element['connect'][1]].coordinates], 
+                                                         element['type']) 
 
         # get (external) forces:
         for ext_force in data['external_forces']:
-            model['forces']['e' + str(ext_force['id'])] = Force2D(ext_force['id'],
+            model["forces"]['e' + str(ext_force['id'])] = Force2D('e' + str(ext_force['id']),
                                                                   ext_force['node_id'],
                                                                   # maybe remove once dependency is not needed
-                                                                  model['nodes'][ext_force['node_id']
+                                                                  model["nodes"][ext_force['node_id']
                                                                                  ].coordinates,
                                                                   ext_force['components'],
                                                                   force_type='external')
 
         # get fixitites
         for fixity in data['fixities']:
-            model['fixities'][fixity['id']] = Fixity2D(fixity['id'],
+            model["fixities"][fixity['id']] = Fixity2D(fixity['id'],
                                                        fixity['node_id'],
                                                        fixity['is_fixed'])
-            # set node of application to is_constrain
-            model['nodes'][fixity['node_id']].is_constrain = True
 
         return model
 
     def postprocess(self):
         # for example cremona-plan
-        print('Cremona-plan to be implemented')
+        print("Cremona-plan to be implemented")
         pass
 
     def _calculate_reaction_forces(self):
         forces = []
-        for key, force in self.input_system['forces'].items():
+        for key, force in self.input_system["forces"].items():
             # if force.force_type == 'external':
             forces.append(force)
 
@@ -157,6 +153,7 @@ class Analysis(object):
 
         for idx, reaction in enumerate(reactions):
             self.computation_model['forces']['r' + str(idx)] = reaction
+            self.computation_model['forces']['r' + str(idx)].id = 'r' + str(idx)
 
         self._check_system_equilibrium()
 
@@ -165,7 +162,7 @@ class Analysis(object):
         # and reaction forces once calculated
 
         forces = []
-        for key, force in self.computation_model['forces'].items():
+        for key, force in self.computation_model["forces"].items():
             # if force.force_type == 'external' or force.force_type == 'reaction':
             forces.append(force)
 
@@ -177,8 +174,7 @@ class Analysis(object):
             plot_force_diagram(force_diagram)
 
         if force_diagram['resultant'].magnitude > TOL:
-            raise Exception(
-                'Computation model not in equilibrium under external and reaction forces!')
+            raise Exception('Computation model not in equilibrium under external and reaction forces!')
 
     def _check_all_nodal_equilibrium(self):
         # checking equilibrium of each node under all forces
@@ -187,21 +183,19 @@ class Analysis(object):
 
     def _check_nodal_equilibrium(self, node_id):
             # TODO: remove need for casting from str to int
-        node = self.computation_model['nodes'][node_id]
+            node = self.computation_model['nodes'][int(node_id)]
 
-        forces = [self.computation_model['forces'][force_id]
-                  for force_id in node.forces]
+            forces = [self.computation_model['forces'][force_id] for force_id in node.forces]
 
-        ################
-        # force diagram
-        # to find the magnitude of the resultant of external forces
-        force_diagram = get_force_diagram(forces)
-        if self.echo_level == 1:
-            plot_force_diagram(force_diagram)
+            ################
+            # force diagram
+            # to find the magnitude of the resultant of external forces
+            force_diagram = get_force_diagram(forces)
+            if self.echo_level == 1:
+                plot_force_diagram(force_diagram)
 
-        if force_diagram['resultant'].magnitude > TOL:
-            raise Exception(
-                'Computation model not in equilibrium at node ' + node.id + '!')
+            if force_diagram['resultant'].magnitude > TOL:
+                warnings.warn('Computation model not in equilibrium at node ' + node.id + '!', Warning)
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
@@ -209,6 +203,7 @@ class Analysis(object):
         # update nodal information with existing forces: external and reaction
         for key, force in self.computation_model['forces'].items():
             self.computation_model['nodes'][force.node_id].forces.append(key)
+            print('here',self.computation_model['nodes'][force.node_id].forces)
         # update nodal information with elements: will link to internal forces
         for key, element in self.computation_model['elements'].items():
             self.computation_model['nodes'][element.nodes[0]
@@ -219,7 +214,7 @@ class Analysis(object):
     def _solve_iteratively(self):
         current_system_unsolved_degree = 0
         # update nodal date with unsolved degree
-        for key, node in self.computation_model['nodes'].items():
+        for key, node in self.computation_model['nodes'].items(): #Was bedeutet key?
             node.unsolved_degree = len(node.unsolved_elements)
             current_system_unsolved_degree += node.unsolved_degree
 
@@ -231,10 +226,10 @@ class Analysis(object):
         counter = 0
 
         if self.echo_level == 1:
-            print('## System solve - iteratively')
+            print("## System solve - iteratively")
 
         change = 1
-        while (not(system_solved) or change > 0):
+        while (not(system_solved) and change > 0):
             counter += 1
 
             # setup initial values
@@ -243,6 +238,16 @@ class Analysis(object):
 
             # computation loop
             for key, node in self.computation_model['nodes'].items():
+
+            # should work from python3.5 onwards
+            # for key, node in reversed(self.computation_model['nodes'].items()):
+
+            # reversed_keys = list(reversed([key for key, node in self.computation_model['nodes'].items()]))
+            # sel_key = 0
+            # reversed_keys.remove(sel_key)
+            # reversed_keys.insert(0, sel_key)
+            # for r_key in reversed_keys:
+            #     node = self.computation_model['nodes'][r_key]
 
                 if node.unsolved_degree > 0:
                     # for any unsolved node set to False
@@ -262,111 +267,20 @@ class Analysis(object):
                             nodal_elements.append(
                                 self.computation_model['elements'][element_id])
 
-                        if len(nodal_elements) == 2:
-                            # for this case we can always decomponse the resultant at the node
-                            # into the 2 elements by the method of joints
+                        ##
+                        ##
+                        ##
+                        # could happen, here a workaround
+                        # insufficient_unsolved = False
+                        # if len(node.unsolved_elements) == 1:
+                        #     insufficient_unsolved = True
+                        #     # take an already solved element
+                        #     # take care not to update values
+                        #     nodal_elements.append(
+                        #         self.computation_model['elements'][node.solved_elements[-1]])
 
-                            forces = get_nodal_equilibrium_by_method_of_joints(
-                                nodal_forces, nodal_elements)
-
-                        elif len(nodal_elements) == 1:
-                            # for this case we need to calculate the existing resultant
-                            # at the node and see if this matches the prescribed topology
-                            # so resultant parallel with member
-                            # otherwise topology needs to be updated/modified ONLY IF
-                            # this is permitted
-
-                            force_diagram = get_force_diagram(nodal_forces)
-                            # move resultant to actual nodal coordinate, recalculate line
-                            force_diagram['resultant'].coordinates = node.coordinates
-                            # update line equation
-                            force_diagram['resultant'].line = force_diagram['resultant']._get_line(
-                            )
-
-                            if not(are_parallel([nodal_elements[0].line, force_diagram['resultant'].line])):
-                                # get the next node id - other end of the nodal_elements[0]
-                                tmp = nodal_elements[0].nodes.copy()
-                                # TODO: make consistent type for id - probably overall as str() and not int()
-                                tmp.remove(node.id)
-                                other_node_id = tmp[0]
-
-                                if self.computation_model['nodes'][other_node_id].is_constrain:
-                                    raise Exception(
-                                        'Computation model (geometrically) constrained at node ' + other_node_id + ', cannot solve further!')
-
-                                # get list of all elements at node - for now ids
-                                # using .copy() to create value copy of list
-                                elements_at_other_node = self.computation_model['nodes'][other_node_id].unsolved_elements.copy(
-                                )
-                                elements_at_other_node += self.computation_model['nodes'][other_node_id].solved_elements.copy(
-                                )
-                                # now elements instead of ids
-                                elements_at_other_node = [
-                                    self.computation_model['elements'][element_id] for element_id in elements_at_other_node]
-                                constrained_elements_at_other_node = [
-                                    element.id for element in elements_at_other_node if element.is_constrain]
-                                if len(constrained_elements_at_other_node) != 1:
-                                    # for 2d - plane - problems only 1 line should give the constraint
-                                    # assumption for the current implementation
-                                    raise Exception(
-                                        'Computation model (geometrically) over-(or under-)constrained at node ' + other_node_id + ', cannot solve further!')
-                                else:
-                                    # node will be move along constrained line
-                                    other_node_new_coord = get_intersection(
-                                        [self.computation_model['elements'][constrained_elements_at_other_node[0]].line, force_diagram['resultant'].line])
-
-                                    # TODO: maybe include if plot with echo
-                                    ##
-                                    # if self.echo_level == 1:
-
-                                    msg = '## Topology update:\n'
-                                    msg += 'node with id ' + \
-                                        str(other_node_id) + \
-                                        ' and coordinates '
-                                    msg += ', '.join('%.3f' % coord
-                                                     for coord in self.computation_model['nodes'][other_node_id].coordinates) + '\n'
-                                    msg += 'updated to coordinates ' + \
-                                        ', '.join('%.3f' % coord
-                                                  for coord in other_node_new_coord) + '\n'
-                                    print(msg)
-
-                                    # TODO - WIP: introduce model part utilities
-                                    # all model data should only be stored once in the model part
-                                    # similar changes - such as the following - should be carried out by these
-
-                                    # node needs to be updated in the model part
-                                    self.computation_model['nodes'][other_node_id].coordinates = other_node_new_coord
-
-                                    # affected elements need to be updated in the model part
-                                    for element_id in [element.id for element in elements_at_other_node]:
-                                        # get index of node which needs to be updated
-                                        # local index from the attribute of elements
-                                        idx = self.computation_model['elements'][element_id].nodes.index(
-                                            other_node_id)
-
-                                        # set new node coordinate
-                                        self.computation_model['elements'][element_id].coordinates[idx] = other_node_new_coord
-
-                                        # update midpoint
-                                        self.computation_model['elements'][element_id].midpoint = get_midpoint(
-                                            self.computation_model['elements'][element_id].coordinates)
-                                        # update line
-                                        self.computation_model['elements'][element_id].line = self.computation_model['elements'][element_id]._get_line(
-                                        )
-                                        # update length
-                                        self.computation_model['elements'][element_id].length = get_length(
-                                            self.computation_model['elements'][element_id].coordinates)
-
-                            else:
-                                print()
-                                # carry on if parallel, no topology update needed
-                                pass
-
-                            forces = [force_diagram['resultant']]
-
-                        else:
-                            # TODO implement some special warning, should not be the case
-                            pass
+                        forces = get_nodal_equilibrium_by_method_of_joints(
+                            nodal_forces, nodal_elements)
 
                         if forces is not None:
                             # update force coordinates and line
@@ -375,9 +289,16 @@ class Analysis(object):
                                 force.line = force._get_line()
 
                             # update element and nodal information
-                            for o_idx, element in enumerate(nodal_elements):
-                                # TODO: note, that by this point the force -> so forces[o_idx]
-                                # has to be parallel to the element !!!
+                            for o_idx, element in enumerate(nodal_elements): #Was ist o_idx?
+                                #Hier weitermachen
+
+                                ##
+                                ##
+                                ##
+                                # if insufficient_unsolved and o_idx == 1:
+                                #     # nothing needs to be done, already solved
+                                #     pass
+                                # else:
 
                                 # use a parameter xi to determine internal force type
                                 dir_u = forces[o_idx].direction[0]
@@ -403,8 +324,7 @@ class Analysis(object):
                                     element.element_type = 'tension'
                                     element.force_magnitude = forces[o_idx].magnitude
                                 else:
-                                    raise Exception(
-                                        'Case not permitted: xi_x and xi_y must have same sign!')
+                                    ValueError("Case not permitted")
 
                                 # update node and force lists:
                                 labels = ['i', 'j']
@@ -413,26 +333,33 @@ class Analysis(object):
                                     #     components = []
                                     # elif element.element_type == 'compression':
                                     components = [self.computation_model['nodes'][node_id].coordinates[0] - element.midpoint[0],
-                                                  self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint[1]]
+                                                    self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint[1]]
                                     if element.element_type == 'tension':
                                         components = [-components[0], -
-                                                      components[1]]
+                                                        components[1]]
+                                    # else:
+                                    #     ValueError("Case not permitted")
+                                    
 
                                     force = Force2D(str(element.id) + labels[i_idx],
                                                     node_id,
                                                     self.computation_model['nodes'][node_id].coordinates,
                                                     # direction will be computed correctly
                                                     components,
-                                                    'internal')
+                                                    forces[o_idx].force_type)
                                     # overwriting magnitude with the correct value
                                     force.magnitude = forces[o_idx].magnitude
 
+                                    
                                     # update forces
                                     self.computation_model['forces'][force.id] = force
+        
+                                    
 
                                     # update nodes - force list and node unsolved degree
                                     self.computation_model['nodes'][node_id].forces.append(
-                                        force.id)
+                                        force.id) 
+
                                     self.computation_model['nodes'][node_id].unsolved_degree -= 1
                                     # also pop elemnt id once solve
                                     # using remove as ID should be unique in list
@@ -454,29 +381,51 @@ class Analysis(object):
             change = old_system_unsolved_degree - current_system_unsolved_degree
             ##
             if self.echo_level == 1:
-                print('At iteration: ', counter)
-                print('System unsolved degree - old: ',
+                print("At iteration: ", counter)
+                print("System unsolved degree - old: ",
                       old_system_unsolved_degree)
-                print('System unsolved degree - current: ',
+                print("System unsolved degree - current: ",
                       current_system_unsolved_degree)
-                print('System unsolved degree - change: ',
+                print("System unsolved degree - change: ",
                       change)
 
             old_system_unsolved_degree = current_system_unsolved_degree
 
         if current_system_unsolved_degree == 0:
-            print('## System solved successfully!')
+            print("## System solved successfully!")
             self._check_all_nodal_equilibrium()
         else:
-            warnings.warn(
-                'System cannot be solved iteratively, needs other solution', Warning)
+            warnings.warn("System cannot be solved iteratively, needs other solution",Warning)
 
     def solve_system(self):
         self._solve_iteratively()
-
         plot_solved_system(self.computation_model)
-        # TODO: add Ritter cut, maybe other solve possibilitie as well
         pass
 
-    def export_computation_results(self, file_path):
-        json_dump_model(self.computation_model, file_path)
+# if __name__ == "__main__":
+    # '''
+    # Mock to check equilibrium at node 6 - example 4
+    # '''
+
+    # element = Element2D('6', ['6', '7'], [[7.5, -0.9],[2.5, -1.5]])
+    # elements = [element]
+
+    # force_m13 = Force2D('13j', '6', [7.5, -0.9], [0.19996 * 1.599296, 0.9798 * 1.599296], 'internal')
+    # force_m5 = Force2D('5j', '6', [7.5, -0.9], [0.98418 * 172.2154, 0.17771 * 172.2154], 'internal')
+    # forces = [force_m13, force_m5]
+
+    # force_diagram = get_force_diagram(forces)
+
+    # plot_force_diagram(force_diagram)
+    # plt.show()
+
+
+
+    # print("## ARE PARALLEL: ", are_parallel([elements[0].line,force_diagram['resultant'].line]))
+    # print("element id: ", elements[0].id)
+    # print("element_dir: ",elements[0].line['direction'])
+    # print("resultant_dir: ", force_diagram['resultant'].direction)
+    # print("element_line: ",elements[0].line['coefficients'])
+    # print("resultant_line: ", force_diagram['resultant'].line['coefficients'])
+    # print("resultant_coordinates: ", force_diagram['resultant'].coordinates)
+    # decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]

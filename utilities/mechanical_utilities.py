@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 from node2d import Node2D
 from segment2d import Segment2D
-from force2d import Force2D
+from entitites.force2d  import Force2D
+from utilities.geometric_utilities import getSecond
 
 from geometric_utilities import get_line_by_point_and_direction, get_intersection, are_parallel, TOL
 
@@ -59,7 +60,7 @@ def get_force_diagram(forces):
         s_coord_x = e_coord_x
         s_coord_y = e_coord_y
 
-        force_diagram['force_base_points'].append(
+        force_diagram['force_base_points'].append(  
             Node2D('p_' + force_diagram['forces'][-1].id, [s_coord_x, s_coord_y]))
 
         e_coord_x = s_coord_x + \
@@ -69,7 +70,7 @@ def get_force_diagram(forces):
             force_diagram['forces'][-1].magnitude * \
             force_diagram['forces'][-1].direction[1]
 
-        force_diagram['force_segments'].append(Segment2D('g*_' + forces[0].id, [Node2D('s', [s_coord_x, s_coord_y]),
+        force_diagram['force_segments'].append(Segment2D('g*_' + forces[-1].id, [Node2D('s', [s_coord_x, s_coord_y]),
                                                                                 Node2D('e', [e_coord_x, e_coord_y])]))
 
     resultant_start = force_diagram['force_base_points'][0].coordinates
@@ -78,7 +79,7 @@ def get_force_diagram(forces):
                                          resultant_end[0] - resultant_start[0], resultant_end[1] - resultant_start[1]])
 
     x = resultant_start[0]
-    x += (resultant_end[0] - resultant_start[0])/2.
+    x += (resultant_end[0] - resultant_start[0])/2. #Was bedeutet dieser Schritt?
     x += force_diagram['resultant'].magnitude/2
 
     y = resultant_start[1]
@@ -381,6 +382,9 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
     # to find the magnitude of the resultant of existing nodal forces
     force_diagram = get_force_diagram(forces)
 
+    
+    # type_of_force = 
+
     # # TODO: for debuging
     # from plot_utilities import plot_force_diagram
     # plot_force_diagram(force_diagram)
@@ -388,12 +392,25 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
 
 
-    # decompose resultant
-    # into two non-parallel components
-    directions = [elements[0].line['direction'], elements[1].line['direction']]
-    decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
-                                                                            directions)
+    if len(elements) == 2:
+        # decompose resultant
+        # into two non-parallel components
+        directions = [elements[0].line['direction'], elements[1].line['direction']]
+        decomposed_forces, points = decompose_force_into_components_by_directions(force_diagram['resultant'],
+                                                                                directions)
+        type_of_element = [elements[0].type, elements[1].type]
+        decomposed_forces[0].force_type = type_of_element[0]
+        decomposed_forces[1].force_type = type_of_element[1]
 
+
+    elif len(elements) == 1:
+        # TODO: check if this is robust enough
+        # for element 5 -> works
+        # for 6 -> does not work -> not parallel
+        type_of_element = [elements[0].type]
+
+        decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
+        decomposed_forces[0].force_type = type_of_element[0]
     # for debug
     # plot_force_diagram(force_diagram)
     #plot_decomposed_forces(force_diagram['resultant'], decomposed_forces, points)
@@ -401,5 +418,27 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
     # TODO: because it is nodal equilibrium, here the signs should be flipped
     # and not in the function calling this one
+    
 
     return decomposed_forces
+
+def sort_clockwise(forces):
+    force_id = []
+    force_direction = []
+
+    for i in range(len(forces)):
+        force_id.append(forces[i].id)
+
+        if forces[i].direction[0] != 0:
+            x_direction = 1
+            y_direction = forces[i].direction[1] / abs(forces[i].direction[0])
+        else:
+            x_direction = 0
+            y_direction = forces[i].direction[1]
+
+        force_direction.append([x_direction,y_direction])
+    sort_forces = dict(sorted(zip(force_id,force_direction), key=getSecond, reverse = True))
+    forces = list(sort_forces.keys())
+    return(forces)
+
+

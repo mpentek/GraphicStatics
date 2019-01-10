@@ -148,7 +148,7 @@
             "node_id": "5",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
-                true,
+                false,
                 true
             ]
         }

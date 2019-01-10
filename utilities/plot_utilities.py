@@ -556,3 +556,5 @@ def plot_reaction_forces(reactions, resultant):
 
     ax.set_xlim([-200, 200])
     ax.set_ylim([-200, 200])
+
+#def plot_cremona_plan():

@@ -3,7 +3,7 @@
         {
             "id": "0",
             "coords": [
-                -12.5,
+                -13,
                 0.0
             ],
             "is_constrain" : false
@@ -11,7 +11,7 @@
         {
             "id": "1",
             "coords": [
-                -8.5,
+                -9,
                 4.0
             ],
             "is_constrain" : false
@@ -19,7 +19,7 @@
         {
             "id": "2",
             "coords": [
-                -3.5,
+                -4,
                 6.0
             ],
             "is_constrain" : false
@@ -27,7 +27,7 @@
         {
             "id": "3",
             "coords": [
-                3.5,
+                4,
                 6.0
             ],
             "is_constrain" : false
@@ -35,7 +35,7 @@
         {
             "id": "4",
             "coords": [
-                8.5,
+                9,
                 4.0
             ],
             "is_constrain" : false
@@ -43,7 +43,7 @@
         {
             "id": "5",
             "coords": [
-                12.5,
+                13,
                 0.0
             ],
             "is_constrain" : false

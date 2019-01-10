@@ -235,7 +235,7 @@
             "node_id": "0",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
-                true,
+                false,
                 true
             ]
         },
@@ -244,7 +244,7 @@
             "node_id": "5",
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
-                true,
+                false,
                 true
             ]
         }
