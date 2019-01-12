@@ -444,7 +444,6 @@ def sort_clockwise(forces):
          if x <= 0 and y <=0:
              angle = 180 + winkel
          if x >= 0 and y <= 0:
-             quadrant = 4
              angle = 360 + winkel
         else:
             if y >= 0:
@@ -454,11 +453,8 @@ def sort_clockwise(forces):
 
         force_angle.append(angle)
 
-        print(forces[i].id,[x,y], angle)
-
     sort_forces = dict(sorted(zip(force_id,force_angle), key=getSecond))
     forces = list(sort_forces.keys())
-    print(forces)
     return(forces)
 
 

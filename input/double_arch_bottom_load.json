@@ -52,7 +52,7 @@
             "id": 6,
             "coords": [
                 8,
-                -1
+                -1,5
             ],
             "is_constrain" : false
         },
@@ -76,7 +76,7 @@
             "id": 9,
             "coords": [
                 -8,
-                -1
+                -1,5
             ],
             "is_constrain" : false
         }
@@ -213,8 +213,8 @@
         {
             "id": 16,
             "connect": [
-                3,
-                6
+                4,
+                7
             ],
             "type" : 3
         }

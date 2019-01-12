@@ -1,14 +1,16 @@
 #class cremona_plan 
-from force2d import Force2D
+from entitites.force2d import Force2D
 from utilities.geometric_utilities import sort_left_to_right, sort_right_to_left,getSecond
 from node2d import Node2D
 from segment2d import Segment2D
 from utilities.mechanical_utilities import sort_clockwise
+from utilities.plo_cremona_plan import plot_cremona_plan
 
 class cremona_plan():
     def __init__(self,analysis):
        model = analysis.input_system["forces"]
        nodes = analysis.input_system["nodes"]
+
        
 
        self.points = {}
@@ -32,6 +34,15 @@ class cremona_plan():
        sorted_ex = sort_left_to_right(ex_forces , nodes)
        sorted_reactions = sort_right_to_left(reactions, nodes)
 
+    #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]
+    #    model['14j'].direction = [-0.7071067811865476, 0.7071067811865476]
+       model['15i'].direction = [0.658504607868518, -0.7525766947068778]
+       model['15j'].direction = [-0.658504607868518, 0.7525766947068778]
+      
+       #    print('16i', model['16i'].direction, '16j', model['16j'].direction )
+    #    model['16i'].direction = [-0.7071067811865476, -0.7071067811865476]
+    #    model['16j'].direction = [0.7071067811865476, 0.7071067811865476]
+
        #Kräfte an Knoten sortieren
        for i in nodes:
            sort_forces = []
@@ -40,6 +51,10 @@ class cremona_plan():
                sort_forces.append(model[force_at_node[j]])
            sorted_forces = sort_clockwise(sort_forces)
            nodes[i].forces = sorted_forces
+
+    #    nodes[8].forces = [e2, '8i', '14j', '11j', '7j']
+    #    nodes[9].forces =  [e3, '7i', '15j', '12j', '6j']
+           
     
        
 
@@ -65,61 +80,11 @@ class cremona_plan():
            elements.append(element)
            a = a + 1
 
-       self.points = dict(zip(node_id,points))
+       self.points = dict(zip(node_id, points))
        self.ex_forces = dict(zip(sorted_ex,elements))
+    
 
-       elements = [] 
-       members = []
-       already_done = []
-       self.members = {}
-       
-
-       for i in sorted_ex:
-           #weitere forces an dem Knoten "einzeichnen"
-           current_node = ex_forces[i].node_id
-           other_forces = nodes[current_node].forces
-           already_done.append(i)
-           start = None
-           change = 1
-
-           while change == 1:
-             for j in range(len(other_forces)):
-                 if other_forces[j] in already_done:
-                     if other_forces[j] in self.ex_forces:
-                         start = self.ex_forces[other_forces[j]].nodes[1]
-                         
-                     else:
-                         change = 0 
-
-                 if start != None:
-                     if other_forces[j] not in already_done:
-                         force = model[str(other_forces[j])]
-                         start.forces.append(j)
-           
-                         x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
-                         y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
-                         start = Node2D(a,[x_amount,y_amount])
-                         start.forces.append(j)
-           
-                         points.append(start)
-                         node_id.append(a)
-                         element = Segment2D(a-1,[points[a-1],points[a]])
-                         elements.append(element)
-                         members.append(other_forces[j])
-                         already_done.append(other_forces[j])
-                         a = a + 1
-                         
-                         
-
-                
-
-       self.points = dict(zip(node_id,points))
-       self.members = dict(zip(members,elements))
-
-       elements = []
-       
-
-       #reactions "zeichnen/speichern"
+        #reactions "zeichnen/speichern"
        for i in sorted_reactions:
            force = reactions[i]
            start.forces.append(i)
@@ -127,7 +92,9 @@ class cremona_plan():
            x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
            y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
            start = Node2D(a,[x_amount,y_amount])
+        
            start.forces.append(i)
+               
            
            points.append(start)
            node_id.append(a)
@@ -138,9 +105,68 @@ class cremona_plan():
        self.points = dict(zip(node_id,points))
        self.reactions = dict(zip(sorted_reactions,elements))
 
+       elements = [] 
+       members = []
+       already_done = []
+       self.members = {}
+
+       for i in sorted_ex:
+           #weitere forces an dem Knoten "einzeichnen"
+           current_node = ex_forces[i].node_id
+           other_forces = nodes[current_node].forces
+           already_done.append(i)
+           start = None
+           change = 1
+
+
+           while change == 1:
+             for j in range(len(other_forces)):
+                 if other_forces[j] in already_done:
+                     if other_forces[j] in self.ex_forces:
+                         start = self.ex_forces[other_forces[j]].nodes[1]
+                         points.append(start)
+                         node_id.append(a)
+                         a = a + 1
+                         
+                     else:
+                         change = 0 
+
+                 if start != None:
+                     if other_forces[j] not in already_done:
+                         print(start, 'force', other_forces[j])
+                         force = model[str(other_forces[j])]
+                         start.forces.append(j)
+           
+                         x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
+                         y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
+
+                         start = Node2D(a,[x_amount,y_amount])
+                         start.forces.append(j)
+           
+                         points.append(start)
+                         node_id.append(a)
+                         element = Segment2D(a-1,[points[a-1],points[a]])
+                         elements.append(element)
+                         members.append(other_forces[j])
+                         already_done.append(other_forces[j])
+                         a = a + 1
+                         print(start.coordinates)
+
+                         
+                         
+
+                
+
+       self.points = dict(zip(node_id, points))
+       self.members = dict(zip(members,elements))
+
+       for node_id in self.points:
+           print(node_id,'x', self.points[node_id].coordinates[0], 'y', self.points[node_id].coordinates[1])
+
+       elements = []
        
 
-       #Elemente nach type aufteilen
+       #Elemente nach type aufteilen,
        type_forces = []
        for i in member_forces:
            type_force = member_forces[i].force_type
@@ -165,7 +191,10 @@ class cremona_plan():
            if sorted_members[i] == 3:
               Verbindung[i] = 3
 
-       #KnotenGG am bel_chord "zeichnen/speichern"
+
+
+       #plot_cremona_plan
+       plot_cremona_plan(self)
        
        member_forces = []
        new_coordinates = []
