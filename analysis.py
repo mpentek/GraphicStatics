@@ -340,13 +340,15 @@ class Analysis(object):
                                     # else:
                                     #     ValueError("Case not permitted")
                                     
-
+                                    print(element.id,  element.element_type)
                                     force = Force2D(str(element.id) + labels[i_idx],
                                                     node_id,
                                                     self.computation_model['nodes'][node_id].coordinates,
                                                     # direction will be computed correctly
                                                     components,
-                                                    forces[o_idx].force_type)
+                                                    forces[o_idx].force_type,
+                                                    element.element_type)
+                                    print(force.element_type)                
                                     # overwriting magnitude with the correct value
                                     force.magnitude = forces[o_idx].magnitude
 
@@ -396,6 +398,12 @@ class Analysis(object):
             self._check_all_nodal_equilibrium()
         else:
             warnings.warn("System cannot be solved iteratively, needs other solution",Warning)
+        
+        print('analysis')
+        print('14i', self.computation_model['forces']['14i'].node_id, self.computation_model['forces']['14i'].direction, 'magnitude', self.computation_model['forces']['14i'].magnitude)
+        print('14j', self.computation_model['forces']['14j'].node_id, self.computation_model['forces']['14j'].direction, 'magnitude', self.computation_model['forces']['14j'].magnitude)
+        print('15i', self.computation_model['forces']['15i'].node_id, self.computation_model['forces']['15i'].direction, 'magnitude', self.computation_model['forces']['15i'].magnitude)
+        print('15j', self.computation_model['forces']['15j'].node_id, self.computation_model['forces']['15j'].direction, 'magnitude', self.computation_model['forces']['15j'].magnitude)
 
     def solve_system(self):
         self._solve_iteratively()

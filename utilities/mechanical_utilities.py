@@ -434,6 +434,12 @@ def sort_clockwise(forces):
         x = forces[i].direction[0]
         y = forces[i].direction[1]
 
+        if forces[i].element_type == 'compression':
+            x = -x
+            y = -y
+        
+        print(forces[i].id, [x,y], forces[i].element_type)
+
         if x != 0:
             
          winkel = degrees(atan(y/x))

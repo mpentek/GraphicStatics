@@ -1,5 +1,4 @@
 #class cremona_plan 
-from entitites.force2d import Force2D
 from utilities.geometric_utilities import sort_left_to_right, sort_right_to_left,getSecond
 from node2d import Node2D
 from segment2d import Segment2D
@@ -10,6 +9,7 @@ class cremona_plan():
     def __init__(self,analysis):
        model = analysis.input_system["forces"]
        nodes = analysis.input_system["nodes"]
+       elements = analysis.input_system["elements"]
 
        
 
@@ -33,11 +33,14 @@ class cremona_plan():
 
        sorted_ex = sort_left_to_right(ex_forces , nodes)
        sorted_reactions = sort_right_to_left(reactions, nodes)
+       sorted_member_forces = sort_left_to_right(member_forces, nodes)
+      
 
+      
     #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]
     #    model['14j'].direction = [-0.7071067811865476, 0.7071067811865476]
-       model['15i'].direction = [0.658504607868518, -0.7525766947068778]
-       model['15j'].direction = [-0.658504607868518, 0.7525766947068778]
+    #    model['15i'].direction = [0.658504607868518, -0.7525766947068778]
+    #    model['15j'].direction = [-0.658504607868518, 0.7525766947068778]
       
        #    print('16i', model['16i'].direction, '16j', model['16j'].direction )
     #    model['16i'].direction = [-0.7071067811865476, -0.7071067811865476]
@@ -54,11 +57,13 @@ class cremona_plan():
 
     #    nodes[8].forces = [e2, '8i', '14j', '11j', '7j']
     #    nodes[9].forces =  [e3, '7i', '15j', '12j', '6j']
+    #    model['14j'].direction = [0.7071067811865476, -0.7071067811865476]
            
     
        
 
        #Externe Lasten in Cremonaplan "speichern/zeichnen"
+
        points  = [Node2D(0,[0,0])]
        start = Node2D(0,[0,0])
        elements = []
@@ -85,7 +90,9 @@ class cremona_plan():
     
 
         #reactions "zeichnen/speichern"
+       already_done = []
        for i in sorted_reactions:
+           already_done.append(i)
            force = reactions[i]
            start.forces.append(i)
            
@@ -107,7 +114,6 @@ class cremona_plan():
 
        elements = [] 
        members = []
-       already_done = []
        self.members = {}
 
        for i in sorted_ex:
@@ -168,11 +174,12 @@ class cremona_plan():
 
        #Elemente nach type aufteilen,
        type_forces = []
-       for i in member_forces:
-           type_force = member_forces[i].force_type
+       print(sorted_member_forces)
+       for i in range(len(sorted_member_forces)):
+           type_force = model[sorted_member_forces[i]].force_type
            type_forces.append(type_force)
            
-       force_id = list(member_forces.keys())
+       force_id = sorted_member_forces
        sorted_members = dict(sorted(zip(force_id,type_forces),key = getSecond))
        bel_chord = {}
        unbel_chord = {}
@@ -191,6 +198,9 @@ class cremona_plan():
            if sorted_members[i] == 3:
               Verbindung[i] = 3
 
+
+       #member unbel_chord einfügen
+      
 
 
        #plot_cremona_plan

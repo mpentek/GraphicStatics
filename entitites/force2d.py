@@ -12,7 +12,7 @@ from geometric_utilities import get_line_coefficients, get_magnitude_and_directi
 
 class Force2D:
 
-    def __init__(self, id, node_id, coordinates, components, force_type=None):
+    def __init__(self, id, node_id, coordinates, components, force_type=None, element_type = None):
         self.id = id
         # node (point) of application
         self.node_id = node_id
@@ -22,6 +22,7 @@ class Force2D:
             components)
         ''' # type: one of internal, external, reaction'''
         self.force_type = force_type
+        self.element_type = element_type
         # application line - with direction and coefficients
         self.line = self._get_line()
 
