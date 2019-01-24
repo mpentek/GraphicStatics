@@ -37,12 +37,11 @@ class cremona_plan():
       
 
       
-    #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]
+    #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]+
     #    model['14j'].direction = [-0.7071067811865476, 0.7071067811865476]
     #    model['15i'].direction = [0.658504607868518, -0.7525766947068778]
     #    model['15j'].direction = [-0.658504607868518, 0.7525766947068778]
       
-       #    print('16i', model['16i'].direction, '16j', model['16j'].direction )
     #    model['16i'].direction = [-0.7071067811865476, -0.7071067811865476]
     #    model['16j'].direction = [0.7071067811865476, 0.7071067811865476]
 
@@ -87,17 +86,24 @@ class cremona_plan():
 
        self.points = dict(zip(node_id, points))
        self.ex_forces = dict(zip(sorted_ex,elements))
+
+       elements = []
     
 
         #reactions "zeichnen/speichern"
        already_done = []
        for i in sorted_reactions:
+           print(i, 'start', start.coordinates)
            already_done.append(i)
            force = reactions[i]
            start.forces.append(i)
-           
-           x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
-           y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
+
+           x = force.direction[0]
+           y = force.direction[1]
+           print(x,y,'magnitude', force.magnitude)
+
+           x_amount = start.coordinates[0] + force.magnitude*x
+           y_amount = start.coordinates[1] + force.magnitude*y
            start = Node2D(a,[x_amount,y_amount])
         
            start.forces.append(i)
@@ -111,7 +117,8 @@ class cremona_plan():
 
        self.points = dict(zip(node_id,points))
        self.reactions = dict(zip(sorted_reactions,elements))
-
+       print('sorted', sorted_reactions,'points',elements[-3].nodes[0].coordinates,elements[-2].nodes[0].coordinates, elements[-1].nodes[0].coordinates)
+       print('hardcode', self.reactions['r2'].nodes[0].coordinates, self.reactions['r2'].nodes[1].coordinates)
        elements = [] 
        members = []
        self.members = {}
@@ -139,7 +146,6 @@ class cremona_plan():
 
                  if start != None:
                      if other_forces[j] not in already_done:
-                         print(start, 'force', other_forces[j])
                          force = model[str(other_forces[j])]
                          start.forces.append(j)
            
@@ -156,7 +162,6 @@ class cremona_plan():
                          members.append(other_forces[j])
                          already_done.append(other_forces[j])
                          a = a + 1
-                         print(start.coordinates)
 
                          
                          
@@ -166,15 +171,10 @@ class cremona_plan():
        self.points = dict(zip(node_id, points))
        self.members = dict(zip(members,elements))
 
-       for node_id in self.points:
-           print(node_id,'x', self.points[node_id].coordinates[0], 'y', self.points[node_id].coordinates[1])
-
-       elements = []
        
 
        #Elemente nach type aufteilen,
        type_forces = []
-       print(sorted_member_forces)
        for i in range(len(sorted_member_forces)):
            type_force = model[sorted_member_forces[i]].force_type
            type_forces.append(type_force)
@@ -184,23 +184,72 @@ class cremona_plan():
        bel_chord = {}
        unbel_chord = {}
        Verbindung = {}
+       
 
        #andere Elemente löschen
        for i in sorted_members:
            if sorted_members[i] == 1:
-              bel_chord[i] = 1
+              bel_chord[i] = model[i]
 
        for i in sorted_members:
            if sorted_members[i] == 2:
-              unbel_chord[i] = 2
+              unbel_chord[i] = model[i]
 
        for i in sorted_members:
            if sorted_members[i] == 3:
-              Verbindung[i] = 3
-
+              Verbindung[i] = model[i]
 
        #member unbel_chord einfügen
       
+       #sort unbel_chord
+       nodes_unbel = []
+       force_id = []
+
+       for i in unbel_chord:
+           coo_node = nodes[unbel_chord[i].node_id].coordinates
+           nodes_unbel.append(coo_node)
+           force_id.append(i)
+       sorted_unbel_chord = dict(sorted(sorted(zip(force_id,nodes_unbel),reverse = True),key = getSecond, reverse = True))
+
+       #start bestimmen
+       print('sorted_reactions', sorted_reactions)
+       if model[sorted_reactions[0]].node_id == model[sorted_reactions[1]].node_id:
+           start = self.reactions[sorted_reactions[1]].nodes[1]
+           print('Version a')
+       else:
+           start = self.reactions[sorted_reactions[0]].nodes[1]
+           print('Version b',sorted_reactions[0], start.coordinates )
+       points.append(start)
+       a= a+1
+         
+       #member einzeichnen
+       print('sort',sorted_unbel_chord)
+       for i in sorted_unbel_chord:  
+             print(i,start.coordinates)      
+             force = unbel_chord[i]
+
+             start.forces.append(i)
+             print('x', force.direction[0], 'y', force.direction[1])
+           
+             x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
+             y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
+
+             start = Node2D(a,[x_amount,y_amount])
+             start.forces.append(i)
+             print(start.coordinates)
+           
+             points.append(start)
+             node_id.append(a)
+             element = Segment2D(a-1,[points[a-1],points[a]])
+             elements.append(element)
+             members.append(i)
+             already_done.append(i)
+             a = a + 1
+      
+
+       self.points = dict(zip(node_id, points))
+       self.members = dict(zip(members,elements))
+
 
 
        #plot_cremona_plan

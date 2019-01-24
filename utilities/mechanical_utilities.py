@@ -438,7 +438,6 @@ def sort_clockwise(forces):
             x = -x
             y = -y
         
-        print(forces[i].id, [x,y], forces[i].element_type)
 
         if x != 0:
             

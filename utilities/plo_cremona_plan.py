@@ -45,7 +45,6 @@ def get_limits_and_points_for_plot(points, offset_factor=0.25):
 
 def plot_cremona_plan(Cremona_plan):
     x_lim, y_lim, p_id, x, y = get_limits_and_points_for_plot(Cremona_plan.points)
-    print(p_id,'x', x,'y', y)
 
     fig, ax = plt.subplots()
     ax.set_title('Cremona Plan')
@@ -69,7 +68,7 @@ def plot_cremona_plan(Cremona_plan):
                      length_includes_head=True, head_width=10, head_length=10)
         s_x = Cremona_plan.ex_forces[f_id].midpoint[0]
         s_y = Cremona_plan.ex_forces[f_id].midpoint[1]  
-        ax.annotate(f_id,(s_x, s_y))  
+        # ax.annotate(f_id,(s_x, s_y))  
 
     #plot reactions
     for f_id in Cremona_plan.reactions:
@@ -86,8 +85,8 @@ def plot_cremona_plan(Cremona_plan):
         delta_x = Cremona_plan.members[f_id].x
         delta_y = Cremona_plan.members[f_id].y
         ax.add_line(PLine2D(delta_x, delta_y,
-                            alpha=1, color='b', linestyle='-'))
-        s_x = Cremona_plan.members[f_id].midpoint[0]
-        s_y = Cremona_plan.members[f_id].midpoint[1]  
+                            alpha=1, color='b', linestyle='--'))
+        s_x = Cremona_plan.members[f_id].midpoint[0] - 1
+        s_y = Cremona_plan.members[f_id].midpoint[1] - 1
         ax.annotate(f_id,(s_x, s_y))                                         
 
