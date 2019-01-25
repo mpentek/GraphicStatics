@@ -11,6 +11,7 @@ class cremona_plan():
        nodes = analysis.input_system["nodes"]
        elements = analysis.input_system["elements"]
        bottom_or_top = analysis.input_system["bel_chord"]
+       print('here_start', model)
 
        
 
@@ -28,12 +29,14 @@ class cremona_plan():
        b= number_ex_forces + number_reactions
        
        #in versch Kräfte aufteilen
+       print('Items',model.items(), list(model.items())[-1])
        ex_forces = dict(list(model.items())[:number_ex_forces])
        reactions = dict(list(model.items())[number_ex_forces : b])
-       member_forces = dict(list(model.items())[b : -1])
+       member_forces = dict(list(model.items())[b : ])
 
        sorted_ex = sort_left_to_right(ex_forces , nodes)
        sorted_reactions = sort_right_to_left(reactions, nodes)
+       print('member_forces', member_forces)
        sorted_member_forces = sort_left_to_right(member_forces, nodes)
       
 
@@ -47,7 +50,6 @@ class cremona_plan():
     #    model['16j'].direction = [0.7071067811865476, 0.7071067811865476]
 
        #Lasten für sort_clockwise richtig einordnen
-       print(bottom_or_top)
        x_real = []
        y_real = []
        for i in ex_forces:
@@ -78,7 +80,6 @@ class cremona_plan():
                sort_forces.append(model[force_at_node[j]])
            sorted_forces = sort_clockwise(sort_forces, bottom_or_top)
            nodes[i].forces = sorted_forces
-           print(i,sorted_forces)
 
     #    'nodes[2].forces = ['e2', '2i', '15i', '11i', '1j']
     #    nodes[1].forces = ['e1', '1i', '14i', '10i', '0j']
@@ -157,7 +158,6 @@ class cremona_plan():
        for i in sorted_ex:
            #weitere forces an dem Knoten "einzeichnen"
            current_node = ex_forces[i].node_id
-           print('node', current_node)
            other_forces = nodes[current_node].forces
            already_done.append(i)
            start = None
@@ -166,7 +166,6 @@ class cremona_plan():
 
            while change == 1:
              for j in range(len(other_forces)):
-                 print(other_forces[j])
                  if other_forces[j] in already_done:
                      if other_forces[j] in self.ex_forces:
                          start = self.ex_forces[other_forces[j]].nodes[1]
@@ -217,7 +216,9 @@ class cremona_plan():
            type_forces.append(type_force)
            
        force_id = sorted_member_forces
+       print('force_id', sorted_member_forces)
        sorted_members = dict(sorted(zip(force_id,type_forces),key = getSecond))
+       print('sorted_members', sorted_members)
        bel_chord = {}
        unbel_chord = {}
        Verbindung = {}
@@ -241,6 +242,7 @@ class cremona_plan():
        #sort unbel_chord
        nodes_unbel = []
        force_id = []
+       print('here1', unbel_chord)
        for i in unbel_chord:
            coo_node = nodes[unbel_chord[i].node_id].coordinates
            nodes_unbel.append(coo_node)
@@ -250,7 +252,7 @@ class cremona_plan():
        if bottom_or_top == 'bottom':
            reverse = True
        sorted_unbel_chord = dict(sorted(zip(force_id,nodes_unbel),reverse = reverse))
-       print('here',sorted_unbel_chord)
+       print('here2',sorted_unbel_chord)
     #    forces_unbel = []
     #    force_id = []
 

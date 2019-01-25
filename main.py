@@ -26,7 +26,7 @@ input_files = {1 : 'sample_input',  # can be checked with Stiff
                9 : 'double_arch_kinematic_top_load_mod2', # simple for debugging
                10 : 'BC belastet ',
                11 : 'geknicktes_System'}
-selected_file_idx = 11
+selected_file_idx = 8
 
 # filename for import
 input_folder = 'input'

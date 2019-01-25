@@ -403,12 +403,7 @@ class Analysis(object):
         else:
             warnings.warn("System cannot be solved iteratively, needs other solution",Warning)
         
-        print('analysis')
-        print('14i', self.computation_model['forces']['14i'].node_id, self.computation_model['forces']['14i'].direction, 'magnitude', self.computation_model['forces']['14i'].magnitude)
-        print('14j', self.computation_model['forces']['14j'].node_id, self.computation_model['forces']['14j'].direction, 'magnitude', self.computation_model['forces']['14j'].magnitude)
-        print('15i', self.computation_model['forces']['15i'].node_id, self.computation_model['forces']['15i'].direction, 'magnitude', self.computation_model['forces']['15i'].magnitude)
-        print('15j', self.computation_model['forces']['15j'].node_id, self.computation_model['forces']['15j'].direction, 'magnitude', self.computation_model['forces']['15j'].magnitude)
-
+        
     def solve_system(self):
         self._solve_iteratively()
         plot_solved_system(self.computation_model)
