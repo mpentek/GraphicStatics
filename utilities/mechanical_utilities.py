@@ -423,7 +423,7 @@ def get_nodal_equilibrium_by_method_of_joints(forces, elements):
 
     return decomposed_forces
 
-def sort_clockwise(forces):
+def sort_clockwise(forces, bottom_or_top):
     force_id = []
     force_angle = []
 
@@ -458,7 +458,10 @@ def sort_clockwise(forces):
 
         force_angle.append(angle)
 
-    sort_forces = dict(sorted(zip(force_id,force_angle), key=getSecond))
+    if bottom_or_top == 'bottom':
+      sort_forces = dict(sorted(zip(force_id,force_angle), key=getSecond))
+    if bottom_or_top == 'top':
+         sort_forces = dict(sorted(zip(force_id,force_angle), key=getSecond, reverse = True))
     forces = list(sort_forces.keys())
     return(forces)
 

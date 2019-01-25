@@ -139,6 +139,21 @@ def getSecond(sort):
     number=sort[1]
     return number
 
+def right_left(sort, length):
+    print('sort', sort)
+    sorted_forces = []
+    a = 0
+    b = 3
+    for i in range(length):
+        short = sort[a:b]
+        short = sorted(short,key = getSecond, reverse = True)
+        sorted_forces.append(short)
+        a = a+1
+        b = b+1
+    print('sorted_forces', sorted_forces)
+    return sorted_forces
+
+
 
 def sort_left_to_right(forces,nodes):
         forces_loaded = forces

@@ -59,16 +59,16 @@ def plot_cremona_plan(Cremona_plan):
 
     #plot external forces
 
-    for f_id in Cremona_plan.ex_forces:
-        x = Cremona_plan.ex_forces[f_id].x[0]
-        y = Cremona_plan.ex_forces[f_id].y[0]
-        delta_x = Cremona_plan.ex_forces[f_id].x[1] - x
-        delta_y = Cremona_plan.ex_forces[f_id].y[1] - y
-        ax.arrow(x,y,delta_x, delta_y,  color='green',
-                     length_includes_head=True, head_width=10, head_length=10)
-        s_x = Cremona_plan.ex_forces[f_id].midpoint[0]
-        s_y = Cremona_plan.ex_forces[f_id].midpoint[1]  
-        # ax.annotate(f_id,(s_x, s_y))  
+    # for f_id in Cremona_plan.ex_forces:
+    #     x = Cremona_plan.ex_forces[f_id].x[0]
+    #     y = Cremona_plan.ex_forces[f_id].y[0]
+    #     delta_x = Cremona_plan.ex_forces[f_id].x[1] - x
+    #     delta_y = Cremona_plan.ex_forces[f_id].y[1] - y
+    #     ax.arrow(x,y,delta_x, delta_y,  color='green',
+    #                  length_includes_head=True, head_width=10, head_length=10)
+    #     s_x = Cremona_plan.ex_forces[f_id].midpoint[0]
+    #     s_y = Cremona_plan.ex_forces[f_id].midpoint[1]  
+    #     ax.annotate(f_id,(s_x, s_y))  
 
     #plot reactions
     for f_id in Cremona_plan.reactions:

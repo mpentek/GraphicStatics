@@ -54,6 +54,10 @@ class Analysis(object):
         with open(input_model_file) as f:
             data = json.load(f)
 
+        #get bel_chord:
+        model["bel_chord"] = data['bel_chord']
+        print('Bel-chord', model['bel_chord'])
+        
         # get node_list:
         for node in data['nodes']:
             model["nodes"][node['id']] = Node2D(node['id'],
