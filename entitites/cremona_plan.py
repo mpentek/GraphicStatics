@@ -245,7 +245,11 @@ class cremona_plan():
            coo_node = nodes[unbel_chord[i].node_id].coordinates
            nodes_unbel.append(coo_node)
            force_id.append(i)
-       sorted_unbel_chord = dict(sorted(sorted(zip(force_id,nodes_unbel),reverse = True),key = getSecond, reverse = True))
+       if bottom_or_top == 'top':
+           reverse = False
+       if bottom_or_top == 'bottom':
+           reverse = True
+       sorted_unbel_chord = dict(sorted(zip(force_id,nodes_unbel),reverse = reverse))
        print('here',sorted_unbel_chord)
     #    forces_unbel = []
     #    force_id = []

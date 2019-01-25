@@ -227,7 +227,7 @@
             "node_id": 1,
             "components": [
                 0.0,
-                -100.0
+                100.0
             ]
         },
         {
@@ -235,7 +235,7 @@
             "node_id": 2,
             "components": [
                 0.0,
-                -100.0
+                100.0
             ]
         },
         {
@@ -243,7 +243,7 @@
             "node_id": 3,
             "components": [
                 0.0,
-                -100.0
+                100.0
             ]
         },
         {
@@ -251,7 +251,7 @@
             "node_id": 4,
             "components": [
                 0.0,
-                -100.0
+                100.0
             ]
         }
     ],
@@ -261,7 +261,7 @@
             "node_id": 0,
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
-                true,
+                false,
                 true
             ]
         },
@@ -270,7 +270,7 @@
             "node_id": 5,
             "//": "first value is horizontal x, second one is vertical y boundary",
             "is_fixed": [
-                false,
+                true,
                 true
             ]
         }
