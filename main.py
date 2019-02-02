@@ -14,6 +14,7 @@ from utilities.plot_utilities import save_to_pdf
 from analysis import Analysis
 from cremona_plan import cremona_plan
 
+
 # select the desired input file by index from the list
 input_files = {1 : 'sample_input',  # can be checked with Stiff
                2 : 'sample_input_mod1',
