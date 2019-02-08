@@ -116,6 +116,9 @@ class cremona_plan():
            a = a + 1
 
        self.points = dict(zip(node_id, points))
+       print('search3-ex')
+       for i in self.points:
+           print(i,self.points[i].forces)
        self.ex_forces = dict(zip(sorted_ex,elements))
 
        elements = []
@@ -176,13 +179,13 @@ class cremona_plan():
                  if start != None:
                      if other_forces[j] not in already_done:
                          force = model[str(other_forces[j])]
-                         start.forces.append(j)
+                         start.forces.append(other_forces[j])
            
                          x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
                          y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
 
                          start = Node2D(a,[x_amount,y_amount])
-                         start.forces.append(j)
+                         start.forces.append(other_forces[j])
            
                          points.append(start)
                          node_id.append(a)
@@ -198,6 +201,9 @@ class cremona_plan():
                 
 
        self.points = dict(zip(node_id, points))
+       print('search3-members')
+       for i in self.points:
+           print(i,self.points[i].forces)
        self.members = dict(zip(members,elements))
 
        
@@ -245,12 +251,13 @@ class cremona_plan():
    
 
        #start bestimmen
+       points.pop(-1)
        if model[sorted_reactions[0]].node_id == model[sorted_reactions[1]].node_id:
            start = self.reactions[sorted_reactions[1]].nodes[1]
        else:
            start = self.reactions[sorted_reactions[0]].nodes[1]
        points.append(start)
-       a= a+1
+       a= a
          
        #member einzeichnen
        for i in sorted_unbel_chord:  
@@ -277,40 +284,127 @@ class cremona_plan():
 
        self.points = dict(zip(node_id, points))
        self.members = dict(zip(members,elements))
+       print('members',self.members)
 
 
 
        #plot_cremona_plan
        plot_cremona_plan(self)
-       
+
+    #    print('check_8', self.points[8].forces)
+    #    print('check_12', self.points[12].forces)
+    #    print('check_13', self.points[13].forces)
+    #    print('check_19', self.points[19].forces)
+    #    print('check_20', self.points[20].forces)
+    #    print('check_25', self.points[25].forces)
+    #    print('check_26', self.points[26].forces)
+    #    print('check_27', self.points[27].forces)
+    #    print('check_31', self.points[31].forces)
+    #    print('check_32', self.points[32].forces)
+    #    print('e1',self.ex_forces['e1'].nodes[0].id,self.ex_forces['e1'].nodes[1].id,'e2',self.ex_forces['e2'].nodes[0].id,self.ex_forces['e2'].nodes[1].id)
+    #    print('8j',self.members['8j'].nodes[0].id,self.members['8j'].nodes[1].id)
+
        #remove dubbelpoints
-       print('points', self.points,'\n','ex_forces', self.ex_forces, '\n', 'reactions',self.reactions,'\n', 'members', self.members)
-       same_point = [[0,0]]
-       print(type(self.points[0].id))
-       popped = [] # first value save as second value save from
-       print('self.points')
+    #    print('points', self.points.items(),'\n','ex_forces', self.ex_forces, '\n', 'reactions',self.reactions,'\n', 'members', self.members)
+       same_point = [[0,0]]# first value "save as" second value "save from" b
+       #sort the points
        for i in self.points:
            x = self.points[i].coordinates[0]
            y = self.points[i].coordinates[1]
-           print('id',self.points[i].id,[x,y])
+        #    print('id',self.points[i].id,[x,y])
            change = 0
 
            for j in range(len(same_point)):
                
                x_coo = self.points[same_point[j][0]].coordinates[0]
                y_coo = self.points[same_point[j][0]].coordinates[1]
-               print('coo',[x_coo,y_coo])
 
+
+            #    print('middle',self.points[8].forces) 
                if x_coo - TOL <= x <= x_coo + TOL and y_coo - TOL <= y <= y_coo + TOL:
-                  points[same_point[j][0]].forces = points[i].forces
                   same_point.append([same_point[j][0],i])
                   change = 1
-                  print('same_point',same_point)
                   break
                    #dann pop points[i] und speicher Kräfte an dem Punkt coordinates[j]
            if change == 0:
                 same_point.append([i,i])
-                print('same_point',same_point)
                    #sonst append points[i]
-       print('samepoint', same_point)
+       print('same', same_point)
+       #remove them
+       for i in range(len(same_point)):
+           stay = same_point[i][0]
+           remove = same_point[i][1]
+           
+           if remove != stay:
+             print('join forces')
+             for c in range(len(self.points[remove].forces)):
+                 print(remove,self.points[remove].forces, stay, self.points[stay].forces)
+                 if self.points[remove].forces[c] not in self.points[stay].forces:
+                      self.points[stay].forces.append(self.points[remove].forces[c])
+
+             print('safter',self.points[stay].forces)
+            
+             for j in self.ex_forces:
+                     n1 = self.ex_forces[j].nodes[0].id
+                     n2 = self.ex_forces[j].nodes[1].id
+                     print('remove',remove,'n1',n1,'stay',stay)
+
+                     if remove == n1:
+                         print('remove',remove)
+                         self.ex_forces[j].nodes[0] = self.points[stay]
+                     if remove == n2:
+                         print('remove',remove)
+                         self.ex_forces[j].nodes[1] = self.points[stay]
+        
+
+             for j in self.reactions:
+                    n1 = self.reactions[j].nodes[0].id
+                    n2 = self.reactions[j].nodes[1].id
+                    print('remove',remove,'n1',n1,'n2',n2,'stay',stay)
+
+                    if remove == n1:
+                        print('remove',remove)
+                        self.reactions[j].nodes[0] = self.points[stay]
+                    if remove == n2:
+                        print('remove',remove)
+                        self.reactions[j].nodes[1] = self.points[stay]
+
+            
+             for j in self.members:
+                 print(j)
+                 n1 = self.members[j].nodes[0].id
+                 n2 = self.members[j].nodes[1].id
+                 print('remove',remove,'n1',n1,'n2', n2, 'stay',stay)
+
+                 if remove == n1:
+                    print('remove',remove)
+                    self.members[j].nodes[0] = self.points[stay]
+                    n1 = self.members[j].nodes[0].id
+                    print('n1_tRUE',n1)
+                    
+                 if remove == n2:
+                    print('remove',remove)
+                    self.members[j].nodes[1] = self.points[stay]
+                    n2 = self.members[j].nodes[1].id
+                    print('n2 True',n2)
+
+                
+             self.points.pop(remove)
+             
+    #    print('8i',self.members['8i'].nodes[0].id,self.members['8i'].nodes[1].id)    
+       print('points after',self.points.items())
+    #    print('check_forces', self.points[1].forces,self.points[2].forces,self.points[3].forces,self.points[4].forces)
+       print('point check')
+       for i in self.points:
+           print(i,self.points[i].forces)
+       print('segment_check')
+       for i in self.ex_forces:
+           print(i,self.ex_forces[i].nodes[0].id,self.ex_forces[i].nodes[1].id)
+       for i in self.reactions:
+           print(i,self.reactions[i].nodes[0].id,self.reactions[i].nodes[1].id)
+       for i in self.members:
+           print(i,self.members[i].nodes[0].id,self.members[i].nodes[1].id)
+
+       plot_cremona_plan(self)
+
        
