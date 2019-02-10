@@ -4,6 +4,7 @@ from node2d import Node2D
 from segment2d import Segment2D
 from utilities.mechanical_utilities import sort_clockwise
 from utilities.plo_cremona_plan import plot_cremona_plan
+from numpy import sign
 
 class cremona_plan():
     def __init__(self,analysis):
@@ -116,10 +117,8 @@ class cremona_plan():
            a = a + 1
 
        self.points = dict(zip(node_id, points))
-       print('search3-ex')
        for i in self.points:
-           print(i,self.points[i].forces)
-       self.ex_forces = dict(zip(sorted_ex,elements))
+          self.ex_forces = dict(zip(sorted_ex,elements))
 
        elements = []
     
@@ -154,6 +153,7 @@ class cremona_plan():
        elements = [] 
        members = []
        self.members = {}
+
 
        for i in sorted_ex:
            #weitere forces an dem Knoten "einzeichnen"
@@ -201,10 +201,8 @@ class cremona_plan():
                 
 
        self.points = dict(zip(node_id, points))
-       print('search3-members')
        for i in self.points:
-           print(i,self.points[i].forces)
-       self.members = dict(zip(members,elements))
+          self.members = dict(zip(members,elements))
 
        
 
@@ -243,11 +241,26 @@ class cremona_plan():
            coo_node = nodes[unbel_chord[i].node_id].coordinates
            nodes_unbel.append(coo_node)
            force_id.append(i)
+       multiply = []
        if bottom_or_top == 'top':
-           reverse = False
+           multiply.append(1)
        if bottom_or_top == 'bottom':
-           reverse = True
-       sorted_unbel_chord = dict(sorted(zip(force_id,nodes_unbel),reverse = reverse))
+            multiply.append(-1)
+       for i in self.ex_forces:
+           y = self.ex_forces[i].y[1]-self.ex_forces[i].y[0]
+           if y > 0:
+               multiply.append(1)
+               break
+           if y < 0:
+               multiply.append(-1)  
+               break  
+    #    if model[force_id[0]].direction[0]>=0:
+    #        multiply.append(1)
+    #    else:
+    #        multiply.append(-1)
+
+
+       sorted_unbel_chord = dict(sorted(zip(force_id,nodes_unbel)))
    
 
        #start bestimmen
@@ -258,18 +271,28 @@ class cremona_plan():
            start = self.reactions[sorted_reactions[0]].nodes[1]
        points.append(start)
        a= a
-         
+       hin = 1   
        #member einzeichnen
        for i in sorted_unbel_chord:  
              force = unbel_chord[i]
 
              start.forces.append(i)
            
-             x_amount = start.coordinates[0] + force.magnitude*force.direction[0]
-             y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
+             x_amount = start.coordinates[0] + force.magnitude*abs(force.direction[0])*multiply[0]*multiply[1]*hin
+             mirrored = abs(force.direction[0])*multiply[0]*multiply[1]*hin*force.magnitude
+
+             if sign(mirrored) == sign(force.direction[0]):
+                 direction = force.direction[1]
+             else: 
+                 direction = -force.direction[1]
+
+             y_amount = start.coordinates[1] + force.magnitude*direction
+             print('x-dir',force.direction[0],'x-amount',force.magnitude*abs(force.direction[0])*multiply[0]*multiply[1]*hin)
+             print('y-dir',force.direction[1],'y-amount',force.magnitude*direction)
 
              start = Node2D(a,[x_amount,y_amount])
              start.forces.append(i)
+             hin = hin * (-1)
            
              points.append(start)
              node_id.append(a)
@@ -284,7 +307,6 @@ class cremona_plan():
 
        self.points = dict(zip(node_id, points))
        self.members = dict(zip(members,elements))
-       print('members',self.members)
 
 
 
@@ -329,72 +351,55 @@ class cremona_plan():
            if change == 0:
                 same_point.append([i,i])
                    #sonst append points[i]
-       print('same', same_point)
        #remove them
        for i in range(len(same_point)):
            stay = same_point[i][0]
            remove = same_point[i][1]
            
            if remove != stay:
-             print('join forces')
              for c in range(len(self.points[remove].forces)):
-                 print(remove,self.points[remove].forces, stay, self.points[stay].forces)
                  if self.points[remove].forces[c] not in self.points[stay].forces:
                       self.points[stay].forces.append(self.points[remove].forces[c])
 
-             print('safter',self.points[stay].forces)
             
              for j in self.ex_forces:
                      n1 = self.ex_forces[j].nodes[0].id
                      n2 = self.ex_forces[j].nodes[1].id
-                     print('remove',remove,'n1',n1,'stay',stay)
 
                      if remove == n1:
-                         print('remove',remove)
                          self.ex_forces[j].nodes[0] = self.points[stay]
                      if remove == n2:
-                         print('remove',remove)
                          self.ex_forces[j].nodes[1] = self.points[stay]
         
 
              for j in self.reactions:
                     n1 = self.reactions[j].nodes[0].id
                     n2 = self.reactions[j].nodes[1].id
-                    print('remove',remove,'n1',n1,'n2',n2,'stay',stay)
 
                     if remove == n1:
-                        print('remove',remove)
                         self.reactions[j].nodes[0] = self.points[stay]
                     if remove == n2:
-                        print('remove',remove)
                         self.reactions[j].nodes[1] = self.points[stay]
 
             
              for j in self.members:
-                 print(j)
                  n1 = self.members[j].nodes[0].id
                  n2 = self.members[j].nodes[1].id
-                 print('remove',remove,'n1',n1,'n2', n2, 'stay',stay)
 
                  if remove == n1:
-                    print('remove',remove)
                     self.members[j].nodes[0] = self.points[stay]
                     n1 = self.members[j].nodes[0].id
-                    print('n1_tRUE',n1)
+
                     
                  if remove == n2:
-                    print('remove',remove)
                     self.members[j].nodes[1] = self.points[stay]
                     n2 = self.members[j].nodes[1].id
-                    print('n2 True',n2)
 
                 
              self.points.pop(remove)
              
     #    print('8i',self.members['8i'].nodes[0].id,self.members['8i'].nodes[1].id)    
-       print('points after',self.points.items())
     #    print('check_forces', self.points[1].forces,self.points[2].forces,self.points[3].forces,self.points[4].forces)
-       print('point check')
        for i in self.points:
            print(i,self.points[i].forces)
        print('segment_check')

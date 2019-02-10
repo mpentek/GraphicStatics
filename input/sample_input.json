@@ -13,7 +13,7 @@
             "id": 1,
             "coords": [
                 5.0,
-                0.0
+                -1.0
             ],
             "is_constrain" : false
         },
@@ -29,7 +29,7 @@
             "id": 3,
             "coords": [
                 10.0,
-                0.0
+                -1.0
             ],
             "is_constrain" : false
         },
@@ -127,26 +127,18 @@
     "external_forces": [
         {
             "id": 1,
-            "node_id": 2,
+            "node_id": 4,
             "components": [
                 0.0,
-                -100.0
+                100.0
             ]
         },
         {
             "id": 2,
-            "node_id": 4,
+            "node_id": 2,
             "components": [
                 0.0,
-                -50.0
-            ]
-        },
-        {
-            "id": 3,
-            "node_id": 4,
-            "components": [
-                100.0,
-                0.0
+                50.0
             ]
         }
     ],
