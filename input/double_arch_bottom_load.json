@@ -227,27 +227,51 @@
             "node_id": 9,
             "components": [
                 50,
-                -100.0
+                0.0
             ]
         },
         {
             "id": 2,
-            "node_id": 8,
+            "node_id": 9,
             "components": [
-                50,
+                0,
                 -100.0
             ]
         },
         {
             "id": 3,
-            "node_id": 7,
+            "node_id": 8,
             "components": [
-                50,
+                0.0,
                 -100.0
             ]
         },
         {
             "id": 4,
+            "node_id": 8,
+            "components": [
+                50,
+                0.0
+            ]
+        },
+        {
+            "id": 5,
+            "node_id": 7,
+            "components": [
+                0,
+                -100.0
+            ]
+        },
+        {
+            "id": 6,
+            "node_id": 7,
+            "components": [
+                50,
+                0.0
+            ]
+        },
+        {
+            "id": 7,
             "node_id": 6,
             "components": [
                 50,

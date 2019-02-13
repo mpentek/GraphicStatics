@@ -135,10 +135,26 @@
         },
         {
             "id": 2,
+            "node_id": 4,
+            "components": [
+                -50.0,
+                0.0
+            ]
+        },
+        {
+            "id": 3,
             "node_id": 2,
             "components": [
-                0.0,
-                50.0
+                -50,
+                0
+            ]
+        },
+        {
+            "id": 4,
+            "node_id": 2,
+            "components": [
+                0,
+                50
             ]
         }
     ],

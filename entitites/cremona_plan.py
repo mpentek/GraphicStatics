@@ -5,6 +5,7 @@ from segment2d import Segment2D
 from utilities.mechanical_utilities import sort_clockwise
 from utilities.plo_cremona_plan import plot_cremona_plan
 from numpy import sign
+from math import sqrt
 
 class cremona_plan():
     def __init__(self,analysis):
@@ -32,8 +33,49 @@ class cremona_plan():
        ex_forces = dict(list(model.items())[:number_ex_forces])
        reactions = dict(list(model.items())[number_ex_forces : b])
        member_forces = dict(list(model.items())[b : ])
-
+       print('model',model['1i'].direction,model['1i'].magnitude)
+    
        sorted_ex = sort_left_to_right(ex_forces , nodes)
+       popped = []
+       Hallo = []
+       correct = 0
+       for i in range (1,len(sorted_ex)):
+           f1 = sorted_ex[i-1]
+           f2 = str(sorted_ex[i])
+           node1 = model[f1].node_id
+           node2 = model[f2].node_id
+           if node1 == node2:
+               popped.append(f2)
+               Hallo.append(i + correct)
+               correct -= 1
+               print('dir_ex','f1',ex_forces[f1].direction,ex_forces[f1].magnitude,'f2',ex_forces[f2].direction,ex_forces[f2].magnitude )
+               x_amount = ex_forces[f1].direction[0]*ex_forces[f1].magnitude + ex_forces[f2].direction[0]*ex_forces[f2].magnitude
+               y_amount = ex_forces[f1].direction[1]*ex_forces[f1].magnitude + ex_forces[f2].direction[1]*ex_forces[f2].magnitude
+               new_amount = sqrt((x_amount)* x_amount+(y_amount)*y_amount)
+               model[f1].direction = [x_amount/abs(x_amount),y_amount/abs(y_amount)]
+               model[f1].magnitude = new_amount
+               ex_forces[f1].direction = [x_amount/new_amount,y_amount/new_amount]
+               ex_forces[f1].magnitude = new_amount
+               print('after',ex_forces[f1].direction, ex_forces[f1].magnitude)
+               forces = nodes[node2].forces
+               pop_point = None
+               for j in range(len(forces)):
+                   if f2 == forces[j]:
+                       pop_point = j
+               forces.pop(pop_point)
+
+            
+    #    sorted_ex = sorted_ex_2           
+    
+       for i in range (0,len(popped)):
+           model.pop(popped[i])
+           ex_forces.pop(popped[i])
+       for i in range (len(Hallo)):
+           sorted_ex.pop(Hallo[i])
+
+
+
+
        sorted_reactions = sort_right_to_left(reactions, nodes)
        sorted_member_forces = sort_left_to_right(member_forces, nodes)
       
@@ -287,8 +329,6 @@ class cremona_plan():
                  direction = -force.direction[1]
 
              y_amount = start.coordinates[1] + force.magnitude*direction
-             print('x-dir',force.direction[0],'x-amount',force.magnitude*abs(force.direction[0])*multiply[0]*multiply[1]*hin)
-             print('y-dir',force.direction[1],'y-amount',force.magnitude*direction)
 
              start = Node2D(a,[x_amount,y_amount])
              start.forces.append(i)
@@ -308,10 +348,6 @@ class cremona_plan():
        self.points = dict(zip(node_id, points))
        self.members = dict(zip(members,elements))
 
-
-
-       #plot_cremona_plan
-       plot_cremona_plan(self)
 
     #    print('check_8', self.points[8].forces)
     #    print('check_12', self.points[12].forces)
@@ -400,15 +436,15 @@ class cremona_plan():
              
     #    print('8i',self.members['8i'].nodes[0].id,self.members['8i'].nodes[1].id)    
     #    print('check_forces', self.points[1].forces,self.points[2].forces,self.points[3].forces,self.points[4].forces)
-       for i in self.points:
-           print(i,self.points[i].forces)
-       print('segment_check')
-       for i in self.ex_forces:
-           print(i,self.ex_forces[i].nodes[0].id,self.ex_forces[i].nodes[1].id)
-       for i in self.reactions:
-           print(i,self.reactions[i].nodes[0].id,self.reactions[i].nodes[1].id)
-       for i in self.members:
-           print(i,self.members[i].nodes[0].id,self.members[i].nodes[1].id)
+    #    for i in self.points:
+    #        print(i,self.points[i].forces)
+    #    print('segment_check')
+    #    for i in self.ex_forces:
+    #        print(i,self.ex_forces[i].nodes[0].id,self.ex_forces[i].nodes[1].id)
+    #    for i in self.reactions:
+    #        print(i,self.reactions[i].nodes[0].id,self.reactions[i].nodes[1].id)
+    #    for i in self.members:
+    #        print(i,self.members[i].nodes[0].id,self.members[i].nodes[1].id)
 
        plot_cremona_plan(self)
 

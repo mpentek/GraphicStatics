@@ -161,7 +161,7 @@ def sort_left_to_right(forces,nodes):
 
         for key in forces_loaded:
             node_id  = forces_loaded[key].node_id
-            node_x = nodes[node_id].coordinates[0]
+            node_x = nodes[node_id].coordinates
             node_x_forces.append(node_x)
         
         force_id = list(forces_loaded.keys())
