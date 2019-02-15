@@ -6,6 +6,7 @@ from utilities.mechanical_utilities import sort_clockwise
 from utilities.plo_cremona_plan import plot_cremona_plan
 from numpy import sign
 from math import sqrt
+from utilities.cremona_utilities import preprocess_cremonaplan
 
 class cremona_plan():
     def __init__(self,analysis):
@@ -18,6 +19,21 @@ class cremona_plan():
 
        self.points = {}
        self.ex_forces = {}
+
+       #belong to one Member
+       str_i = []
+       str_j = []
+       self.one_member = {}
+       for i in elements:
+           var1 = str(i)+ 'i'
+           var2 = str(i)+ 'j'
+           str_i.append(var1)
+           str_j.append(var2)
+       for i in range(len(str_i)):
+           self.one_member[str_i[i]] = str_j[i]
+           self.one_member[str_j[i]] = str_i[i]
+
+       print('one',self.one_member)
      
        force_id = analysis.input_system["forces"].keys()
        str_keys = ""
@@ -448,4 +464,8 @@ class cremona_plan():
 
        plot_cremona_plan(self)
 
-       
+       #process Cremonaplan
+
+       self,self.bel_chord, Verbindung,model,nodes = preprocess_cremonaplan(self,bel_chord,Verbindung,model,nodes)
+
+      
