@@ -75,3 +75,14 @@ class Segment2D(object):
         else:
             # throw error
             pass
+
+def update(self):
+    self.midpoint = get_midpoint(
+            [self.nodes[0].coordinates, self.nodes[1].coordinates])
+    self.x = [self.nodes[0].coordinates[0], self.nodes[1].coordinates[0]]
+    self.y = [self.nodes[0].coordinates[1], self.nodes[1].coordinates[1]]
+    self.line = self._get_line()
+        # TODO: magnitude redundant with length, clean up
+    self.length = get_length(
+            [[self.x[0], self.y[0]], [self.x[1], self.y[1]]])
+

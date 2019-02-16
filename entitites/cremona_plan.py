@@ -468,4 +468,6 @@ class cremona_plan():
 
        self,self.bel_chord, Verbindung,model,nodes = preprocess_cremonaplan(self,bel_chord,Verbindung,model,nodes)
 
+       plot_cremona_plan(self)
+
       
