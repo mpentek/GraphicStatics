@@ -1,13 +1,14 @@
 #cremona utilities
 from entitites.segment2d import update
+from utilities.geometric_utilities import get_magnitude_and_direction
 #remove diagonals 
-def preprocess_cremonaplan(Cremona_plan,bel_chord,Verbindung,model,nodes):
+def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements):
     print('members',Cremona_plan.members)
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
-    Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
+    Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
+    Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
 
-
-    return Cremona_plan,bel_chord,Verbindung,model,nodes
+    return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
 def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
     print('bel_chord',bel_chord)
@@ -62,7 +63,7 @@ def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
     print(mini)
     return  mini
 
-def remove_diagonals(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes):
+def remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes):
     for i in low_diagonals:
     #aus Cremonaplan entfernen:
         force = model[i]
@@ -75,7 +76,6 @@ def remove_diagonals(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes
             forces2 = Cremona_plan.points[n2.id].forces
             if n1 == n2:
                 #nur Diagonale löschen nicht Punkt!!
-                 Verbindung.pop(i)
                  for j in range(len(forces1)):
                     update(Cremona_plan.members[forces1[j]])
                     if i == forces1[j]:
@@ -102,7 +102,6 @@ def remove_diagonals(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes
                         print('S nodes after', Cremona_plan.members[forces2[j]].nodes[0].id,Cremona_plan.members[forces2[j]].nodes[1].id)
                 print('f1 after', forces1)
                 #aus Cremona_plan löschen:
-                Verbindung.pop(i)
                 for j in range(len(forces1)):
                     update(Cremona_plan.members[forces1[j]])
                     if i == forces1[j]:
@@ -115,13 +114,73 @@ def remove_diagonals(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes
                 print('f1',forces1)
     return Cremona_plan,bel_chord,Verbindung,model,nodes
 
-
-    #neue Steigung der angrenzenden Kräfte bestimmen
-    #Steigung im Cremona und System anpassen
-    #aus Elementen entfernen
-    #aus System entfernen:
-    #aus model(elements) entfernen 
-    #aus nodes entfernen
+#aus System entfernen:
+def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements):
+    print('low_diagonals',low_diagonals)
+    for i in low_diagonals:
+        node = model[i].node_id
+        forces = nodes[node].forces
+        for j in range(len(forces)):
+            if i == forces[j]:
+                popped =  j
+        forces.pop(popped)
+        model.pop(i)
+        print('model',model.keys())
+        print('elements',elements[1].coordinates)
+        id_element = Cremona_plan.at_member[i]
+        if id_element in elements:
+            elements.pop(id_element)
+        print('elements',elements.keys())
+        Verbindung.pop(i)
+        Cremona_plan.one_member.pop(i)
+        Cremona_plan.at_member.pop(i)
+        print('Cremona',Cremona_plan.one_member.keys())
+    #Steigungen aktualisieren
+    for i in elements:
+        #Achtung!: bei elements nun Steigung aktualisiert, aber length falsch
+        #System aktualisierung notwendig
+        j = str(i) + 'i'
+        if j in Cremona_plan.members:
+            var = Cremona_plan.members[j]
+        else: var = Cremona_plan.members[str(i)+'j']
+        elements[i].coordinates = [[var.x[0],var.y[0]],[var.x[1],var.y[1]]]
+    for i in bel_chord:
+        if i in Cremona_plan.members:
+            x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
+            y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
+        else:
+            var = Cremona_plan.one_member[i]
+            x = - Cremona_plan.members[var].x[1] + Cremona_plan.members[var].x[0]
+            y = - Cremona_plan.members[var].y[1] + Cremona_plan.members[var].y[0]
+        components = [x,y]
+        bel_chord[i].magnitude, bel_chord[i].direction = get_magnitude_and_direction(
+            components)
+        model[i].magnitude, model[i].direction = get_magnitude_and_direction(
+            components)
+    for i in unbel_chord:
+         x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
+         y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
+         components = [x,y]
+         unbel_chord[i].magnitude, unbel_chord[i].direction = get_magnitude_and_direction(
+            components)
+         model[i].magnitude, model[i].direction = get_magnitude_and_direction(
+            components)
+    print('Verbindung',Verbindung,'one', Cremona_plan.one_member)
+    # for i in Verbindung:
+    #     if i in Cremona_plan.members:
+    #          x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
+    #          y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
+    #     else:
+    #         var = Cremona_plan.one_member[i]
+    #         x = - Cremona_plan.members[var].x[1] + Cremona_plan.members[var].x[0]
+    #         y = - Cremona_plan.members[var].y[1] + Cremona_plan.members[var].y[0]
+    #     components = [x,y]
+    #     Verbindung[i].magnitude, Verbindung[i].direction = get_magnitude_and_direction(
+    #         components)
+    #     model[i].magnitude, model[i].direction = get_magnitude_and_direction(
+    #         components)
+        
+    return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
 
     

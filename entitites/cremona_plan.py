@@ -12,7 +12,7 @@ class cremona_plan():
     def __init__(self,analysis):
        model = analysis.input_system["forces"]
        nodes = analysis.input_system["nodes"]
-       elements = analysis.input_system["elements"]
+       sys_elements = analysis.input_system["elements"]
        bottom_or_top = analysis.input_system["bel_chord"]
 
        
@@ -20,18 +20,23 @@ class cremona_plan():
        self.points = {}
        self.ex_forces = {}
 
-       #belong to one Member
+       #i und j einander zuordnen
        str_i = []
        str_j = []
-       self.one_member = {}
-       for i in elements:
+       el_id = []
+       self.one_member = {} #i und i
+       self.at_member = {} # member i oder member j
+       for i in sys_elements:
            var1 = str(i)+ 'i'
            var2 = str(i)+ 'j'
            str_i.append(var1)
            str_j.append(var2)
+           el_id.append(i)
        for i in range(len(str_i)):
            self.one_member[str_i[i]] = str_j[i]
            self.one_member[str_j[i]] = str_i[i]
+           self.at_member[str_i[i]] = el_id[i]
+           self.at_member[str_j[i]] = el_id[i]
 
        print('one',self.one_member)
      
@@ -466,7 +471,7 @@ class cremona_plan():
 
        #process Cremonaplan
 
-       self,self.bel_chord, Verbindung,model,nodes = preprocess_cremonaplan(self,bel_chord,Verbindung,model,nodes)
+       self,self.bel_chord, self.unbel_chord,Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements)
 
        plot_cremona_plan(self)
 
