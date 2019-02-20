@@ -7,7 +7,6 @@ def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,n
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
-
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
 def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
@@ -144,6 +143,7 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
             var = Cremona_plan.members[j]
         else: var = Cremona_plan.members[str(i)+'j']
         elements[i].coordinates = [[var.x[0],var.y[0]],[var.x[1],var.y[1]]]
+        
     for i in bel_chord:
         if i in Cremona_plan.members:
             x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]

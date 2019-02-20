@@ -91,22 +91,21 @@ def get_forces_for_plot(model, ref_length, shift_to_head=False, scale=0.1):
     scaling_factor = scale * ref_length / avg_force_length
 
     for id, force in model["forces"].items():
-        x.append(model["nodes"][force.node_id].coordinates[0])
-        y.append(model["nodes"][force.node_id].coordinates[1])
+        if force.force_type == "external" or force.force_type == "reaction":
+            x.append(model["nodes"][force.node_id].coordinates[0])
+            y.append(model["nodes"][force.node_id].coordinates[1])
 
-        u.append(scaling_factor * force.direction[0] * force.magnitude)
-        v.append(scaling_factor * force.direction[1] * force.magnitude)
+            u.append(scaling_factor * force.direction[0] * force.magnitude)
+            v.append(scaling_factor * force.direction[1] * force.magnitude)
 
-        if shift_to_head:
-            x[-1] -= u[-1]
-            y[-1] -= v[-1]
+            if shift_to_head:
+                x[-1] -= u[-1]
+                y[-1] -= v[-1]
 
         if force.force_type == "external":
             c.append('magenta')
         elif force.force_type == "reaction":
             c.append('green')
-        elif force.force_type == "internal":
-            c.append('blue')
         else:
             pass
 

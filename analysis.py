@@ -22,7 +22,7 @@ from entitites.segment2d import Segment2D
 from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints,sort_clockwise
 from utilities.geometric_utilities import TOL
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
-
+from utilities.geometric_utilities import sort_left_to_right
 
 class Analysis(object):
     def __init__(self, input_model_file, echo_level=0):
@@ -56,7 +56,6 @@ class Analysis(object):
 
         #get bel_chord:
         model["bel_chord"] = data['bel_chord']
-        print('Bel-chord', model['bel_chord'])
         
         # get node_list:
         for node in data['nodes']:
@@ -65,7 +64,6 @@ class Analysis(object):
                                                 node['is_constrain'])
         #get elements
         for element in data['elements']: 
-            print(model['nodes'][0])
             model['elements'][element['id']] = Element2D(element['id'], 
                                                          element['connect'], 
                                                          # TODO: to be removed in future, should be only stored in 'nodes' 
@@ -91,10 +89,11 @@ class Analysis(object):
 
         return model
 
-    def postprocess(self):
+    def postprocess(self,cremona):
         # for example cremona-plan
         print("Cremona-plan to be implemented")
-        pass
+        plot_computation_model(self.computation_model)
+        self.draw_system_from_cremona(cremona)
 
     def _calculate_reaction_forces(self):
         forces = []
@@ -207,7 +206,6 @@ class Analysis(object):
         # update nodal information with existing forces: external and reaction
         for key, force in self.computation_model['forces'].items():
             self.computation_model['nodes'][force.node_id].forces.append(key)
-            print('here',self.computation_model['nodes'][force.node_id].forces)
         # update nodal information with elements: will link to internal forces
         for key, element in self.computation_model['elements'].items():
             self.computation_model['nodes'][element.nodes[0]
@@ -344,15 +342,13 @@ class Analysis(object):
                                     # else:
                                     #     ValueError("Case not permitted")
                                     
-                                    print(element.id,  element.element_type)
                                     force = Force2D(str(element.id) + labels[i_idx],
                                                     node_id,
                                                     self.computation_model['nodes'][node_id].coordinates,
                                                     # direction will be computed correctly
                                                     components,
                                                     forces[o_idx].force_type,
-                                                    element.element_type)
-                                    print(force.element_type)                
+                                                    element.element_type)              
                                     # overwriting magnitude with the correct value
                                     force.magnitude = forces[o_idx].magnitude
 
@@ -408,6 +404,58 @@ class Analysis(object):
         self._solve_iteratively()
         plot_solved_system(self.computation_model)
         pass
+   
+    def draw_system_from_cremona(self,cremona):
+        #draw bel_chord first
+        model = self.computation_model
+        e_line = []
+        #Liste mit allen externen Kraftlinien
+        for i in cremona.ex_forces:
+            line = model['forces'][i].line
+            e_line.append(line)
+        print('eline',e_line)
+        pass
+        #sortiere Elemente bel-chord von links nach rechts
+        #zeichne Elemente bel_chord
+        bel_elements = get_elements_bel_chord(model,cremona)
+        print('bel_elements', bel_elements)
+        for i in bel_elements:
+            print('element', model['elements'][i])
+            left_node, right_node = r_l_node(model['elements'][i],model['nodes'],model['bel_chord'])
+            print('i', i, 'left_node',left_node)
+    
+def r_l_node(element,nodes, bel):
+        #knoten von links nach rechts sortieren
+        print('element',element)
+        n1 =  element.nodes[0]
+        n2 =  element.nodes[1]
+        if nodes[n1].coordinates[0] < nodes[n2].coordinates[0]:
+            return n1,n2 
+        if nodes[n2].coordinates[0] < nodes[n1].coordinates[0]:
+            return n2,n1
+        if nodes[n1].coordinates[0] == nodes[n2].coordinates[0]:
+            if bel == 'bottom':
+                if nodes[n1].coordinates[1] < nodes[n2].coordinates[1]:
+                    return n2, n1
+                if nodes[n2].coordinates[1] < nodes[n1].coordinates[1]:
+                    return n1, n2
+            if bel == 'top':
+                if nodes[n1].coordinates[1] < nodes[n2].coordinates[1]:
+                    return n1,n2
+                if nodes[n2].coordinates[1] < nodes[n1].coordinates[1]:
+                    return n2,n1
+
+def get_elements_bel_chord(model,cremona):
+    bel_elements = {}
+    for i in cremona.bel_chord:
+        element = cremona.at_member[cremona.bel_chord[i].id]
+        if element not in bel_elements:
+            bel_elements[element] = cremona.bel_chord[i]
+    bel_elements = sort_left_to_right(bel_elements,model['nodes'])
+    return bel_elements
+
+
+        
 
 # if __name__ == "__main__":
     # '''

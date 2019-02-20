@@ -4,6 +4,7 @@ from node2d import Node2D
 from segment2d import Segment2D
 from utilities.mechanical_utilities import sort_clockwise
 from utilities.plo_cremona_plan import plot_cremona_plan
+from utilities.plot_utilities import plot_computation_model
 from numpy import sign
 from math import sqrt
 from utilities.cremona_utilities import preprocess_cremonaplan
@@ -14,6 +15,7 @@ class cremona_plan():
        nodes = analysis.input_system["nodes"]
        sys_elements = analysis.input_system["elements"]
        bottom_or_top = analysis.input_system["bel_chord"]
+    #    fixities = analysis.input_system['fixities']
 
        
 
@@ -38,7 +40,6 @@ class cremona_plan():
            self.at_member[str_i[i]] = el_id[i]
            self.at_member[str_j[i]] = el_id[i]
 
-       print('one',self.one_member)
      
        force_id = analysis.input_system["forces"].keys()
        str_keys = ""
@@ -54,7 +55,6 @@ class cremona_plan():
        ex_forces = dict(list(model.items())[:number_ex_forces])
        reactions = dict(list(model.items())[number_ex_forces : b])
        member_forces = dict(list(model.items())[b : ])
-       print('model',model['1i'].direction,model['1i'].magnitude)
     
        sorted_ex = sort_left_to_right(ex_forces , nodes)
        popped = []
@@ -69,7 +69,6 @@ class cremona_plan():
                popped.append(f2)
                Hallo.append(i + correct)
                correct -= 1
-               print('dir_ex','f1',ex_forces[f1].direction,ex_forces[f1].magnitude,'f2',ex_forces[f2].direction,ex_forces[f2].magnitude )
                x_amount = ex_forces[f1].direction[0]*ex_forces[f1].magnitude + ex_forces[f2].direction[0]*ex_forces[f2].magnitude
                y_amount = ex_forces[f1].direction[1]*ex_forces[f1].magnitude + ex_forces[f2].direction[1]*ex_forces[f2].magnitude
                new_amount = sqrt((x_amount)* x_amount+(y_amount)*y_amount)
@@ -77,7 +76,6 @@ class cremona_plan():
                model[f1].magnitude = new_amount
                ex_forces[f1].direction = [x_amount/new_amount,y_amount/new_amount]
                ex_forces[f1].magnitude = new_amount
-               print('after',ex_forces[f1].direction, ex_forces[f1].magnitude)
                forces = nodes[node2].forces
                pop_point = None
                for j in range(len(forces)):
@@ -370,19 +368,6 @@ class cremona_plan():
        self.members = dict(zip(members,elements))
 
 
-    #    print('check_8', self.points[8].forces)
-    #    print('check_12', self.points[12].forces)
-    #    print('check_13', self.points[13].forces)
-    #    print('check_19', self.points[19].forces)
-    #    print('check_20', self.points[20].forces)
-    #    print('check_25', self.points[25].forces)
-    #    print('check_26', self.points[26].forces)
-    #    print('check_27', self.points[27].forces)
-    #    print('check_31', self.points[31].forces)
-    #    print('check_32', self.points[32].forces)
-    #    print('e1',self.ex_forces['e1'].nodes[0].id,self.ex_forces['e1'].nodes[1].id,'e2',self.ex_forces['e2'].nodes[0].id,self.ex_forces['e2'].nodes[1].id)
-    #    print('8j',self.members['8j'].nodes[0].id,self.members['8j'].nodes[1].id)
-
        #remove dubbelpoints
     #    print('points', self.points.items(),'\n','ex_forces', self.ex_forces, '\n', 'reactions',self.reactions,'\n', 'members', self.members)
        same_point = [[0,0]]# first value "save as" second value "save from" b
@@ -471,8 +456,13 @@ class cremona_plan():
 
        #process Cremonaplan
 
-       self,self.bel_chord, self.unbel_chord,Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements)
-
+       self,self.bel_chord, self.unbel_chord,self.Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements)
+       #input-system aktualisieren und Cremonaplan plotten 
        plot_cremona_plan(self)
+
+       analysis.computation_model["forces"] = analysis.input_system['forces']
+       analysis.computation_model["nodes"] = nodes
+       analysis.computation_model["elements"] = elements
+       
 
       

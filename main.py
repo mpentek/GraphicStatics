@@ -42,9 +42,9 @@ output_file_name_prefix = 'report_'
 #sample_analysis = Analysis(json_name,echo_level=1)
 sample_analysis = Analysis(json_name)
 sample_analysis.solve_system()
-sample_analysis.postprocess()
 
 sample_cremona_plan = cremona_plan(sample_analysis)
+sample_analysis.postprocess(sample_cremona_plan)
 
 save_to_pdf(join_path(output_folder, output_file_name_prefix +
                       input_files[selected_file_idx]))
