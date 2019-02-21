@@ -20,7 +20,7 @@ from entitites.fixity2d import Fixity2D
 from entitites.segment2d import Segment2D
 
 from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints,sort_clockwise
-from utilities.geometric_utilities import TOL
+from utilities.geometric_utilities import TOL,get_line_coefficients
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
 from utilities.geometric_utilities import sort_left_to_right
 
@@ -419,11 +419,33 @@ class Analysis(object):
         #zeichne Elemente bel_chord
         bel_elements = get_elements_bel_chord(model,cremona)
         print('bel_elements', bel_elements)
+        element_line = []
         for i in bel_elements:
             print('element', model['elements'][i])
             left_node, right_node = r_l_node(model['elements'][i],model['nodes'],model['bel_chord'])
             print('i', i, 'left_node',left_node)
+            #Elementlinie mit Steigung aus Cremona
+            print('line_element',model['elements'][i].line)
+            model['elements'][i].line = get_line_from_cremona(model['elements'][i],model['nodes'][left_node],cremona)
+            element_line.append(line)
+            print('line_element',model['elements'][i].line)
+
+def get_line_from_cremona(element,node,cremona):
+    #Richtung
+    line = {}
+    j = str(element.id) + 'i'
+    x = node.coordinates[0] + cremona.bel_chord[j].direction[0]
+    y  = node.coordinates[1] + cremona.bel_chord[j].direction[1]
+    line['direction'] = [x,y]
+    #Koeffizienten
+    print('node',node)
+    x2 = node.coordinates[0] + line['direction'][0]
+    y2 = node.coordinates[1] + line['direction'][1]
+    p2 = [x2,y2]
+    line['coefficients'] = get_line_coefficients([node.coordinates,p2])
+    return line
     
+
 def r_l_node(element,nodes, bel):
         #knoten von links nach rechts sortieren
         print('element',element)

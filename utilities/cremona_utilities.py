@@ -6,7 +6,11 @@ def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,n
     print('members',Cremona_plan.members)
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
+    for i in bel_chord:
+        print('1i',i,bel_chord[i].direction,bel_chord[i].coordinates)
     Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
+    for i in bel_chord:
+        print('2i',i,bel_chord[i].direction,bel_chord[i].coordinates)
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
 def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
@@ -135,15 +139,6 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
         Cremona_plan.at_member.pop(i)
         print('Cremona',Cremona_plan.one_member.keys())
     #Steigungen aktualisieren
-    for i in elements:
-        #Achtung!: bei elements nun Steigung aktualisiert, aber length falsch
-        #System aktualisierung notwendig
-        j = str(i) + 'i'
-        if j in Cremona_plan.members:
-            var = Cremona_plan.members[j]
-        else: var = Cremona_plan.members[str(i)+'j']
-        elements[i].coordinates = [[var.x[0],var.y[0]],[var.x[1],var.y[1]]]
-        
     for i in bel_chord:
         if i in Cremona_plan.members:
             x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
