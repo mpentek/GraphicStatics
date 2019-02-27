@@ -60,6 +60,7 @@ class cremona_plan():
        popped = []
        Hallo = []
        correct = 0
+       #externe Kräfte am selben Knoten zusammenlegen
        for i in range (1,len(sorted_ex)):
            f1 = sorted_ex[i-1]
            f2 = str(sorted_ex[i])
@@ -82,6 +83,8 @@ class cremona_plan():
                    if f2 == forces[j]:
                        pop_point = j
                forces.pop(pop_point)
+
+       analysis.input_system["forces"] = model
 
             
     #    sorted_ex = sorted_ex_2           
@@ -170,6 +173,8 @@ class cremona_plan():
            y_amount = start.coordinates[1] + force.magnitude*force.direction[1]
            start = Node2D(a,[x_amount,y_amount])
            start.forces.append(i)
+           #Punkte der externen Last als Fix setzen
+           start.is_constrain = True
            
            points.append(start)
            node_id.append(a)
@@ -200,6 +205,8 @@ class cremona_plan():
            start = Node2D(a,[x_amount,y_amount])
         
            start.forces.append(i)
+           #Knoten AL-Kräfte fest setzen
+           start.is_constrain = True
                
            
            points.append(start)
@@ -459,6 +466,8 @@ class cremona_plan():
        self,self.bel_chord, self.unbel_chord,self.Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements)
        #input-system aktualisieren und Cremonaplan plotten 
        plot_cremona_plan(self)
+
+
 
        analysis.computation_model["forces"] = analysis.input_system['forces']
        analysis.computation_model["nodes"] = nodes

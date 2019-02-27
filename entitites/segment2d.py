@@ -28,6 +28,17 @@ class Segment2D(object):
     # TODO: line and scaled_segment should be moved to
     # geometric_utilities
 
+    #Nach verschieben der Knoten Segment anpassen
+    def update_from_node(self):
+        n1 = self.nodes[0]
+        n2 = self.nodes[1]
+        self.x = [n1.coordinates[0],n2.coordinates[0]]
+        self.y = [n1.coordinates[1], n1.coordinates[1]]
+        self.line = self._get_line()
+        self.length = get_length(
+            [[self.x[0], self.y[0]], [self.x[1], self.y[1]]])
+
+
     def _get_line(self):
         line = {}
         # not normalized, for consistency normlize always, overall

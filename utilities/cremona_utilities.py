@@ -1,21 +1,52 @@
 #cremona utilities
 from entitites.segment2d import update
 from utilities.geometric_utilities import get_magnitude_and_direction
+from utilities.plo_cremona_plan import plot_cremona_plan
 #remove diagonals 
 def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements):
-    print('members',Cremona_plan.members)
+    Cremona_plan, bel_chord =  set_force_bel_chord(Cremona_plan,bel_chord, model,nodes)
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
-    for i in bel_chord:
-        print('1i',i,bel_chord[i].direction,bel_chord[i].coordinates)
     Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
-    for i in bel_chord:
-        print('2i',i,bel_chord[i].direction,bel_chord[i].coordinates)
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
+#Für optimiertes System Kräfte in einem Chord konstant, hier bel_chord
+def set_force_bel_chord(cremona,bel_chord, model,nodes):
+    #Kräfte auf bestimmte Länge setzen
+    new_amount = 100 #ToDO: später eventuell Nutzereingabe
+    for i in bel_chord:
+        #Kraft anpassen
+        magnitude = bel_chord[i].magnitude
+        bel_chord[i].magnitude = new_amount * (magnitude/abs(magnitude))
+        #member anpassen
+        #bestimmen welcher Punkt verschoben werden soll
+        if i in cremona.members:
+            start = cremona.members[i].nodes[0]
+            if start.is_constrain == True:
+                end = cremona.members[i].nodes[1]
+                #Marker setzen (wird später bei entfernen der Diagonalen benötigt)
+                end.is_constrain = 'mem'
+            else:
+                end = start
+                start = cremona.members[i].nodes[1]
+                bel_chord[i].magnitude = - bel_chord[i].magnitude # damit Punkt nicht in falsche Richtung verschoben wird
+        #Marker setzen (wird später bei entfernen der Diagonalen benötigt)
+            end.is_constrain = 'mem'       
+        #neue Endkoordinaten bestimmen
+            end_new_x = start.coordinates[0] + bel_chord[i].direction[0] * bel_chord[i].magnitude
+            end_new_y = start.coordinates[1] + bel_chord[i].direction[1] * bel_chord[i].magnitude
+            end.coordinates = [end_new_x,end_new_y]
+    #Steigungen und Längen der angrenzenden Segmente anpassen
+    for i in cremona.members:
+        update(cremona.members[i])
+    plot_cremona_plan(cremona)
+           
+        
+
+    return cremona, bel_chord
+
+
 def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
-    print('bel_chord',bel_chord)
-    print('model',model)
     mini = []
     a = 1 #da sonst jeder Knoten doppelt
     for i in bel_chord:
@@ -25,13 +56,11 @@ def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
             a = a * (-1)
             dev = []
             node = bel_chord[i].node_id
-            print('node',node)
             forces = nodes[node].forces
             #aus forces deviations suchen
             for i in range(len(forces)):
                 if forces[i] in Verbindung:
                     dev.append(forces[i])
-            print(dev)
             #alle bis auf die größte am Knoten müssen später gelöscht werden
             if len(dev) > 1:
                 größte = dev[0]
@@ -63,13 +92,12 @@ def get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes):
 
     # print('model_after',model)
     # print('forces',nodes[node].forces,'forces2',nodes[node2].forces)
-    print(mini)
     return  mini
 
 def remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes):
     for i in low_diagonals:
+        print(i)
     #aus Cremonaplan entfernen:
-        force = model[i]
         if i in Cremona_plan.members:
             Segment = Cremona_plan.members[i]
             #Endpunkte Segment zusammenlegen
@@ -77,6 +105,7 @@ def remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindun
             n2 = Segment.nodes[1]
             forces1 = Cremona_plan.points[n1.id].forces
             forces2 = Cremona_plan.points[n2.id].forces
+            #Diagonale gleich 0
             if n1 == n2:
                 #nur Diagonale löschen nicht Punkt!!
                  for j in range(len(forces1)):
@@ -87,23 +116,42 @@ def remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindun
             
                  Cremona_plan.points[n1.id].forces = forces1
                  Cremona_plan.members.pop(i)
+            #Diagonale ungleich 0
             else:
+                p1 = Cremona_plan.points[n1.id]
+                p2 = Cremona_plan.points[n2.id]
+                #Punkt der nicht an bel_chord angeschlossen ist löschen
+                #dazu Kräfte an anderen Punkt hängen
+                if p1.is_constrain == 'mem':
+                    for c in range(len(p2.forces)):
+                         p1.forces.append(p2.forces[c])
+                    n1 = p1
+                    n2 = p2
+                    print('Version a')
+                else:
+                     if p2.is_constrain == 'mem':
+                          for c in range(len(p1.forces)):
+                             p2.forces.append(p1.forces[c])
+                          n1 = p2
+                          n2 = p1
+                          print('Version b')
+                
+                #Wenn beide Punkte nicht an bel_chord angeschlossen sind im Mittel zusammenlegen
+                     else:
+                         Cremona_plan.points[n1.id].coordinates = Segment.midpoint
+                         for c in range(len(p2.forces)):
+                            p1.forces.append(p2.forces[c])
+                         n1 = p1
+                         n2 = p2
+                         print('Version c')
+                #zu löschender Knoten aus Segmenten entfernen
 
-                print('n1',n1.id,'n2',n2.id)
-                Cremona_plan.points[n1.id].coordinates = Segment.midpoint
-                print('forces1',forces1,'forces2',forces2)
-                for j in range(len(forces2)):
-                    if forces2[j] not in forces1:
-                        forces1.append(forces2[j])
-                    if n2 == Cremona_plan.members[forces2[j]].nodes[0]:
-                        print('Segment nodes',Cremona_plan.members[forces2[j]].nodes[0].id,Cremona_plan.members[forces2[j]].nodes[1].id)
-                        Cremona_plan.members[forces2[j]].nodes[0] = n1
-                        print('S nodes after',Cremona_plan.members[forces2[j]].nodes[0].id,Cremona_plan.members[forces2[j]].nodes[1].id)
-                    if n2 == Cremona_plan.members[forces2[j]].nodes[1]:
-                        print('Segment nodes',Cremona_plan.members[forces2[j]].nodes[0].id,Cremona_plan.members[forces2[j]].nodes[1].id)
-                        Cremona_plan.members[forces2[j]].nodes[1] = n1
-                        print('S nodes after', Cremona_plan.members[forces2[j]].nodes[0].id,Cremona_plan.members[forces2[j]].nodes[1].id)
-                print('f1 after', forces1)
+                for j in range(len(n2.forces)):
+                    if n2 == Cremona_plan.members[n2.forces[j]].nodes[0]:
+                        Cremona_plan.members[n2.forces[j]].nodes[0] = n1
+                    if n2 == Cremona_plan.members[n2.forces[j]].nodes[1]:
+                        Cremona_plan.members[n2.forces[j]].nodes[1] = n1
+    
                 #aus Cremona_plan löschen:
                 for j in range(len(forces1)):
                     update(Cremona_plan.members[forces1[j]])
@@ -111,15 +159,13 @@ def remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindun
                         popped = j
                 forces1.pop(popped)
                 
-                Cremona_plan.points[n1.id].forces = forces1
+                # Cremona_plan.points[n1.id].forces = forces1
                 Cremona_plan.members.pop(i)
                 Cremona_plan.points.pop(n2.id)
-                print('f1',forces1)
     return Cremona_plan,bel_chord,Verbindung,model,nodes
 
 #aus System entfernen:
 def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements):
-    print('low_diagonals',low_diagonals)
     for i in low_diagonals:
         node = model[i].node_id
         forces = nodes[node].forces
@@ -128,16 +174,13 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
                 popped =  j
         forces.pop(popped)
         model.pop(i)
-        print('model',model.keys())
-        print('elements',elements[1].coordinates)
         id_element = Cremona_plan.at_member[i]
         if id_element in elements:
             elements.pop(id_element)
-        print('elements',elements.keys())
         Verbindung.pop(i)
         Cremona_plan.one_member.pop(i)
         Cremona_plan.at_member.pop(i)
-        print('Cremona',Cremona_plan.one_member.keys())
+
     #Steigungen aktualisieren
     for i in bel_chord:
         if i in Cremona_plan.members:
@@ -160,7 +203,6 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
             components)
          model[i].magnitude, model[i].direction = get_magnitude_and_direction(
             components)
-    print('Verbindung',Verbindung,'one', Cremona_plan.one_member)
     # for i in Verbindung:
     #     if i in Cremona_plan.members:
     #          x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
