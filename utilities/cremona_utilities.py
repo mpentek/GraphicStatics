@@ -7,8 +7,16 @@ def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,n
     Cremona_plan, bel_chord =  set_force_bel_chord(Cremona_plan,bel_chord, model,nodes)
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
-    Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
+    for i in unbel_chord:
+        print('BEFORE',Cremona_plan.members[i].line['direction'])
+    Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
+    # Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord = get_new_directions(Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord)
+    for i in unbel_chord:
+        print('AFTER',Cremona_plan.members[i].line['direction'])
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
+
+def get_new_directions(Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord):
+    pass
 
 #Für optimiertes System Kräfte in einem Chord konstant, hier bel_chord
 def set_force_bel_chord(cremona,bel_chord, model,nodes):
@@ -39,7 +47,6 @@ def set_force_bel_chord(cremona,bel_chord, model,nodes):
     #Steigungen und Längen der angrenzenden Segmente anpassen
     for i in cremona.members:
         update(cremona.members[i])
-    plot_cremona_plan(cremona)
            
         
 
