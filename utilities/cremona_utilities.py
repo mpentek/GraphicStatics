@@ -7,21 +7,41 @@ def preprocess_cremonaplan(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,n
     Cremona_plan, bel_chord =  set_force_bel_chord(Cremona_plan,bel_chord, model,nodes)
     low_diagonals = get_low_diagonals(Cremona_plan,bel_chord,Verbindung,model,nodes)
     Cremona_plan,bel_chord,Verbindung,model,nodes = remove_diagonals_from_cremona(low_diagonals,Cremona_plan,bel_chord,Verbindung,model,nodes)
-    for i in unbel_chord:
-        print('BEFORE',Cremona_plan.members[i].line['direction'])
-    Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
+    for i in Verbindung:
+        if i in Cremona_plan.members:
+            print('BEFORE',i, Cremona_plan.members[i].line['direction'])
+    Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
     # Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord = get_new_directions(Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord)
-    for i in unbel_chord:
-        print('AFTER',Cremona_plan.members[i].line['direction'])
+    Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements = get_new_directions(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements)
+    for i in Verbindung:
+        if i in Cremona_plan.members:
+            print('AFTER',i,Cremona_plan.members[i].line['direction'])
+
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
-def get_new_directions(Cremona_plan,bel_ch,unbel_chord,Verbindung,model,nodes,elementsord):
-    pass
+def get_new_directions(Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements):
+    #Nach den vorherigen Schritten ist die richtige Steigung in model[i].direction gespeichert
+    print('MODEL', model)
+    print('un', unbel_chord['0i'].direction)
+    print(model['0i'].direction)
+    for i in model:
+        print(i,model[i].direction)
+    for i in bel_chord:
+        print('i',i)
+        bel_chord[i].line['direction'] = model[i].direction
+    for i in unbel_chord:
+        print('i',i)
+        unbel_chord[i].line['direction'] = model[i].direction
+    for i in Verbindung:
+        print(i)
+        Verbindung[i].line['direction'] = model[i].direction
+        
+    return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
 #Für optimiertes System Kräfte in einem Chord konstant, hier bel_chord
 def set_force_bel_chord(cremona,bel_chord, model,nodes):
     #Kräfte auf bestimmte Länge setzen
-    new_amount = 100 #ToDO: später eventuell Nutzereingabe
+    new_amount = 900 #ToDO: später eventuell Nutzereingabe
     for i in bel_chord:
         #Kraft anpassen
         magnitude = bel_chord[i].magnitude
@@ -191,6 +211,7 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
     #Steigungen aktualisieren
     for i in bel_chord:
         if i in Cremona_plan.members:
+            print(i,'BEFORE', model[i].direction)
             x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
             y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
         else:
@@ -202,7 +223,9 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
             components)
         model[i].magnitude, model[i].direction = get_magnitude_and_direction(
             components)
+        print(i,'AFTER', model[i].direction)
     for i in unbel_chord:
+         print('Change?', i, model[i].direction)
          x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
          y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
          components = [x,y]
@@ -210,19 +233,22 @@ def remove_diagonals_from_system(low_diagonals,Cremona_plan,bel_chord,unbel_chor
             components)
          model[i].magnitude, model[i].direction = get_magnitude_and_direction(
             components)
-    # for i in Verbindung:
-    #     if i in Cremona_plan.members:
-    #          x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
-    #          y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
-    #     else:
-    #         var = Cremona_plan.one_member[i]
-    #         x = - Cremona_plan.members[var].x[1] + Cremona_plan.members[var].x[0]
-    #         y = - Cremona_plan.members[var].y[1] + Cremona_plan.members[var].y[0]
-    #     components = [x,y]
-    #     Verbindung[i].magnitude, Verbindung[i].direction = get_magnitude_and_direction(
-    #         components)
-    #     model[i].magnitude, model[i].direction = get_magnitude_and_direction(
-    #         components)
+         print('sfter', i, model[i].direction)
+    for i in Verbindung:
+        if i in Cremona_plan.members:
+             print('Change?', i, model[i].direction)
+             x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]
+             y = Cremona_plan.members[i].y[1] - Cremona_plan.members[i].y[0]
+        else:
+            var = Cremona_plan.one_member[i]
+            x = - Cremona_plan.members[var].x[1] + Cremona_plan.members[var].x[0]
+            y = - Cremona_plan.members[var].y[1] + Cremona_plan.members[var].y[0]
+        components = [x,y]
+        Verbindung[i].magnitude, Verbindung[i].direction = get_magnitude_and_direction(
+            components)
+        model[i].magnitude, model[i].direction = get_magnitude_and_direction(
+            components)
+        print('after', i, model[i].direction)
         
     return Cremona_plan,bel_chord,unbel_chord,Verbindung,model,nodes,elements
 
