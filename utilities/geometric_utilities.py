@@ -140,7 +140,6 @@ def getSecond(sort):
     return number
 
 def right_left(sort, length):
-    print('sort', sort)
     sorted_forces = []
     a = 0
     b = 3
@@ -150,7 +149,6 @@ def right_left(sort, length):
         sorted_forces.append(short)
         a = a+1
         b = b+1
-    print('sorted_forces', sorted_forces)
     return sorted_forces
 
 

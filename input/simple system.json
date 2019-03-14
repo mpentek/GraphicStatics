@@ -1,0 +1,110 @@
+{
+    "bel_chord": "top",
+    "nodes": [
+        {
+            "id": 0,
+            "coords": [
+                0.0,
+                0.0
+            ],
+            "is_constrain" : true
+        },
+        {
+            "id": 1,
+            "coords": [
+                3,
+                0.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 2,
+            "coords": [
+                6,
+                0
+            ],
+            "is_constrain" : true
+        },
+        {
+            "id": 3,
+            "coords": [
+                3,
+                3
+            ],
+            "is_constrain" : false
+        }
+        
+    ],
+    "elements": [
+        {
+            "id": 0,
+            "connect": [
+                0,
+                1
+            ],
+            "type" : 2
+        },
+        {
+            "id": 1,
+            "connect": [
+                1,
+                2
+            ],
+            "type" : 2
+        },
+        {
+            "id": 2,
+            "connect": [
+                2,
+                3
+            ],
+            "type" : 1
+        },
+        {
+            "id": 3,
+            "connect": [
+                3,
+                0
+            ],
+            "type" : 1
+        },
+        {
+            "id": 4,
+            "connect": [
+                3,
+                1
+            ],
+            "type" : 3
+        }
+    ],
+    "external_forces": [
+        {
+            "id": 1,
+            "node_id": 3,
+            "components": [
+                0.0,
+                -100.0
+            ]
+        }
+    ],
+    "fixities": [
+        {
+            "id": 1,
+            "node_id": 0,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                true,
+                true
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 2,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                false,
+                true
+            ]
+        }
+    ]
+}

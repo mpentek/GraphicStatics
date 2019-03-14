@@ -16,17 +16,18 @@ from cremona_plan import cremona_plan
 
 
 # select the desired input file by index from the list
-input_files = {1 : 'sample_input',  # can be checked with Stiff
+input_files = {1 : 'sample_input', #was altes mit was neuem verglichen # can be checked with Stiff
                2 : 'sample_input_mod1',
-               3 : 'sample_input_mod2',
-               4 : 'double_arch_kinematic_top_load',  # TODO: check the bug at nodes 6,7,8,9 due to wrong force (progpagation) from member 6 (member 5 is still correct)
-               5 : 'double_arch_kinematic_top_load_mod1',  # TODO: check the bug at nodes 6,7,8,9 due to wrong force (progpagation) from member 6 (member 5 is still correct
-               6 : 'double_arch_kinematic_bottom_load',  # TODO: check the bug at nodes 6,7,8,9 due to wrong force (progpagation) from member 6 (member 5 is still correct
-               7 : 'double_arch_top_load',  # can be checked with Stiff
-               8 : 'double_arch_bottom_load',  # can be checked with Stiff
-               9 : 'double_arch_kinematic_top_load_mod2', # simple for debugging
-               10 : 'BC belastet ',
-               11 : 'geknicktes_System'}
+               3 : 'sample_input_mod2',#succesful, nur Diagonalen
+               4 : 'double_arch_kinematic_top_load', #member9 
+               5 : 'double_arch_kinematic_top_load_mod1',  # member9
+               6 : 'double_arch_kinematic_bottom_load',  #succesful, nur Diagonalen
+               7 : 'double_arch_top_load',  #succesful, nur Diagonalen
+               8 : 'double_arch_bottom_load',  # succesful, nur Diagonalen
+               9 : 'double_arch_kinematic_top_load_mod2', # succesful
+               10 : 'BC belastet ', # not in equilibrium
+               11 : 'geknicktes_System',#m5 falsch
+               12 : 'simple system'}#lines parallel
 selected_file_idx = 8
 
 # filename for import

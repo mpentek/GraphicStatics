@@ -20,7 +20,7 @@ from entitites.fixity2d import Fixity2D
 from entitites.segment2d import Segment2D
 
 from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints,sort_clockwise
-from utilities.geometric_utilities import TOL,get_line_coefficients, get_intersection
+from utilities.geometric_utilities import TOL,get_line_coefficients, get_intersection, are_parallel
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
 from utilities.geometric_utilities import sort_left_to_right
 
@@ -94,6 +94,27 @@ class Analysis(object):
         print("Cremona-plan to be implemented")
         plot_computation_model(self.computation_model)
         self.draw_system_from_cremona(cremona)
+        #Steigungen anpassen
+        elements = self.computation_model['elements']
+        nodes = self.computation_model['nodes']
+        members = cremona.members
+        for i in elements:
+            j = str(elements[i].id) +'i'
+            if j not in members:
+                j = str(elements[i].id) + 'j'
+
+            line1 = members[j].line
+            elements[i].coordinates[0] = nodes[elements[i].nodes[0]].coordinates
+            elements[i].coordinates[1] = nodes[elements[i].nodes[1]].coordinates
+            elements[i]._get_line()
+            lines = [elements[i].line,line1]
+            jop = are_parallel(lines)
+            if jop == True:
+                print('Member',i,'is correct')
+                print('cremona:',line1['direction'], 'system',elements[i].line['direction'])
+            else: 
+                print('Member', i, 'is incorrect')
+                print('cremona:',line1['direction'], 'system',elements[i].line['direction'])
         plot_computation_model(self.computation_model)
 
     def _calculate_reaction_forces(self):
@@ -407,67 +428,67 @@ class Analysis(object):
         pass
    
     def draw_system_from_cremona(self,cremona):
-        #draw bel_chord first
+        # #draw bel_chord first
         model = self.computation_model
-        e_line = []
-        #Liste mit allen externen Kraftlinien
-        for i in cremona.ex_forces:
-            self.computation_model['forces'][i].line = self.computation_model['forces'][i]._get_line()
-            line = self.computation_model['forces'][i].line
-            e_line.append(line)
-        # pass
-        #sortiere Elemente bel-chord von links nach rechts
-        #zeichne Elemente bel_chord
+        # e_line = []
+        # #Liste mit allen externen Kraftlinien
+        # for i in cremona.ex_forces:
+        #     self.computation_model['forces'][i].line = self.computation_model['forces'][i]._get_line()
+        #     line = self.computation_model['forces'][i].line
+        #     e_line.append(line)
+        # # pass
+        # #sortiere Elemente bel-chord von links nach rechts
+        # #zeichne Elemente bel_chord
         bel_elements = get_elements_bel_chord(model,cremona)
-        #Für alle außer letzten member Schnittpunkt memberlinie und Kraftlinie bestimmen
-        last_one = bel_elements[-1]
-        bel_elements.pop(-1)
-        count = 0
-        #an linkem Punkt von linkem member starten
-        left_node, right_node = r_l_node(model['elements'][bel_elements[0]],model['nodes'],model['bel_chord'])
-        start = model['nodes'][left_node].coordinates
-        for i in bel_elements:
-            #Koordinaten des linken Punkts anpassen
-            left_node, right_node = r_l_node(model['elements'][i],model['nodes'],model['bel_chord'])
-            model['nodes'][left_node].coordinates = start
-            #Elementlinie mit Steigung aus Cremonaplan
-            model['elements'][i].line = get_line_from_cremona(model['elements'][i],model['nodes'][left_node],cremona,cremona.bel_chord,model) 
-            #Schnittpunkt element- und external-force line
-            new_point = get_intersection([model['elements'][i].line,e_line[count]])
-            count = count+1
-            #new_point als neue Koordinaten für den rechten Punkt
-            model['nodes'][right_node].coordinates = new_point
-            #von dort aus nächsten member zeichnen
-            start = new_point
-        #letzten member "einhängen"
-        #in computation model speichern
-        self.computation_model = model
-        #überprüfen ob bel_chord richtig gezeichnet wurde
-        check_bottom_chord(last_one,start,model['nodes'],model,cremona,e_line)
+        # #Für alle außer letzten member Schnittpunkt memberlinie und Kraftlinie bestimmen
+        # last_one = bel_elements[-1]
+        # bel_elements.pop(-1)
+        # count = 0
+        # #an linkem Punkt von linkem member starten
+        # left_node, right_node = r_l_node(model['elements'][bel_elements[0]],model['nodes'],model['bel_chord'])
+        # start = model['nodes'][left_node].coordinates
+        # for i in bel_elements:
+        #     #Koordinaten des linken Punkts anpassen
+        #     left_node, right_node = r_l_node(model['elements'][i],model['nodes'],model['bel_chord'])
+        #     model['nodes'][left_node].coordinates = start
+        #     #Elementlinie mit Steigung aus Cremonaplan
+        #     model['elements'][i].line = get_line_from_cremona(model['elements'][i],model['nodes'][left_node],cremona,cremona.bel_chord,model) 
+        #     #Schnittpunkt element- und external-force line
+        #     new_point = get_intersection([model['elements'][i].line,e_line[count]])
+        #     count = count+1
+        #     #new_point als neue Koordinaten für den rechten Punkt
+        #     model['nodes'][right_node].coordinates = new_point
+        #     #von dort aus nächsten member zeichnen
+        #     start = new_point
+        # #letzten member "einhängen"
+        # #in computation model speichern
+        # self.computation_model = model
+        # #überprüfen ob bel_chord richtig gezeichnet wurde
+        # check_bottom_chord(last_one,start,model['nodes'],model,cremona,e_line)
 
-        bel_elements.append(last_one)
+        # bel_elements.append(last_one)
         #Diagonalen und unbel_chord zeichnen
         unbel_elements = get_elements_unbel_chord(model,cremona)
         last_one = unbel_elements[-1]
         unbel_elements.pop(-1)
         Verbdg_elements = get_elements_Verbindung(model,cremona)
-        print('bel',unbel_elements, 'Verbindungen',Verbdg_elements)
         #Startpunkt für unbel_chord und Verbindung festlegen
         left_node, right_node = r_l_node(model['elements'][bel_elements[0]],model['nodes'],model['bel_chord'])
         start_ubc = model['nodes'][left_node].coordinates
-        print('start_ubc',left_node)
         start_ver = model['nodes'][right_node].coordinates
-        print('start_ver', right_node)
         #Schnittpunkt von Verbindung und unbel-Member finden
-        for i in range(len(unbel_elements)):
+        for i in range(len(Verbdg_elements)):
             #Elementlinie unbel_chord mit Steigung aus Cremonaplan
+            print('intersection from',unbel_elements[i], 'with', Verbdg_elements[i] )
             left_node, right_node = r_l_node(model['elements'][unbel_elements[i]],model['nodes'],model['bel_chord'])
             model['nodes'][left_node].coordinates = start_ubc
             print('start_ubc', model['nodes'][left_node].coordinates)
             model['elements'][unbel_elements[i]].line = get_line_from_cremona(model['elements'][unbel_elements[i]],model['nodes'][left_node],cremona,cremona.unbel_chord, model)
             line1 = model['elements'][unbel_elements[i]].line
             #Elementlinie Vernindung mit Steigung aus Cremonaplan
-            fix, move = u_o_node(model['elements'][Verbdg_elements[i]],model['nodes'],cremona)
+            fix = u_o_node(model['elements'][Verbdg_elements[i]],model['nodes'],cremona)
+            #rechter Knoten des unbel_element soll beweglich sein
+            move = right_node
             # model['nodes'][fix].coordinates = start_ver
             print('start_ver', start_ver)
             model['elements'][Verbdg_elements[i]].line = get_line_from_cremona(model['elements'][Verbdg_elements[i]],model['nodes'][fix],cremona, cremona.Verbindung, model)
@@ -485,20 +506,28 @@ class Analysis(object):
             start_ver = model['nodes'][right].coordinates
             print('start_ver',right )
             plot_computation_model(model)
-            check_top_chord(last_one, start_ubc,model['nodes'], model, cremona, bel_elements[-1], Verbdg_elements[-1])
+        check_top_chord(last_one, start_ubc,model['nodes'], model, cremona, bel_elements[-1], Verbdg_elements[-1])
             
 def check_top_chord(last_one,start, nodes, model, cremona, last_bel, last_Ver):
     #Linie des letzten unbel_chord Elements
     left_node, right_node = r_l_node(model['elements'][last_one],nodes,model['bel_chord'])
     line1 = get_line_from_cremona(model['elements'][last_one],model['nodes'][right_node],cremona, cremona.unbel_chord, model)
+    model['elements'][last_one].coordinates[0] = nodes[model['elements'][last_one].nodes[0]].coordinates
+    model['elements'][last_one].coordinates[1] = nodes[model['elements'][last_one].nodes[1]].coordinates
+    model['elements'][last_one]._get_line()
+    line1 = model['elements'][last_one].line
     #Linie der letzten Deviation
     left_node, right_node = r_l_node(model['elements'][last_bel],nodes,model['bel_chord'])  
     line2 = get_line_from_cremona(model['elements'][last_Ver],model['nodes'][left_node],cremona, cremona.Verbindung, model)
     new_point = get_intersection([line1, line2])
+    print('start',start, 'new', new_point)
     if start[0] - TOL <= new_point[0] <= start[0] + TOL and  start[1] - TOL <= new_point[1] <= start[1] + TOL  :
         print('unbel_chord succesful')
     else:
         print('unbel_chord wrong!')
+        dx = start[0]-new_point[0]
+        dy = start[1]-new_point[1]
+        print('difference:',dx,dy)
 
 def check_bottom_chord(last_one,start,nodes, model,cremona, e_line):
     left_node, right_node = r_l_node(model['elements'][last_one],nodes,model['bel_chord'])
@@ -514,6 +543,7 @@ def check_bottom_chord(last_one,start,nodes, model,cremona, e_line):
 def get_line_from_cremona(element,node,cremona,chord,model):
     #Richtung
     line = {}
+    print('element',element.id)
     i = str(element.id) + 'i'
     j = str(element.id) +'j'
     #Vorzeichen der Richtung anpassen
@@ -522,8 +552,6 @@ def get_line_from_cremona(element,node,cremona,chord,model):
     if j in node.forces:
         line['direction'] =  chord[j].line['direction']
 
-    print('line',line['direction'])
-    print('element', element.line['direction'])
     #Koeffizienten
     x2 = node.coordinates[0] - line['direction'][0]
     y2 = node.coordinates[1] - line['direction'][1]
@@ -560,11 +588,11 @@ def u_o_node(element,nodes,cremona):
         for i in cremona.bel_chord:
             if i in nodes[n1].forces:
                 fix = n1
-                move = n2
             if i in nodes[n2].forces:
                 fix = n2
-                move = n1
-        return fix, move
+        #rechter Knoten des unbelasteten Elements soll verschoben werden
+
+        return fix
 
 def get_elements_bel_chord(model,cremona):
     bel_elements = {}
