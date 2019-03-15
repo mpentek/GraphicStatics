@@ -463,7 +463,7 @@ class cremona_plan():
 
        #process Cremonaplan
 
-       self,self.bel_chord, self.unbel_chord,self.Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements)
+       self,self.bel_chord, self.unbel_chord,self.Verbindung,model,nodes,elements = preprocess_cremonaplan(self,bel_chord,unbel_chord,Verbindung,model,nodes,sys_elements, bottom_or_top)
        #input-system aktualisieren und Cremonaplan plotten 
        plot_cremona_plan(self)
 

@@ -28,7 +28,7 @@ input_files = {1 : 'sample_input', #was altes mit was neuem verglichen # can be 
                10 : 'BC belastet ', # not in equilibrium
                11 : 'geknicktes_System',#m5 falsch
                12 : 'simple system'}#lines parallel
-selected_file_idx = 8
+selected_file_idx = 7
 
 # filename for import
 input_folder = 'input'
