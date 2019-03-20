@@ -16,19 +16,19 @@ from cremona_plan import cremona_plan
 
 
 # select the desired input file by index from the list
-input_files = {1 : 'sample_input', #was altes mit was neuem verglichen # can be checked with Stiff
-               2 : 'sample_input_mod1',
+input_files = {1 : 'sample_input', #succesful
+               2 : 'sample_input_mod1',#funktioniert noch nicth
                3 : 'sample_input_mod2',#succesful, nur Diagonalen
-               4 : 'double_arch_kinematic_top_load', #member9 
-               5 : 'double_arch_kinematic_top_load_mod1',  # member9
-               6 : 'double_arch_kinematic_bottom_load',  #succesful, nur Diagonalen
+               4 : 'double_arch_kinematic_top_load', #not in equilibrium 
+               5 : 'double_arch_kinematic_top_load_mod1',  # not in equilibrium
+               6 : 'double_arch_kinematic_bottom_load',  #succesful, keine Diagonalen
                7 : 'double_arch_top_load',  #succesful, nur Diagonalen
                8 : 'double_arch_bottom_load',  # succesful, nur Diagonalen
                9 : 'double_arch_kinematic_top_load_mod2', # succesful
                10 : 'BC belastet ', # not in equilibrium
-               11 : 'geknicktes_System',#m5 falsch
-               12 : 'simple system'}#lines parallel
-selected_file_idx = 7
+               11 : 'geknicktes_System',#succesful
+               12 : 'simple system'}#funktioniert noch nicht
+selected_file_idx = 12
 
 # filename for import
 input_folder = 'input'

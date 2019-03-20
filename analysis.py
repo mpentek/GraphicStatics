@@ -472,41 +472,46 @@ class Analysis(object):
         last_one = unbel_elements[-1]
         unbel_elements.pop(-1)
         Verbdg_elements = get_elements_Verbindung(model,cremona)
-        #Startpunkt für unbel_chord und Verbindung festlegen
-        left_node, right_node = r_l_node(model['elements'][bel_elements[0]],model['nodes'],model['bel_chord'])
-        start_ubc = model['nodes'][left_node].coordinates
-        start_ver = model['nodes'][right_node].coordinates
-        #Schnittpunkt von Verbindung und unbel-Member finden
-        for i in range(len(Verbdg_elements)):
-            #Elementlinie unbel_chord mit Steigung aus Cremonaplan
-            print('intersection from',unbel_elements[i], 'with', Verbdg_elements[i] )
-            left_node, right_node = r_l_node(model['elements'][unbel_elements[i]],model['nodes'],model['bel_chord'])
-            model['nodes'][left_node].coordinates = start_ubc
-            print('start_ubc', model['nodes'][left_node].coordinates)
-            model['elements'][unbel_elements[i]].line = get_line_from_cremona(model['elements'][unbel_elements[i]],model['nodes'][left_node],cremona,cremona.unbel_chord, model)
-            line1 = model['elements'][unbel_elements[i]].line
-            #Elementlinie Vernindung mit Steigung aus Cremonaplan
-            fix = u_o_node(model['elements'][Verbdg_elements[i]],model['nodes'],cremona)
-            #rechter Knoten des unbel_element soll beweglich sein
-            move = right_node
-            # model['nodes'][fix].coordinates = start_ver
-            print('start_ver', start_ver)
-            model['elements'][Verbdg_elements[i]].line = get_line_from_cremona(model['elements'][Verbdg_elements[i]],model['nodes'][fix],cremona, cremona.Verbindung, model)
-            line2 =  model['elements'][Verbdg_elements[i]].line          
-            #Schnittpunkt der Linien bestimmen
-            new_point = get_intersection([line1,line2])
-            print('new_point', new_point)
-            #Neuen Punkt in Elementen speichern
-            print('fix',fix,'move', move)
-            model['nodes'][move].coordinates = new_point
-            #neuen Start festlegen
-            start_ubc = new_point
-            print('start_ubc',move)
-            left, right = r_l_node(model['elements'][bel_elements[i+1]],model['nodes'],model['bel_chord'])
-            start_ver = model['nodes'][right].coordinates
-            print('start_ver',right )
+        print('Verbindungen', Verbdg_elements)
+        #Falls keine Vernindungen mehr vorhanden -> System bleibt wie es war
+        if Verbdg_elements == []:
             plot_computation_model(model)
-        check_top_chord(last_one, start_ubc,model['nodes'], model, cremona, bel_elements[-1], Verbdg_elements[-1])
+        else:
+            #Startpunkt für unbel_chord und Verbindung festlegen
+            left_node, right_node = r_l_node(model['elements'][bel_elements[0]],model['nodes'],model['bel_chord'])
+            start_ubc = model['nodes'][left_node].coordinates
+            start_ver = model['nodes'][right_node].coordinates
+            #Schnittpunkt von Verbindung und unbel-Member finden
+            for i in range(len(Verbdg_elements)):
+                #Elementlinie unbel_chord mit Steigung aus Cremonaplan
+                print('intersection from',unbel_elements[i], 'with', Verbdg_elements[i] )
+                left_node, right_node = r_l_node(model['elements'][unbel_elements[i]],model['nodes'],model['bel_chord'])
+                model['nodes'][left_node].coordinates = start_ubc
+                print('start_ubc', model['nodes'][left_node].coordinates)
+                model['elements'][unbel_elements[i]].line = get_line_from_cremona(model['elements'][unbel_elements[i]],model['nodes'][left_node],cremona,cremona.unbel_chord, model)
+                line1 = model['elements'][unbel_elements[i]].line
+                #Elementlinie Vernindung mit Steigung aus Cremonaplan
+                fix = u_o_node(model['elements'][Verbdg_elements[i]],model['nodes'],cremona)
+                #rechter Knoten des unbel_element soll beweglich sein
+                move = right_node
+                # model['nodes'][fix].coordinates = start_ver
+                print('start_ver', start_ver)
+                model['elements'][Verbdg_elements[i]].line = get_line_from_cremona(model['elements'][Verbdg_elements[i]],model['nodes'][fix],cremona, cremona.Verbindung, model)
+                line2 =  model['elements'][Verbdg_elements[i]].line          
+                #Schnittpunkt der Linien bestimmen
+                new_point = get_intersection([line1,line2])
+                print('new_point', new_point)
+                #Neuen Punkt in Elementen speichern
+                print('fix',fix,'move', move)
+                model['nodes'][move].coordinates = new_point
+                #neuen Start festlegen
+                start_ubc = new_point
+                print('start_ubc',move)
+                left, right = r_l_node(model['elements'][bel_elements[i+1]],model['nodes'],model['bel_chord'])
+                start_ver = model['nodes'][right].coordinates
+                print('start_ver',right )
+                plot_computation_model(model)
+            check_top_chord(last_one, start_ubc,model['nodes'], model, cremona, bel_elements[-1], Verbdg_elements[-1])
             
 def check_top_chord(last_one,start, nodes, model, cremona, last_bel, last_Ver):
     #Linie des letzten unbel_chord Elements
