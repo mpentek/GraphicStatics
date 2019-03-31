@@ -1,4 +1,4 @@
-#plot Cemona_Plan
+# plot Cemona_Plan
 
 from utilities.plot_utilities import save_to_pdf
 import matplotlib.pyplot as plt
@@ -7,11 +7,12 @@ from matplotlib import colors as mcolors
 import matplotlib.patches as patches
 from matplotlib.backends.backend_pdf import PdfPages
 
-#geplottet werden müssen: self.points, self.ex_forces, self.members, self.reactions
+# geplottet werden müssen: self.points, self.ex_forces, self.members, self.reactions
 
-#member_limits and segment for plot
-#Achsen Zeichnen und beschriften
-#plot solved system
+# member_limits and segment for plot
+# Achsen Zeichnen und beschriften
+# plot solved system
+
 
 def get_limits_and_points_for_plot(points, offset_factor=0.25):
     x = []
@@ -41,46 +42,45 @@ def get_limits_and_points_for_plot(points, offset_factor=0.25):
     return x_lim, y_lim, p_id, x, y
 
 
-
-
 def plot_cremona_plan(Cremona_plan):
-    x_lim, y_lim, p_id, x, y = get_limits_and_points_for_plot(Cremona_plan.points)
+    x_lim, y_lim, p_id, x, y = get_limits_and_points_for_plot(
+        Cremona_plan.points)
 
     fig, ax = plt.subplots()
     ax.set_title('Cremona Plan')
     ax.set_xlim(x_lim)
     ax.set_ylim(y_lim)
 
-    #plot points and point_id
+    # plot points and point_id
     ax.scatter(x, y)
 
     for i in range(len(p_id)):
-       ax.annotate("n_" + str(p_id[i]), (x[i],y[i]))
+        ax.annotate("n_" + str(p_id[i]), (x[i], y[i]))
 
-    #plot external forces
+    # plot external forces
 
     for f_id in Cremona_plan.ex_forces:
         x = Cremona_plan.ex_forces[f_id].x[0]
         y = Cremona_plan.ex_forces[f_id].y[0]
         delta_x = Cremona_plan.ex_forces[f_id].x[1] - x
         delta_y = Cremona_plan.ex_forces[f_id].y[1] - y
-        ax.arrow(x,y,delta_x, delta_y,  color='green',
-                     length_includes_head=True, head_width=10, head_length=10)
+        ax.arrow(x, y, delta_x, delta_y,  color='green',
+                 length_includes_head=True, head_width=10, head_length=10)
         s_x = Cremona_plan.ex_forces[f_id].midpoint[0]
-        s_y = Cremona_plan.ex_forces[f_id].midpoint[1]  
-        ax.annotate(f_id,(s_x, s_y))  
+        s_y = Cremona_plan.ex_forces[f_id].midpoint[1]
+        ax.annotate(f_id, (s_x, s_y))
 
-    #plot reactions
+    # plot reactions
     for f_id in Cremona_plan.reactions:
         delta_x = Cremona_plan.reactions[f_id].x
         delta_y = Cremona_plan.reactions[f_id].y
         ax.add_line(PLine2D(delta_x, delta_y,
-                          alpha=1, color='b', linestyle='-'))
+                            alpha=1, color='b', linestyle='-'))
         s_x = Cremona_plan.reactions[f_id].midpoint[0]
-        s_y = Cremona_plan.reactions[f_id].midpoint[1]  
-        ax.annotate(f_id,(s_x, s_y))                        
+        s_y = Cremona_plan.reactions[f_id].midpoint[1]
+        ax.annotate(f_id, (s_x, s_y))
 
-    #plot members
+    # plot members
     for f_id in Cremona_plan.members:
         delta_x = Cremona_plan.members[f_id].x
         delta_y = Cremona_plan.members[f_id].y
@@ -88,5 +88,4 @@ def plot_cremona_plan(Cremona_plan):
                             alpha=1, color='b', linestyle='--'))
         s_x = Cremona_plan.members[f_id].midpoint[0] - 1
         s_y = Cremona_plan.members[f_id].midpoint[1] - 1
-        ax.annotate(f_id,(s_x, s_y))                                         
-
+        ax.annotate(f_id, (s_x, s_y))
