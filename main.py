@@ -29,9 +29,13 @@ input_files = {1: 'sample_input',  # succesful
                7: 'double_arch_top_load',  # succesful, nur Diagonalen
                8: 'double_arch_bottom_load',  # succesful, nur Diagonalen
                9: 'double_arch_kinematic_top_load_mod2',  # succesful
-               10: 'BC belastet ',  # not in equilibrium
+               # PMT: need some is_contrain to be solved correctly
+               # setting element 8 as is_contrain -> topology update at node 7
+               # further erros -> DEBUG
+               10: 'BC_belastet ',  # not in equilibrium
                11: 'geknicktes_System',  # succesful
                12: 'simple system'}  # succesful
+
 selected_file_idx = 12
 
 # filename for import

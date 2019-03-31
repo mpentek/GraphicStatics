@@ -344,8 +344,11 @@ class Analysis(object):
                                 if len(constrained_elements_at_other_node) != 1:
                                     # for 2d - plane - problems only 1 line should give the constraint
                                     # assumption for the current implementation
+                                    print("# other node id: ",
+                                          str(other_node_id))
                                     print(
-                                        "#: ", constrained_elements_at_other_node)
+                                        "# constrained elements at other node: ", constrained_elements_at_other_node)
+
                                     raise Exception(
                                         'Computation model (geometrically) over-(or under-)constrained at node ' + str(other_node_id) + ', cannot solve further!')
                                 else:
