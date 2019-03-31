@@ -42,7 +42,8 @@
                 0,
                 1
             ],
-            "type" : 2
+            "opt_type" : 2,
+            "is_constrain" : false
         },
         {
             "id": 1,
@@ -50,7 +51,8 @@
                 1,
                 2
             ],
-            "type" : 2
+            "opt_type" : 2,
+            "is_constrain" : false
         },
         {
             "id": 2,
@@ -58,7 +60,8 @@
                 2,
                 3
             ],
-            "type" : 1
+            "opt_type" : 1,
+            "is_constrain" : false
         },
         {
             "id": 3,
@@ -66,7 +69,8 @@
                 3,
                 0
             ],
-            "type" : 1
+            "opt_type" : 1,
+            "is_constrain" : false
         },
         {
             "id": 4,
@@ -74,7 +78,8 @@
                 3,
                 1
             ],
-            "type" : 3
+            "opt_type" : 3,
+            "is_constrain" : false
         }
     ],
     "external_forces": [

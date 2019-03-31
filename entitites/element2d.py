@@ -12,21 +12,14 @@ from geometric_utilities import get_length, get_magnitude_and_direction, get_lin
 
 
 class Element2D:
-<<<<<<< HEAD
-    def __init__(self, id, nodes, coordinates,type):
-=======
-    def __init__(self, id, nodes, coordinates, is_constrain):
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
+    def __init__(self, id, nodes, coordinates,opt_type,is_constrain,):
         self.id = id
         # id of nodes at i and j
         self.nodes = nodes
         self.coordinates = coordinates
-<<<<<<< HEAD
+        self.is_constrain=is_constrain
         #bel_chord, unbel_chord, Verbindung
-        self.type = type 
-=======
-        self.is_constrain = is_constrain
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
+        self.opt_type = opt_type 
         # will be tension or compression
         self.element_type = None
         # will be assigned after initialize

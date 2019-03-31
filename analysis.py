@@ -19,13 +19,9 @@ from entitites.force2d import Force2D
 from entitites.fixity2d import Fixity2D
 from entitites.segment2d import Segment2D
 
-<<<<<<< HEAD
 from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints,sort_clockwise
-from utilities.geometric_utilities import TOL,get_line_coefficients, get_intersection, are_parallel
-=======
-from utilities.mechanical_utilities import get_force_diagram, get_space_diagram, get_reactions, decompose_force_into_components_by_directions, get_nodal_equilibrium_by_method_of_joints
-from utilities.geometric_utilities import TOL, are_parallel, get_intersection, get_length, get_midpoint
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
+from utilities.geometric_utilities import TOL, are_parallel, get_intersection, get_length, get_midpoint, get_line_coefficients
+
 from utilities.plot_utilities import plot_input_system, plot_computation_model, plot_solved_system, plot_force_diagram, plot_space_diagram, plot_decomposed_forces, plot_reaction_forces
 from utilities.geometric_utilities import sort_left_to_right
 
@@ -65,7 +61,6 @@ class Analysis(object):
         # get node_list:
         for node in data['nodes']:
             model["nodes"][node['id']] = Node2D(node['id'],
-<<<<<<< HEAD
                                                 node['coords'],
                                                 node['is_constrain'])
         #get elements
@@ -74,19 +69,9 @@ class Analysis(object):
                                                          element['connect'], 
                                                          # TODO: to be removed in future, should be only stored in 'nodes' 
                                                          [model['nodes'][element['connect'][0]].coordinates, 
-                                                          model['nodes'][element['connect'][1]].coordinates], 
-                                                         element['type']) 
-=======
-                                                node['coords'])
-
-        # get elements:
-        for element in data['elements']:
-            model["elements"][element['id']] = Element2D(element['id'],
-                                                         element['connect'],
-                                                         [model["nodes"][element['connect'][0]].coordinates,
-                                                          model["nodes"][element['connect'][1]].coordinates],
-                                                         element['is_constrain'])
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
+                                                          model['nodes'][element['connect'][1]].coordinates],  
+                                                         element['opt_type'],
+                                                         element['is_constrain']) 
 
         # get (external) forces:
         for ext_force in data['external_forces']:
@@ -238,14 +223,8 @@ class Analysis(object):
         if self.echo_level == 1:
             plot_force_diagram(force_diagram)
 
-<<<<<<< HEAD
             if force_diagram['resultant'].magnitude > TOL:
                 warnings.warn('Computation model not in equilibrium at node ' + str(node.id) + '!', Warning)
-=======
-        if force_diagram['resultant'].magnitude > TOL:
-            warnings.warn(
-                'Computation model not in equilibrium at node ' + node.id + '!', Warning)
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
 
     def _prepare_computation_model(self):
         self._calculate_reaction_forces()
@@ -354,11 +333,14 @@ class Analysis(object):
                                     self.computation_model['elements'][element_id] for element_id in elements_at_other_node]
                                 constrained_elements_at_other_node = [
                                     element.id for element in elements_at_other_node if element.is_constrain]
+                                
+                                ## PMT: here workaround for overconstrained geometry
                                 if len(constrained_elements_at_other_node) != 1:
                                     # for 2d - plane - problems only 1 line should give the constraint
                                     # assumption for the current implementation
+                                    print("#: ", constrained_elements_at_other_node)
                                     raise Exception(
-                                        'Computation model (geometrically) over-(or under-)constrained at node ' + other_node_id + ', cannot solve further!')
+                                        'Computation model (geometrically) over-(or under-)constrained at node ' + str(other_node_id) + ', cannot solve further!')
                                 else:
                                     # node will be move along constrained line
                                     other_node_new_coord = get_intersection(
@@ -420,7 +402,6 @@ class Analysis(object):
                                 force.line = force._get_line()
 
                             # update element and nodal information
-<<<<<<< HEAD
                             for o_idx, element in enumerate(nodal_elements): #Was ist o_idx?
                                 #Hier weitermachen
 
@@ -431,11 +412,6 @@ class Analysis(object):
                                 #     # nothing needs to be done, already solved
                                 #     pass
                                 # else:
-=======
-                            for o_idx, element in enumerate(nodal_elements):
-                                # TODO: note, that by this point the force -> so forces[o_idx]
-                                # has to be parallel to the element !!!
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
 
                                 # use a parameter xi to determine internal force type
                                 dir_u = forces[o_idx].direction[0]
@@ -474,15 +450,10 @@ class Analysis(object):
                                                   self.computation_model['nodes'][node_id].coordinates[1] - element.midpoint[1]]
                                     if element.element_type == 'tension':
                                         components = [-components[0], -
-<<<<<<< HEAD
                                                         components[1]]
                                     # else:
                                     #     ValueError("Case not permitted")
                                     
-=======
-                                                      components[1]]
-
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
                                     force = Force2D(str(element.id) + labels[i_idx],
                                                     node_id,
                                                     self.computation_model['nodes'][node_id].coordinates,
@@ -538,20 +509,13 @@ class Analysis(object):
             print("## System solved successfully!")
             self._check_all_nodal_equilibrium()
         else:
-<<<<<<< HEAD
             warnings.warn("System cannot be solved iteratively, needs other solution",Warning)
         
         
-=======
-            warnings.warn(
-                "System cannot be solved iteratively, needs other solution", Warning)
-
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
     def solve_system(self):
         self._solve_iteratively()
         plot_solved_system(self.computation_model)
         pass
-<<<<<<< HEAD
    
     def draw_system_from_cremona(self,cremona):
         # #draw bel_chord first
@@ -781,5 +745,3 @@ def get_elements_Verbindung(model,cremona):
     # print("resultant_line: ", force_diagram['resultant'].line['coefficients'])
     # print("resultant_coordinates: ", force_diagram['resultant'].coordinates)
     # decomposed_forces, points = [force_diagram['resultant']], [force_diagram['resultant'].coordinates]
-=======
->>>>>>> ed1bab1... WIP : workaround for overconstraineg geometry
