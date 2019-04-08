@@ -36,7 +36,7 @@ input_files = {1: 'sample_input',  # succesful
                11: 'geknicktes_System',  # succesful
                12: 'simple system'}  # succesful
 
-selected_file_idx = 12
+selected_file_idx = 6
 
 # filename for import
 input_folder = 'input'

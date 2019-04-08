@@ -99,6 +99,7 @@ class cremona_plan():
 
         sorted_reactions = sort_right_to_left(reactions, nodes)
         sorted_member_forces = sort_left_to_right(member_forces, nodes)
+        print(sorted_member_forces)
 
     #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]+
     #    model['14j'].direction = [-0.7071067811865476, 0.7071067811865476]
@@ -263,7 +264,9 @@ class cremona_plan():
         # Elemente nach type aufteilen,
         type_forces = []
         for i in range(len(sorted_member_forces)):
-            type_force = model[sorted_member_forces[i]].force_type
+            watch_force = model[sorted_member_forces[i]]
+            type_force = sys_elements[self.at_member[watch_force.id]].opt_type
+            print('watch', watch_force.id,'type',type_force)
             type_forces.append(type_force)
 
         force_id = sorted_member_forces
@@ -285,6 +288,8 @@ class cremona_plan():
         for i in sorted_members:
             if sorted_members[i] == 3:
                 Verbindung[i] = model[i]
+
+        print('bel', bel_chord, 'un',unbel_chord, 'VEr',Verbindung)
 
         # member unbel_chord einfügen
 

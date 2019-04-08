@@ -615,7 +615,7 @@ class Analysis(object):
                     model['elements'][bel_elements[i+1]], model['nodes'], model['bel_chord'])
                 start_ver = model['nodes'][right].coordinates
                 print('start_ver', right)
-                plot_computation_model(model)
+                # plot_computation_model(model)
             check_top_chord(
                 last_one, start_ubc, model['nodes'], model, cremona, bel_elements[-1], Verbdg_elements[-1])
 
