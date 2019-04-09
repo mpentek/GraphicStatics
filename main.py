@@ -36,7 +36,11 @@ input_files = {1: 'sample_input',  # succesful
                11: 'geknicktes_System',  # succesful
                12: 'simple system'}  # succesful
 
-selected_file_idx = 6
+selected_file_idx = 10
+##
+# PMT: weiterhin Problement bei
+# 4, 5, 10
+##
 
 # filename for import
 input_folder = 'input'
