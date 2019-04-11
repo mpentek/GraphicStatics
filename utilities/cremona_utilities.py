@@ -249,6 +249,7 @@ def remove_diagonals_from_system(low_diagonals, Cremona_plan, bel_chord, unbel_c
         Cremona_plan.at_member.pop(i)
 
     # Steigungen aktualisieren
+    print('bel_chord', bel_chord, 'Cremona', Cremona_plan.members)
     for i in bel_chord:
         if i in Cremona_plan.members:
             x = Cremona_plan.members[i].x[1] - Cremona_plan.members[i].x[0]

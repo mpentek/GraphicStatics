@@ -73,7 +73,7 @@
                 0,
                 1
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -82,7 +82,7 @@
                 1,
                 2
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -91,7 +91,7 @@
                 2,
                 3
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -100,7 +100,7 @@
                 3,
                 4
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -145,7 +145,7 @@
                 1,
                 7
             ],
-            "opt_type" : 1,
+            "opt_type" : 3,
             "is_constrain" : true
         },
         {
@@ -154,7 +154,7 @@
                 2,
                 6
             ],
-            "opt_type" : 1,
+            "opt_type" : 3,
             "is_constrain" : false
         },
         {
@@ -163,7 +163,7 @@
                 3,
                 5
             ],
-            "opt_type" : 1,
+            "opt_type" : 3,
             "is_constrain" : false
         },
         {
@@ -172,7 +172,7 @@
                 2,
                 7
             ],
-            "opt_type" : 1,
+            "opt_type" : 3,
             "is_constrain" : false
         },
         {
@@ -181,7 +181,7 @@
                 2,
                 5
             ],
-            "opt_type" : 1,
+            "opt_type" : 3,
             "is_constrain" : false
         }
     ],

@@ -66,20 +66,24 @@ class cremona_plan():
             node1 = model[f1].node_id
             node2 = model[f2].node_id
             if node1 == node2:
+                #Kraft 2 soll entfernt werden
                 popped.append(f2)
                 Hallo.append(i + correct)
                 correct -= 1
+                #Resultierende bilden
                 x_amount = ex_forces[f1].direction[0]*ex_forces[f1].magnitude + \
                     ex_forces[f2].direction[0]*ex_forces[f2].magnitude
                 y_amount = ex_forces[f1].direction[1]*ex_forces[f1].magnitude + \
                     ex_forces[f2].direction[1]*ex_forces[f2].magnitude
                 new_amount = sqrt((x_amount) * x_amount+(y_amount)*y_amount)
+                #Resutierende in erster Kraft speichern
                 model[f1].direction = [
                     x_amount/abs(x_amount), y_amount/abs(y_amount)]
                 model[f1].magnitude = new_amount
                 ex_forces[f1].direction = [
                     x_amount/new_amount, y_amount/new_amount]
                 ex_forces[f1].magnitude = new_amount
+                #Kraft 2 von Knoten löschen
                 forces = nodes[node2].forces
                 pop_point = None
                 for j in range(len(forces)):
@@ -90,7 +94,7 @@ class cremona_plan():
         analysis.input_system["forces"] = model
 
     #    sorted_ex = sorted_ex_2
-
+        #Kraft 2 auch aus model und sorted_ex entfernen
         for i in range(0, len(popped)):
             model.pop(popped[i])
             ex_forces.pop(popped[i])
@@ -99,7 +103,7 @@ class cremona_plan():
 
         sorted_reactions = sort_right_to_left(reactions, nodes)
         sorted_member_forces = sort_left_to_right(member_forces, nodes)
-        print(sorted_member_forces)
+        
 
     #    model['14i'].direction = [0.7071067811865476, -0.7071067811865476]+
     #    model['14j'].direction = [-0.7071067811865476, 0.7071067811865476]
@@ -294,6 +298,7 @@ class cremona_plan():
         # member unbel_chord einfügen
 
         # sort unbel_chord
+        #dient dazu, dass die Kräfte auf die richtige Seite gezeichnet werden
         nodes_unbel = []
         force_id = []
         for i in unbel_chord:
