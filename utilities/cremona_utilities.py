@@ -32,6 +32,9 @@ def get_new_directions(Cremona_plan, bel_chord, unbel_chord, Verbindung, model, 
         unbel_chord[i].line['direction'] = unbel_chord[i].direction
     for i in Verbindung:
         Verbindung[i].line['direction'] = Verbindung[i].direction
+    #Länge der Kräfte im Cremonaplan anpassen
+    for i in Cremona_plan.members:
+        Cremona_plan.members[i].update_from_node 
 
     return Cremona_plan, bel_chord, unbel_chord, Verbindung, model, nodes, elements
 
