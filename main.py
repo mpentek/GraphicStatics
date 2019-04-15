@@ -16,31 +16,22 @@ from cremona_plan import cremona_plan
 
 
 # select the desired input file by index from the list
-input_files = {1: 'sample_input',  # succesful
-               2: 'sample_input_mod1',  # succesful
-               3: 'sample_input_mod2',  # succesful, nur Diagonalen
+input_files = {1: 'sample_input',  
+               2: 'sample_input_mod1',  
+               3: 'sample_input_mod2', 
                # Automatic topology update at nodes 7 and 8
-               4: 'double_arch_kinematic_top_load',  # not in equilibrium
+               4: 'double_arch_kinematic_top_load',
                # Automatic topology update at nodes 7 and 8
-               5: 'double_arch_kinematic_top_load_mod1',  # not in equilibrium
-               # TODO: should add extra constrain not just to elements but also to nodes (those that have external or reaction forces)
+               5: 'double_arch_kinematic_top_load_mod1', 
                # Automatic topology update at nodes 7 and 8
-               6: 'double_arch_kinematic_bottom_load',  # succesful, keine Diagonalen
-               7: 'double_arch_top_load',  # succesful, nur Diagonalen
-               8: 'double_arch_bottom_load',  # succesful, nur Diagonalen
-               9: 'double_arch_kinematic_top_load_mod2',  # succesful
-               # PMT: need some is_contrain to be solved correctly
-               # setting element 8 as is_contrain -> topology update at node 7
-               # further erros -> DEBUG
-               10: 'BC_belastet ',  # not in equilibrium
-               11: 'geknicktes_System',  # succesful
-               12: 'simple system'}  # succesful
+               6: 'double_arch_kinematic_bottom_load',
+               7: 'double_arch_top_load', 
+               8: 'double_arch_bottom_load', 
+               9: 'double_arch_kinematic_top_load_mod2', 
+               10: 'geknicktes_System',
+               11: 'simple system'}
 
-selected_file_idx =10
-##
-# PMT: weiterhin Problement bei
-# 4, 5, 10
-##
+selected_file_idx = 11
 
 # filename for import
 input_folder = 'input'
