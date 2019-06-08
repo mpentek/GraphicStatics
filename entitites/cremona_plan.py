@@ -270,7 +270,6 @@ class cremona_plan():
         for i in range(len(sorted_member_forces)):
             watch_force = model[sorted_member_forces[i]]
             type_force = sys_elements[self.at_member[watch_force.id]].opt_type
-            print('watch', watch_force.id,'type',type_force)
             type_forces.append(type_force)
 
         force_id = sorted_member_forces
@@ -293,7 +292,6 @@ class cremona_plan():
             if sorted_members[i] == 3:
                 Verbindung[i] = model[i]
 
-        print('bel', bel_chord, 'un',unbel_chord, 'VEr',Verbindung)
 
         # member unbel_chord einfügen
 
@@ -368,10 +366,11 @@ class cremona_plan():
 
         self.points = dict(zip(node_id, points))
         self.members = dict(zip(members, elements))
-
         # remove dubbelpoints
     #    print('points', self.points.items(),'\n','ex_forces', self.ex_forces, '\n', 'reactions',self.reactions,'\n', 'members', self.members)
         # first value "save as" second value "save from" b
+        #Um sicher zu gehen, dass keine Informationen verloren gehen, werden die gelöschten Punkt in einem Vektor gespeichert
+        self.removed_points = {}
         same_point = [[0, 0]]
         # sort the points
         for i in self.points:
@@ -386,25 +385,29 @@ class cremona_plan():
                 y_coo = self.points[same_point[j][0]].coordinates[1]
 
             #    print('middle',self.points[8].forces)
+                #Vergleiche die beiden Punkte
                 if x_coo - TOL <= x <= x_coo + TOL and y_coo - TOL <= y <= y_coo + TOL:
                     same_point.append([same_point[j][0], i])
                     change = 1
                     break
-                    # dann pop points[i] und speicher Kräfte an dem Punkt coordinates[j]
+                    #Punkte liegen übereinander
+            #Punkte sind unterschiedlich
             if change == 0:
                 same_point.append([i, i])
-                # sonst append points[i]
-        # remove them
+        
+        # Eigenschaften auf bleibenden Punkt übertragen
         for i in range(len(same_point)):
             stay = same_point[i][0]
             remove = same_point[i][1]
 
             if remove != stay:
+                #angreifende Kräfte übertragen
                 for c in range(len(self.points[remove].forces)):
                     if self.points[remove].forces[c] not in self.points[stay].forces:
                         self.points[stay].forces.append(
                             self.points[remove].forces[c])
 
+                #Punkte an angreifenden Kräften austauschen
                 for j in self.ex_forces:
                     n1 = self.ex_forces[j].nodes[0].id
                     n2 = self.ex_forces[j].nodes[1].id
@@ -435,7 +438,11 @@ class cremona_plan():
                         self.members[j].nodes[1] = self.points[stay]
                         n2 = self.members[j].nodes[1].id
 
+                #den aus Cremonaplan gelöschten Punkt in removed Points verschieben
+                self.removed_points[remove] = self.points[remove]
                 self.points.pop(remove)
+                
+                
 
     #    print('8i',self.members['8i'].nodes[0].id,self.members['8i'].nodes[1].id)
     #    print('check_forces', self.points[1].forces,self.points[2].forces,self.points[3].forces,self.points[4].forces)
@@ -451,8 +458,10 @@ class cremona_plan():
 
         plot_cremona_plan(self)
 
-        # process Cremonaplan
+        #Volumen vor Änderung bestimmen
+        analysis.get_system_volume(elements, self.members, self.at_member, self.one_member)
 
+        # process Cremonaplan
         self, self.bel_chord, self.unbel_chord, self.Verbindung, model, nodes, elements = preprocess_cremonaplan(
             self, bel_chord, unbel_chord, Verbindung, model, nodes, sys_elements, bottom_or_top)
         # input-system aktualisieren und Cremonaplan plotten

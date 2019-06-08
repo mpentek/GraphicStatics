@@ -34,9 +34,10 @@ input_files = {1: 'sample_input',  # succesful
                # further erros -> DEBUG
                10: 'BC_belastet ',  # not in equilibrium
                11: 'geknicktes_System',  # succesful
-               12: 'simple system'}  # succesful
+               12: 'simple system',
+               13: 'Beispiel_theorie'}  # succesful
 
-selected_file_idx =7
+selected_file_idx =11
 ##
 # PMT: weiterhin Problement bei
 # 4, 5, 10

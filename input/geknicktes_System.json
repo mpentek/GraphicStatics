@@ -1,11 +1,11 @@
 {
-    "bel_chord": "top"
+    "bel_chord": "bottom"
     , 
     "nodes": [
         {
             "id": 0,
             "coords": [
-                -13,
+                -15,
                 0.0
             ],
             "is_constrain" : true
@@ -13,7 +13,7 @@
         {
             "id": 1,
             "coords": [
-                -9,
+                -10,
                 0.0
             ],
             "is_constrain" : false
@@ -21,7 +21,7 @@
         {
             "id": 2,
             "coords": [
-                -4,
+                -5,
                 0.0
             ],
             "is_constrain" : false
@@ -29,7 +29,7 @@
         {
             "id": 3,
             "coords": [
-                4,
+                5,
                 0.0
             ],
             "is_constrain" : false
@@ -37,7 +37,7 @@
         {
             "id": 4,
             "coords": [
-                9,
+                10,
                 0.0
             ],
             "is_constrain" : false
@@ -45,7 +45,7 @@
         {
             "id": 5,
             "coords": [
-                13,
+                15,
                 0.0
             ],
             "is_constrain" : true
@@ -54,23 +54,23 @@
             "id": 6,
             "coords": [
                 8,
-                -1
+                -3
             ],
             "is_constrain" : false
         },
         {
             "id": 7,
             "coords": [
-                3,
-                -2
+                4,
+                -4
             ],
             "is_constrain" : false
         },
         {
             "id": 8,
             "coords": [
-                -3,
-                -2
+                -4,
+                -5
             ],
             "is_constrain" : false
         },
@@ -78,7 +78,7 @@
             "id": 9,
             "coords": [
                 -8,
-                -1
+                -5
             ],
             "is_constrain" : false
         }
@@ -90,7 +90,7 @@
                 0,
                 1
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -99,7 +99,7 @@
                 1,
                 2
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -108,7 +108,7 @@
                 2,
                 3
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -117,7 +117,7 @@
                 3,
                 4
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -126,7 +126,7 @@
                 4,
                 5
             ],
-            "opt_type" : 1,
+            "opt_type" : 2,
             "is_constrain" : false
         },
         {
@@ -135,7 +135,7 @@
                 5,
                 6
             ],
-            "opt_type" : 2,
+            "opt_type" : 1,
             "is_constrain" : false
         },
         {
@@ -144,7 +144,7 @@
                 6,
                 7
             ],
-            "opt_type" : 2,
+            "opt_type" : 1,
             "is_constrain" : false
         },
         {
@@ -153,7 +153,7 @@
                 7,
                 8
             ],
-            "opt_type" : 2,
+            "opt_type" : 1,
             "is_constrain" : false
         },
         {
@@ -162,7 +162,7 @@
                 8,
                 9
             ],
-            "opt_type" : 2,
+            "opt_type" : 1,
             "is_constrain" : false
         },
         {
@@ -171,7 +171,7 @@
                 9,
                 0
             ],
-            "opt_type" : 2,
+            "opt_type" : 1,
             "is_constrain" : false
         },
         {
@@ -241,34 +241,34 @@
     "external_forces":   [
         {
             "id": 1,
-            "node_id": 2,
+            "node_id": 6,
             "components": [
-                0.0,
-                -100.0
+                50.0,
+                100.0
             ]
         },
         {
             "id": 2,
-            "node_id": 1,
+            "node_id": 7,
             "components": [
-                0.0,
-                -100.0
+                50.0,
+                100.0
             ]
         },
         {
             "id": 3,
-            "node_id": 3,
+            "node_id": 8,
             "components": [
-                0.0,
-                -100.0
+                50.0,
+                100.0
             ]
         },
         {
             "id": 4,
-            "node_id": 4,
+            "node_id": 9,
             "components": [
-                0.0,
-                -100.0
+                50.0,
+                100.0
             ]
         }
     ],
