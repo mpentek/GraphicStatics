@@ -47,7 +47,7 @@ def plot_cremona_plan(Cremona_plan):
         Cremona_plan.points)
 
     fig, ax = plt.subplots()
-    ax.set_title('Cremona Plan')
+    ax.set_title('Cremona Plan', size = 18)
     ax.set_xlim(x_lim)
     ax.set_ylim(y_lim)
 
@@ -55,7 +55,7 @@ def plot_cremona_plan(Cremona_plan):
     ax.scatter(x, y)
 
     for i in range(len(p_id)):
-        ax.annotate("n_" + str(p_id[i]), (x[i], y[i]))
+        ax.annotate("n_" + str(p_id[i]), (x[i], y[i]), size = 12)
 
     # plot external forces
 
@@ -68,7 +68,7 @@ def plot_cremona_plan(Cremona_plan):
                  length_includes_head=True, head_width=10, head_length=10)
         s_x = Cremona_plan.ex_forces[f_id].midpoint[0]
         s_y = Cremona_plan.ex_forces[f_id].midpoint[1]
-        ax.annotate(f_id, (s_x, s_y))
+        ax.annotate(f_id, (s_x, s_y), size = 12)
 
     # plot reactions
     for f_id in Cremona_plan.reactions:
@@ -78,14 +78,16 @@ def plot_cremona_plan(Cremona_plan):
                             alpha=1, color='b', linestyle='-'))
         s_x = Cremona_plan.reactions[f_id].midpoint[0]
         s_y = Cremona_plan.reactions[f_id].midpoint[1]
-        ax.annotate(f_id, (s_x, s_y))
+        ax.annotate(f_id, (s_x, s_y), size = 12)
 
     # plot members
     for f_id in Cremona_plan.members:
         delta_x = Cremona_plan.members[f_id].x
         delta_y = Cremona_plan.members[f_id].y
         ax.add_line(PLine2D(delta_x, delta_y,
-                            alpha=1, color='b', linestyle='--'))
+                            alpha=1, color='b', linestyle='-'))
         s_x = Cremona_plan.members[f_id].midpoint[0] - 1
         s_y = Cremona_plan.members[f_id].midpoint[1] - 1
-        ax.annotate(f_id, (s_x, s_y))
+        ax.annotate(f_id, (s_x, s_y), size = 12)
+
+    plt.rcParams.update({'font.size': 12})

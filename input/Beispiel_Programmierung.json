@@ -1,0 +1,294 @@
+{
+    "bel_chord": "top",
+    "nodes": [
+        {
+            "id": 0,
+            "coords": [
+                -15.0,
+                0.0
+            ],
+            "is_constrain" : true
+        },
+        {
+            "id": 1,
+            "coords": [
+                -10.0,
+                0.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 2,
+            "coords": [
+                -5.0,
+                0.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 3,
+            "coords": [
+                5.0,
+                0.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 4,
+            "coords": [
+                10.0,
+                0.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 5,
+            "coords": [
+                15.0,
+                0.0
+            ],
+            "is_constrain" : true
+        },
+        {
+            "id": 6,
+            "coords": [
+                8.0,
+                -3.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 7,
+            "coords": [
+                4.0,
+                -4.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 8,
+            "coords": [
+                -4.0,
+                -5.0
+            ],
+            "is_constrain" : false
+        },
+        {
+            "id": 9,
+            "coords": [
+                -8.0,
+                -5.0
+            ],
+            "is_constrain" : false
+        }
+    ],
+    "elements": [
+        {
+            "id": 0,
+            "connect": [
+                0,
+                1
+            ],
+            "opt_type" : 1,
+            "is_constrain" : false
+        },
+        {
+            "id": 1,
+            "connect": [
+                1,
+                2
+            ],
+            "opt_type" : 1,
+            "is_constrain" : false
+        },
+        {
+            "id": 2,
+            "connect": [
+                2,
+                3
+            ],
+            "opt_type" : 1,
+            "is_constrain" : false
+        },
+        {
+            "id": 3,
+            "connect": [
+                4,
+                3
+            ],
+            "opt_type" : 1,
+            "is_constrain" : false
+        },
+        {
+            "id": 4,
+            "connect": [
+                5,
+                4
+            ],
+            "opt_type" : 1,
+            "is_constrain" : false
+        },
+        {
+            "id": 5,
+            "connect": [
+                5,
+                6
+            ],
+            "opt_type" : 2,
+            "is_constrain" : false
+        },
+        {
+            "id": 6,
+            "connect": [
+                6,
+                7
+            ],
+            "opt_type" : 2,
+            "is_constrain" : false
+        },
+        {
+            "id": 7,
+            "connect": [
+                7,
+                8
+            ],
+            "opt_type" : 2,
+            "is_constrain" : false
+        },
+        {
+            "id": 8,
+            "connect": [
+                8,
+                9
+            ],
+            "opt_type" : 2,
+            "is_constrain" : false
+        },
+        {
+            "id": 9,
+            "connect": [
+                9,
+                0
+            ],
+            "opt_type" : 2,
+            "is_constrain" : false
+        },
+        {
+            "id": 10,
+            "connect": [
+                1,
+                9
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 11,
+            "connect": [
+                2,
+                8
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 12,
+            "connect": [
+                3,
+                7
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 13,
+            "connect": [
+                4,
+                6
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 14,
+            "connect": [
+                1,
+                8
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 15,
+            "connect": [
+                7,
+                2
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        },
+        {
+            "id": 16,
+            "connect": [
+                3,
+                6
+            ],
+            "opt_type" : 3,
+            "is_constrain" : false
+        }
+    ],
+    "external_forces": [
+        {
+            "id": 1,
+            "node_id": 1,
+            "components": [
+                50.0,
+                -100.0
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 2,
+            "components": [
+                50.0,
+                -100.0
+            ]
+        },
+        {
+            "id": 3,
+            "node_id": 3,
+            "components": [
+                50,
+                -100.0
+            ]
+        },
+        {
+            "id": 4,
+            "node_id": 4,
+            "components": [
+                50,
+                -100.0
+            ]
+        }
+    ],
+    "fixities": [
+        {
+            "id": 1,
+            "node_id": 0,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                true,
+                true
+            ]
+        },
+        {
+            "id": 2,
+            "node_id": 5,
+            "//": "first value is horizontal x, second one is vertical y boundary",
+            "is_fixed": [
+                false,
+                true
+            ]
+        }
+    ]
+}

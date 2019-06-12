@@ -114,10 +114,8 @@ class Analysis(object):
             elements[i].length = get_length(elements[i].coordinates)
             lines = [elements[i].line, line1]
             jop = are_parallel(lines)
-            if jop == True:
-                print('Member', i, 'is correct')
-                
-            else:
+            if jop != True:
+               
                 print('Member', i, 'is incorrect')
                 print('cremona:', line1['direction'],
                       'system', elements[i].line['direction'])

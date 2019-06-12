@@ -131,7 +131,7 @@ def plot_input_system(input_system):
         input_system, offset_factor=0.25)
 
     fig, ax = plt.subplots()
-    ax.set_title('Input system')
+    ax.set_title('Input system', size = 18)
     ax.set_xlim(x_lim)
     ax.set_ylim(y_lim)
 
@@ -140,13 +140,13 @@ def plot_input_system(input_system):
         ax.add_line(
             PLine2D(segment[0], segment[1], alpha=0.5, color='grey'))
     for i, txt in enumerate(m_id):
-        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]))
+        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]), size = 12)
 
     # nodes
     x_n, y_n, n_id = get_nodal_data_for_plot(input_system)
     ax.scatter(x_n, y_n)
     for i, txt in enumerate(n_id):
-        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
+        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]), size = 12)
 
     # (external) forces
     x, y, u, v, c = get_forces_for_plot(
@@ -180,6 +180,8 @@ def plot_input_system(input_system):
             patch = patches.Polygon(xy, color='r')
             ax.add_patch(patch)
 
+    plt.rcParams.update({'font.size': 12})
+
 
 def plot_computation_model(computation_model):
 
@@ -187,7 +189,7 @@ def plot_computation_model(computation_model):
         computation_model, offset_factor=0.25)
 
     fig, ax = plt.subplots()
-    ax.set_title('Computational model')
+    ax.set_title('Computational model', size = 18)
     ax.set_xlim(x_lim)
     ax.set_ylim(y_lim)
 
@@ -196,13 +198,13 @@ def plot_computation_model(computation_model):
         ax.add_line(
             PLine2D(segment[0], segment[1], alpha=0.5, color='grey'))
     for i, txt in enumerate(m_id):
-        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]))
+        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]), size = 12)
 
     # nodes
     x_n, y_n, n_id = get_nodal_data_for_plot(computation_model)
     ax.scatter(x_n, y_n)
     for i, txt in enumerate(n_id):
-        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
+        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]), size = 12)
 
     # (external) forces
     x, y, u, v, c = get_forces_for_plot(
@@ -211,6 +213,8 @@ def plot_computation_model(computation_model):
         if (u[i]**2 + v[i]**2)**0.5 > TOL:
             ax.arrow(x[i], y[i], u[i], v[i], color=c[i],
                      length_includes_head=True, head_width=0.25, head_length=0.25)
+    
+    plt.rcParams.update({'font.size': 12})
 
 
 def plot_solved_system(computation_model, scale=0.1):
@@ -218,7 +222,7 @@ def plot_solved_system(computation_model, scale=0.1):
         computation_model, offset_factor=0.2)
 
     fig, ax = plt.subplots()
-    ax.set_title('Results: normal force distribution in system')
+    ax.set_title('Results: normal force distribution in system', size = 18)
     ax.set_xlim(x_lim)
     ax.set_ylim(y_lim)
 
@@ -227,13 +231,13 @@ def plot_solved_system(computation_model, scale=0.1):
         ax.add_line(
             PLine2D(segment[0], segment[1], alpha=0.5, color='grey'))
     for i, txt in enumerate(m_id):
-        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]))
+        ax.annotate("m_" + str(txt), (x_m[i], y_m[i]), size = 12)
 
     # nodes
     x_n, y_n, n_id = get_nodal_data_for_plot(computation_model)
     ax.scatter(x_n, y_n)
     for i, txt in enumerate(n_id):
-        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]))
+        ax.annotate("n_" + str(txt), (x_n[i], y_n[i]), size = 12)
 
     results = []
 
@@ -309,6 +313,8 @@ def plot_solved_system(computation_model, scale=0.1):
     ax.set_xlim([x_lim[0], x_lim[1] + (x_lim[1] - x_lim[0]) * 0.2])
     ax.set_ylim(y_lim)
 
+    plt.rcParams.update({'font.size': 12})
+
 
 def plot_force_diagram(force_diagram):
     fig, ax = plt.subplots()
@@ -341,7 +347,7 @@ def plot_force_diagram(force_diagram):
                             alpha=0.5, color='black', linestyle='-.'))
 
     for i, txt in enumerate(s_id):
-        ax.annotate(txt, (s_x[i], s_y[i]))
+        ax.annotate(txt, (s_x[i], s_y[i]), size = 12)
 
     # forces
     x = []
@@ -393,11 +399,13 @@ def plot_force_diagram(force_diagram):
             str(round(force_diagram['resultant'].magnitude, 2))
     else:
         custom_str += '\n Resultant has zero magnitude (equilibrium)'
-    ax.set_title('Forces - force diagram: ' + custom_str)
+    ax.set_title('Forces - force diagram: ' + custom_str, size = 18)
 
     # ax.autoscale() #does not seem to work properly
     ax.set_xlim([-100, 100])
     ax.set_ylim([-175, 100])
+
+    plt.rcParams.update({'font.size': 12})
 
 
 def plot_space_diagram(space_diagram):
@@ -405,7 +413,7 @@ def plot_space_diagram(space_diagram):
     fig, ax = plt.subplots()
     custom_str = '\n with resultant along line (a,b,c): ' + str(
         space_diagram['resultant'].line['coefficients'])
-    ax.set_title('Forces - space diagram, ' + custom_str)
+    ax.set_title('Forces - space diagram, ' + custom_str, size = 18)
 
     # # force segments
     # segments = []
@@ -434,7 +442,7 @@ def plot_space_diagram(space_diagram):
                             alpha=0.5, color='black', linestyle='-.'))
 
     for i, txt in enumerate(s_id):
-        ax.annotate(txt, (s_x[i], s_y[i]))
+        ax.annotate(txt, (s_x[i], s_y[i]), size = 12)
 
     # nodes
     x = []
@@ -477,11 +485,13 @@ def plot_space_diagram(space_diagram):
     ax.set_xlim([-200, 200])
     ax.set_ylim([-200, 200])
 
+    plt.rcParams.update({'font.size': 12})
+
 
 def plot_decomposed_forces(resultant, decomposed_forces, points):
     ##
     fig, ax = plt.subplots()
-    ax.set_title('Force - decomposed')
+    ax.set_title('Force - decomposed', size = 18)
 
     # forces
     x = []
@@ -518,14 +528,16 @@ def plot_decomposed_forces(resultant, decomposed_forces, points):
         y.append(point[1])
     ax.scatter(x, y)
 
-    ax.set_xlim([-200, 200])
-    ax.set_ylim([-200, 200])
+    ax.set_xlim([-200, 200], size = 12)
+    ax.set_ylim([-200, 200], size = 12)
+
+    plt.rcParams.update({'font.size': 12})
 
 
 def plot_reaction_forces(reactions, resultant):
     ##
     fig, ax = plt.subplots()
-    ax.set_title('Resultant and reaction(s)')
+    ax.set_title('Resultant and reaction(s)', size = 18)
 
     # forces
     x = []
@@ -555,5 +567,7 @@ def plot_reaction_forces(reactions, resultant):
 
     ax.set_xlim([-200, 200])
     ax.set_ylim([-200, 200])
+
+    plt.rcParams.update({'font.size': 12})
 
 #def plot_cremona_plan():
