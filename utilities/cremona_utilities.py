@@ -204,7 +204,7 @@ def remove_diagonals_from_cremona(low_diagonals, Cremona_plan, bel_chord, Verbin
 
                 # aus Cremona_plan löschen:
                 for j in range(len(forces1)):
-                    'update(Cremona_plan.members[forces1[j]])'
+                    update(Cremona_plan.members[forces1[j]])
                     if i == forces1[j]:
                         popped = j
                 forces1.pop(popped)

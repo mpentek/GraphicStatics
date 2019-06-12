@@ -442,7 +442,7 @@ class cremona_plan():
                 #den aus Cremonaplan gelöschten Punkt in removed Points verschieben
                 # self.removed_points[remove] = self.points[remove]
                 self.points.pop(remove)
-        plot_cremona_plan(self)     
+             
                 
 
     #    print('8i',self.members['8i'].nodes[0].id,self.members['8i'].nodes[1].id)

@@ -120,7 +120,7 @@ class Analysis(object):
                 print('cremona:', line1['direction'],
                       'system', elements[i].line['direction'])
         self.get_system_volume(elements, members, cremona.at_member, cremona.one_member)
-        plot_computation_model(self.computation_model)
+        #plot_computation_model(self.computation_model)
 
     def get_system_volume(self, elements, members, at_member, one_member):
         V = 0

@@ -31,7 +31,7 @@ input_files = {1: 'sample_input',
                13: 'Beispiel_theorie',
                14: 'Beispiel_Programmierung'} 
 
-selected_file_idx =13
+selected_file_idx =14
 ##
 
 ##
