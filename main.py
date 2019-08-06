@@ -19,19 +19,22 @@ from cremona_plan import cremona_plan
 input_files = {1: 'sample_input',  
                2: 'sample_input_mod1',  
                3: 'sample_input_mod2', 
-               # Automatic topology update at nodes 7 and 8
                4: 'double_arch_kinematic_top_load',
-               # Automatic topology update at nodes 7 and 8
                5: 'double_arch_kinematic_top_load_mod1', 
-               # Automatic topology update at nodes 7 and 8
-               6: 'double_arch_kinematic_bottom_load',
-               7: 'double_arch_top_load', 
-               8: 'double_arch_bottom_load', 
+               6: 'double_arch_kinematic_bottom_load',  
+               7: 'double_arch_top_load',  
+               8: 'double_arch_bottom_load',  
                9: 'double_arch_kinematic_top_load_mod2', 
-               10: 'geknicktes_System',
-               11: 'simple system'}
+               10: 'BC_belastet ',  # not in equilibrium
+               11: 'geknicktes_System',  
+               12: 'simple system',
+               13: 'Beispiel_theorie',
+               14: 'Beispiel_Programmierung'} 
 
-selected_file_idx = 11
+selected_file_idx =14
+##
+
+##
 
 # filename for import
 input_folder = 'input'
